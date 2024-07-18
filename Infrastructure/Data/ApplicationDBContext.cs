@@ -9,6 +9,8 @@ namespace BookManagementSystem.Data
         public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
         }
+        public DbSet<Book> Books { get; set;}
+        public DbSet<Report> Reports {get; set;}
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

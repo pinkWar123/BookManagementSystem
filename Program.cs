@@ -1,8 +1,11 @@
 using System.Text;
+using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Services;
 using BookManagementSystem.Data;
 using BookManagementSystem.Data.Repositories;
 using BookManagementSystem.Data.UnitOfWork;
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Infrastructure.Repositories.Book;
 using BookManagementSystem.Middlewares;
 using BookManagementSystem.Settings;
 using FluentValidation;
@@ -99,7 +102,10 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-// builder.Services.AddScoped<ITestRepository, TestRepository>();
+// Register services 
+builder.Services.AddScoped<IBookService, BookService>();
+// DI Container
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
 // builder.Services.AddValidatorsFromAssemblyContaining<CreateTestValidator>();
 

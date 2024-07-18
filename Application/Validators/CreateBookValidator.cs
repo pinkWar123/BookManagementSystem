@@ -9,6 +9,9 @@ namespace BookManagementSystem.Application.Validators
 {
     public class CreateBookValidator : AbstractValidator<CreateBookDto>
     {
-        
+        public CreateBookValidator()
+        {
+            
+        }
     }
 }
