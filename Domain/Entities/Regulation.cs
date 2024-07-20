@@ -8,14 +8,13 @@ namespace BookManagementSystem.Domain.Entities
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class PaymentReceive : Base
+    public class Regulation : Base
     {
-        public required DateOnly Date { get; set; }
-        public required int Amount { get; set; }
         [StringLength(5)]
-        public required string CustomerID { get; set; }
-
-        [ForeignKey("CustomerID")]
-        public virtual Customer Customer { get; set; } 
+        public required string Code { get; set; }
+        [StringLength(200)]
+        public required string Content { get; set; }
+        public required int Value { get; set; }
+        public required bool Status { get; set; } // 1 = true, 0 = false
     }
 }

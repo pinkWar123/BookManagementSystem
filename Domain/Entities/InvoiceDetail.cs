@@ -14,9 +14,9 @@ namespace BookManagementSystem.Domain.Entities
         public required string InvoiceID { get; set; }
         [StringLength(5)]
         public required string BookID { get; set; }
-        public required int quantity { get; set; }
+        public required int Quantity { get; set; }
 
-        public required int price { get; set; }
+        public required int Price { get; set; }
 
         [ForeignKey("InvoiceID")]
         public virtual Invoice Invoice { get; set; } 

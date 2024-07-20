@@ -9,7 +9,7 @@ namespace BookManagementSystem.Domain.Entities
 
     public class BookEntry : Base
     {
-        public required DateOnly date { get; set; }
+        public required DateOnly Date { get; set; }
 
         public ICollection<BookEntryDetail>? BookEntryDetails { get; set; }
     }

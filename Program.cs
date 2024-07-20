@@ -107,7 +107,12 @@ builder.Services.AddScoped<IBookService, BookService>();
 // DI Container
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddIdentity<Users, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDBContext>()
+            .AddDefaultTokenProviders();
+
 // builder.Services.AddValidatorsFromAssemblyContaining<CreateTestValidator>();
+
 
 var app = builder.Build();
 // SeedDatabase(app.Services);

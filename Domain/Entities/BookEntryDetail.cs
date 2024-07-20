@@ -17,7 +17,7 @@ namespace BookManagementSystem.Domain.Entities
         [Required]
         public required string BookID { get; set; }
         [Required]
-        public required int quantity { get; set; }
+        public required int Quantity { get; set; }
 
 
         [ForeignKey("EntryID")]

@@ -9,27 +9,27 @@ namespace BookManagementSystem.Domain.Entities
 
     public class Customer : Base
     {
-        [StringLength(100)]
-        public required string title { get; set; }
+        // [StringLength(100)]
+        // public required string title { get; set; }
 
         [StringLength(45)]
-        public required string customerName { get; set; }
+        public required string CustomerName { get; set; }
 
-        public required int totalDept { get; set; }
+        public required int TotalDept { get; set; }
 
         [StringLength(150)]
-        public required string address { get; set; }
+        public required string Address { get; set; }
         [StringLength(10)]
-        public required string phoneNumber { get; set; }
+        public required string PhoneNumber { get; set; }
 
         [StringLength(150)]
-        public string? email { get; set; }
+        public string? Email { get; set; }
 
-        public ICollection<PaymentReceive>? paymentReceives { get; set; }
+        public ICollection<PaymentReceive>? PaymentReceives { get; set; }
 
         public ICollection<DeptReportDetail>? DeptReportDetails { get; set; }
 
-        public ICollection<Invoice>? invoices { get; set; }
+        public ICollection<Invoice>? Invoices { get; set; }
 
         
     }

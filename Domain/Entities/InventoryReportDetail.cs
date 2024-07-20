@@ -15,9 +15,9 @@ namespace BookManagementSystem.Domain.Entities
         [StringLength(5)]
         public required string BookID { get; set; }
 
-        public required int initalStock { get; set; }
-        public required int finalStock { get; set; }
-        public required int additionalStock { get; set; }
+        public required int InitalStock { get; set; }
+        public required int FinalStock { get; set; }
+        public required int AdditionalStock { get; set; }
 
         [ForeignKey("ReportID")]
         public virtual InventoryReport InventoryReport { get; set; } 

@@ -10,13 +10,13 @@ namespace BookManagementSystem.Domain.Entities
 
     public class Invoice : Base
     {
-        public required DateOnly date { get; set; }
+        public required DateOnly Date { get; set; }
         [StringLength(5)]
-        public required string customerID { get; set; }
+        public required string CustomerID { get; set; }
 
-        [ForeignKey("customerID")]
+        [ForeignKey("CustomerID")]
         public virtual Customer Customer { get; set; } 
 
-        public ICollection<InvoiceDetail>? invoiceDetails { get; set; }
+        public ICollection<InvoiceDetail>? InvoiceDetails { get; set; }
     }
 }

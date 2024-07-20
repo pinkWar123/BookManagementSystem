@@ -15,9 +15,9 @@ namespace BookManagementSystem.Domain.Entities
         [StringLength(5)]
         public required string CustomerID { get; set; }
 
-        public required int initalDept { get; set; }
-        public required int finalDept { get; set; }
-        public required int additionalDept { get; set; }
+        public required int InitalDept { get; set; }
+        public required int FinalDept { get; set; }
+        public required int AdditionalDept { get; set; }
 
         [ForeignKey("ReportID")]
         public virtual DeptReport DeptReport { get; set; } 
