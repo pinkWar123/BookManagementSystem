@@ -11,8 +11,10 @@ namespace BookManagementSystem.Domain.Entities
     public class InventoryReportDetail
     {
         [StringLength(5)]
+        [Column(TypeName = "char(5)")]
         public required string ReportID { get; set; }
         [StringLength(5)]
+        [Column(TypeName = "char(5)")]
         public required string BookID { get; set; }
 
         public required int InitalStock { get; set; }

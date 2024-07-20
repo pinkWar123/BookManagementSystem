@@ -54,7 +54,7 @@ namespace BookManagementSystem.Migrations
                 name: "BookEntrys",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
@@ -66,7 +66,7 @@ namespace BookManagementSystem.Migrations
                 name: "Books",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Genre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Author = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -82,7 +82,7 @@ namespace BookManagementSystem.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     CustomerName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     TotalDept = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
@@ -98,7 +98,7 @@ namespace BookManagementSystem.Migrations
                 name: "DeptReports",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     ReportMonth = table.Column<int>(type: "int", nullable: false),
                     ReportYear = table.Column<int>(type: "int", nullable: false)
                 },
@@ -111,7 +111,7 @@ namespace BookManagementSystem.Migrations
                 name: "InventoryReports",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     ReportMonth = table.Column<int>(type: "int", nullable: false),
                     ReportYear = table.Column<int>(type: "int", nullable: false)
                 },
@@ -124,8 +124,8 @@ namespace BookManagementSystem.Migrations
                 name: "Regulation",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
+                    Code = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false)
@@ -272,8 +272,8 @@ namespace BookManagementSystem.Migrations
                 name: "BookEntryDetail",
                 columns: table => new
                 {
-                    EntryID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    BookID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    EntryID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
+                    BookID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -297,9 +297,9 @@ namespace BookManagementSystem.Migrations
                 name: "Invoices",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    CustomerID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false)
+                    CustomerID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -316,10 +316,10 @@ namespace BookManagementSystem.Migrations
                 name: "PaymentReceives",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Id = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    CustomerID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false)
+                    CustomerID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -336,8 +336,8 @@ namespace BookManagementSystem.Migrations
                 name: "DeptReportDetails",
                 columns: table => new
                 {
-                    ReportID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    CustomerID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    ReportID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
+                    CustomerID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     InitalDept = table.Column<int>(type: "int", nullable: false),
                     FinalDept = table.Column<int>(type: "int", nullable: false),
                     AdditionalDept = table.Column<int>(type: "int", nullable: false)
@@ -363,8 +363,8 @@ namespace BookManagementSystem.Migrations
                 name: "InventoryReportDetails",
                 columns: table => new
                 {
-                    ReportID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    BookID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    ReportID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
+                    BookID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     InitalStock = table.Column<int>(type: "int", nullable: false),
                     FinalStock = table.Column<int>(type: "int", nullable: false),
                     AdditionalStock = table.Column<int>(type: "int", nullable: false)
@@ -390,8 +390,8 @@ namespace BookManagementSystem.Migrations
                 name: "InvoiceDetails",
                 columns: table => new
                 {
-                    InvoiceID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    BookID = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    InvoiceID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
+                    BookID = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false)
                 },

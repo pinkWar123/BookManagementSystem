@@ -11,7 +11,9 @@ namespace BookManagementSystem.Domain.Entities
     public class Invoice : Base
     {
         public required DateOnly Date { get; set; }
+        
         [StringLength(5)]
+        [Column(TypeName = "char(5)")]
         public required string CustomerID { get; set; }
 
         [ForeignKey("CustomerID")]

@@ -11,8 +11,10 @@ namespace BookManagementSystem.Domain.Entities
     public class DeptReportDetail
     {
         [StringLength(5)]
+        [Column(TypeName = "char(5)")]
         public required string ReportID { get; set; }
         [StringLength(5)]
+        [Column(TypeName = "char(5)")]
         public required string CustomerID { get; set; }
 
         public required int InitalDept { get; set; }

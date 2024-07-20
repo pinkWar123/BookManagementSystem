@@ -11,6 +11,7 @@ namespace BookManagementSystem.Domain.Entities
     public class Regulation : Base
     {
         [StringLength(5)]
+        [Column(TypeName = "char(5)")]
         public required string Code { get; set; }
         [StringLength(200)]
         public required string Content { get; set; }

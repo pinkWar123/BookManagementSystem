@@ -91,7 +91,7 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("Author")
                         .IsRequired()
@@ -123,7 +123,7 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -137,11 +137,11 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("EntryID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("BookID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -157,7 +157,7 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -190,7 +190,7 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<int>("ReportMonth")
                         .HasColumnType("int");
@@ -207,11 +207,11 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("ReportID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("CustomerID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<int>("AdditionalDept")
                         .HasColumnType("int");
@@ -233,7 +233,7 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<int>("ReportMonth")
                         .HasColumnType("int");
@@ -250,11 +250,11 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("ReportID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("BookID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<int>("AdditionalStock")
                         .HasColumnType("int");
@@ -276,12 +276,12 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("CustomerID")
                         .IsRequired()
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -297,11 +297,11 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("InvoiceID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("BookID")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
@@ -320,7 +320,7 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
@@ -328,7 +328,7 @@ namespace BookManagementSystem.Migrations
                     b.Property<string>("CustomerID")
                         .IsRequired()
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -344,12 +344,12 @@ namespace BookManagementSystem.Migrations
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("char(5)");
 
                     b.Property<string>("Content")
                         .IsRequired()
