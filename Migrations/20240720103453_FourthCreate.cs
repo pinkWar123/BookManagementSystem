@@ -86,8 +86,8 @@ namespace BookManagementSystem.Migrations
                     CustomerName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     TotalDept = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true)
+                    PhoneNumber = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false),
+                    Email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: true)
                 },
                 constraints: table =>
                 {

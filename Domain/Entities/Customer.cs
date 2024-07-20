@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace BookManagementSystem.Domain.Entities
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Customer : Base
     {
@@ -19,10 +20,13 @@ namespace BookManagementSystem.Domain.Entities
 
         [StringLength(150)]
         public required string Address { get; set; }
+
         [StringLength(10)]
+        [Column(TypeName = "varchar(10)")]
         public required string PhoneNumber { get; set; }
 
         [StringLength(150)]
+        [Column(TypeName = "varchar(150)")]
         public string? Email { get; set; }
 
         public ICollection<PaymentReceive>? PaymentReceives { get; set; }

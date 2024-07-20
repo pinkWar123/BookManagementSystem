@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240720102326_FourthCreate")]
+    [Migration("20240720103453_FourthCreate")]
     partial class FourthCreate
     {
         /// <inheritdoc />
@@ -174,12 +174,12 @@ namespace BookManagementSystem.Migrations
 
                     b.Property<string>("Email")
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("varchar(150)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<int>("TotalDept")
                         .HasColumnType("int");
