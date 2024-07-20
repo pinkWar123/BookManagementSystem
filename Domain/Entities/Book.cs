@@ -7,8 +7,13 @@ namespace BookManagementSystem.Domain.Entities
 {
     public class Book
     {
-        public int Id { get; set; } // ef core
-        public required string Title { get; set; }
-        public int Price { get; set; }
+        // Properties: BookID, Title, Genre , Author, StockQUantity, Price
+        public string? BookID { get; set; }
+        public string? Title { get; set; }
+        public string? Genre { get; set; }
+        public string? Author { get; set; }
+        public int StockQuantity { get; set; }
+        public double Price { get; set; }
+        
     }
 }
