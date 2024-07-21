@@ -7,6 +7,6 @@ namespace BookManagementSystem.Infrastructure.Data.Seed
 {
     public class SeedData
     {
-        
+
     }
 }

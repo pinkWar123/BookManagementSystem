@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookManagementSystem.Application.Dtos.Book;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookManagementSystem.Api.Controllers
@@ -15,15 +16,32 @@ namespace BookManagementSystem.Api.Controllers
         {
             _bookService = bookService;
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateNewBook(CreateBookDto createBookDto)
+        {
+            var validator = new CreateBookValidator();
+            var validateResult = await validator.ValidateAsync(createBookDto);
+            if (!validateResult.IsValid)
+            {
+                return BadRequest(validateResult);
+            }
 
-        // [HttpPost]
-        // public async Task<IActionResult> CreateNewBook(CreateBookDto createBookDto)
+            await _bookService.CreateNewBook(createBookDto);
+            return Ok(createBookDto);
+        }
+
+        // [HttpPatch]
+        // public async Task<IActionResult> UpdateBookById(UpdateBookDto createBookDto)
         // {
-        //     // Validate data
+        //     var validator = new CreateBookValidator();
+        //     var validateResult = await validator.ValidateAsync(createBookDto);
+        //     if(!validateResult.IsValid)
+        //     {
+        //         return BadRequest(validateResult);
+        //     }
+
         //     await _bookService.CreateNewBook(createBookDto);
         //     return Ok(createBookDto);
         // }
-
-        
     }
 }

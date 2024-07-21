@@ -1,14 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace BookManagementSystem.Domain.Entities
 {
-    public class Book
+    using System.ComponentModel.DataAnnotations;
+
+    public class Book : Base
     {
-        public int Id { get; set; } // ef core
+        [StringLength(100)]
         public required string Title { get; set; }
-        public int Price { get; set; }
+
+        [StringLength(100)]
+        public required string Genre { get; set; }
+
+        [StringLength(100)]
+        public required string Author { get; set; }
+
+        public required int StockQuantity { get; set; }
+        public required int Price { get; set; }
+
+        public ICollection<BookEntryDetail>? BookEntryDetails { get; set; }
+
+        public ICollection<InventoryReportDetail>? InventoryReportDetails { get; set; }
+        public ICollection<InvoiceDetail>? invoiceDetails { get; set; }
     }
 }

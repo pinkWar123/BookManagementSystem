@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.Book;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Book;
 
 namespace BookManagementSystem.Application.Services
@@ -18,10 +19,17 @@ namespace BookManagementSystem.Application.Services
             _bookRepository = bookRepository;
             _mapper = mapper;
         }
-        // public async Task CreateNewBook(CreateBookDto createBookDto)
+
+        public async Task CreateNewBook(CreateBookDto createBookDto)
+        {
+            var book = _mapper.Map<Domain.Entities.Book>(createBookDto);
+            await _bookRepository.AddAsync(book);
+        }
+
+        // public async Task UpdateBookById(UpdateBookDto updateBookDto, string bookId)
         // {
-        //     var book = _mapper.Map<Book>(createBookDto);
-        //     await _bookRepository.AddAsync(book);
+        //     var book = _mapper.Map<Domain.Entities.Book>(createBookDto);
+        //     await _bookRepository.UpdateAsync(bookId, )
         // }
     }
 }

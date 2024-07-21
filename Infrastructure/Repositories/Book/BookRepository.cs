@@ -7,7 +7,7 @@ using BookManagementSystem.Data.Repositories;
 
 namespace BookManagementSystem.Infrastructure.Repositories.Book
 {
-    public class BookRepository : GenericRepository<Domain.Entities.Book> ,IBookRepository
+    public class BookRepository : GenericRepository<Domain.Entities.Book>, IBookRepository
     {
         public BookRepository(ApplicationDBContext applicationDbContext) : base(applicationDbContext)
         {
