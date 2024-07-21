@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BookManagementSystem.Data;
 using BookManagementSystem.Data.Repositories;
-using BookManagementSystem.Infrastructure.Repositories.Book;
-using BookManagementSystem.Infrastructure.Repositories.BookEntryDetail;
 
-namespace BookManagementSystem.Infrastructure.Repositories.BookEntry
+namespace BookManagementSystem.Infrastructure.Repositories.BookEntryDetail
 {
     public class BookEntryDetailRepository : GenericRepository<Domain.Entities.BookEntryDetail>, IBookEntryDetailRepository
     {
