@@ -9,3 +9,5 @@ obj/
 *.ide
 .vs/
 *.sln
+appsettings.json
+/Migrations

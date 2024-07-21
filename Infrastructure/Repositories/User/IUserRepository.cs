@@ -7,7 +7,7 @@ using BookManagementSystem.Domain.Entities;
 
 namespace BookManagementSystem.Infrastructure.Repositories.User
 {
-    public interface IUserRepository : IGenericRepository<Users>
+    public interface IUserRepository : IGenericRepository<Domain.Entities.User>
     {
 
     }

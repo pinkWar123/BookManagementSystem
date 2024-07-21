@@ -70,7 +70,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-builder.Services.AddIdentity<Users, IdentityRole>(options =>
+builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -107,9 +107,6 @@ builder.Services.AddScoped<IBookService, BookService>();
 // DI Container
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddIdentity<Users, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDBContext>()
-            .AddDefaultTokenProviders();
 
 // builder.Services.AddValidatorsFromAssemblyContaining<CreateTestValidator>();
 
@@ -119,7 +116,7 @@ var app = builder.Build();
 // using (var scope = app.Services.CreateScope())
 // {
 //     var services = scope.ServiceProvider;
-//     var userManager = services.GetRequiredService<UserManager<AppUser>>();
+//     var userManager = services.GetRequiredService<UserManager<User>>();
 //     SeedData.Initialize(services, userManager).Wait();
 // }
 // Configure the HTTP request pipeline.

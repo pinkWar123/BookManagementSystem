@@ -22,71 +22,6 @@ namespace BookManagementSystem.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BookManagementSystem.Domain.Entities.AppUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-                });
-
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.Book", b =>
                 {
                     b.Property<string>("Id")
@@ -316,7 +251,7 @@ namespace BookManagementSystem.Migrations
                     b.ToTable("InvoiceDetails");
                 });
 
-            modelBuilder.Entity("BookManagementSystem.Domain.Entities.PaymentReceive", b =>
+            modelBuilder.Entity("BookManagementSystem.Domain.Entities.PaymentReceipt", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(5)
@@ -337,7 +272,7 @@ namespace BookManagementSystem.Migrations
 
                     b.HasIndex("CustomerID");
 
-                    b.ToTable("PaymentReceives");
+                    b.ToTable("PaymentReceipts");
                 });
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.Regulation", b =>
@@ -367,7 +302,7 @@ namespace BookManagementSystem.Migrations
                     b.ToTable("Regulation");
                 });
 
-            modelBuilder.Entity("BookManagementSystem.Domain.Entities.Users", b =>
+            modelBuilder.Entity("BookManagementSystem.Domain.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -376,10 +311,12 @@ namespace BookManagementSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -396,10 +333,12 @@ namespace BookManagementSystem.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -410,10 +349,6 @@ namespace BookManagementSystem.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -421,11 +356,20 @@ namespace BookManagementSystem.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -657,14 +601,14 @@ namespace BookManagementSystem.Migrations
                     b.Navigation("Invoice");
                 });
 
-            modelBuilder.Entity("BookManagementSystem.Domain.Entities.PaymentReceive", b =>
+            modelBuilder.Entity("BookManagementSystem.Domain.Entities.PaymentReceipt", b =>
                 {
                     b.HasOne("BookManagementSystem.Domain.Entities.Customer", "Customer")
-                        .WithMany("PaymentReceives")
+                        .WithMany("PaymentReceipts")
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_PaymentReceive_Customer");
+                        .HasConstraintName("FK_PaymentReceipt_Customer");
 
                     b.Navigation("Customer");
                 });
@@ -680,7 +624,7 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("BookManagementSystem.Domain.Entities.AppUser", null)
+                    b.HasOne("BookManagementSystem.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -689,7 +633,7 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("BookManagementSystem.Domain.Entities.AppUser", null)
+                    b.HasOne("BookManagementSystem.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -704,7 +648,7 @@ namespace BookManagementSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookManagementSystem.Domain.Entities.AppUser", null)
+                    b.HasOne("BookManagementSystem.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -713,7 +657,7 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("BookManagementSystem.Domain.Entities.AppUser", null)
+                    b.HasOne("BookManagementSystem.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -740,7 +684,7 @@ namespace BookManagementSystem.Migrations
 
                     b.Navigation("Invoices");
 
-                    b.Navigation("PaymentReceives");
+                    b.Navigation("PaymentReceipts");
                 });
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.DeptReport", b =>

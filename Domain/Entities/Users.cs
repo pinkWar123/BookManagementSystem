@@ -11,11 +11,9 @@ namespace BookManagementSystem.Domain.Entities
         StoreKeeper
     }
 
-    public class Users : IdentityUser
+    public class User : IdentityUser
     {
         [StringLength(100)]
         public required string FullName { get; set; }
-
-        public required Roles Role { get; set; }
-}
+    }
 }

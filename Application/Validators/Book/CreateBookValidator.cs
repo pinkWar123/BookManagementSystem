@@ -11,7 +11,8 @@ namespace BookManagementSystem.Application.Validators
     {
         public CreateBookValidator()
         {
-
+            RuleFor(x => x.Title).NotEmpty();
+            RuleFor(x => x.Price).NotEmpty().GreaterThan(0);
         }
     }
 }

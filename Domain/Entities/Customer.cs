@@ -22,7 +22,7 @@ namespace BookManagementSystem.Domain.Entities
         [Column(TypeName = "varchar(150)")]
         public string? Email { get; set; }
 
-        public ICollection<PaymentReceipt>? PaymentReceives { get; set; }
+        public ICollection<PaymentReceipt>? PaymentReceipts { get; set; }
 
         public ICollection<DeptReportDetail>? DeptReportDetails { get; set; }
 

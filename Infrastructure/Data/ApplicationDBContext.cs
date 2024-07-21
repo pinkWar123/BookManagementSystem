@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Data
 {
-    public class ApplicationDBContext : IdentityDbContext<AppUser>
+    public class ApplicationDBContext : IdentityDbContext<User>
     {
         public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
@@ -16,7 +16,7 @@ namespace BookManagementSystem.Data
         public DbSet<InventoryReportDetail> InventoryReportDetails { get; set; }
 
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<PaymentReceive> PaymentReceives { get; set; }
+        public DbSet<PaymentReceipt> PaymentReceipts { get; set; }
 
         public DbSet<DeptReport> DeptReports { get; set; }
 
@@ -55,7 +55,7 @@ namespace BookManagementSystem.Data
                 .HasKey(p => p.Id);
 
             //payment Receive : 
-            builder.Entity<PaymentReceive>()
+            builder.Entity<PaymentReceipt>()
                 .HasKey(p => p.Id);
 
             //Dept Report : 
@@ -74,18 +74,18 @@ namespace BookManagementSystem.Data
             builder.Entity<InvoiceDetail>()
                .HasKey(b => new { b.InvoiceID, b.BookID });
 
-            //Users : 
-            builder.Entity<Users>()
-                .HasKey(g => g.Id);
+            //User : 
+            // builder.Entity<User>()
+            //     .HasKey(g => g.Id);
 
             builder.Entity<Regulation>()
                 .HasKey(p => p.Id);
             /////////////////////////////////////////////
 
             // other
-            builder.Entity<Users>()
-            .Property(e => e.Role)
-            .HasConversion<string>();
+            // builder.Entity<User>()
+            // .Property(e => e.Role)
+            // .HasConversion<string>();
             //////////////////////////////// 
 
             //Foreign Key         
@@ -113,11 +113,11 @@ namespace BookManagementSystem.Data
             .HasForeignKey(bed => bed.ReportID)
             .HasConstraintName("FK_InventoryReportDetail_InventoryReport");
 
-            builder.Entity<PaymentReceive>()
+            builder.Entity<PaymentReceipt>()
             .HasOne(bed => bed.Customer)
-            .WithMany(be => be.PaymentReceives)
+            .WithMany(be => be.PaymentReceipts)
             .HasForeignKey(bed => bed.CustomerID)
-            .HasConstraintName("FK_PaymentReceive_Customer");
+            .HasConstraintName("FK_PaymentReceipt_Customer");
 
             builder.Entity<DeptReportDetail>()
             .HasOne(bed => bed.DeptReport)

@@ -7,7 +7,7 @@ using BookManagementSystem.Data.Repositories;
 
 namespace BookManagementSystem.Infrastructure.Repositories.User
 {
-    public class UserRepository : GenericRepository<Domain.Entities.Users>, IUserRepository
+    public class UserRepository : GenericRepository<Domain.Entities.User>, IUserRepository
     {
         public UserRepository(ApplicationDBContext applicationDbContext) : base(applicationDbContext)
         {
