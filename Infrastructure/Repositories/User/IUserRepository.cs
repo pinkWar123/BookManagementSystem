@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using BookManagementSystem.Data.Repositories;
 using BookManagementSystem.Domain.Entities;
 
-namespace BookManagementSystem.Infrastructure.Repositories.Book
+namespace BookManagementSystem.Infrastructure.Repositories.User
 {
-    public interface IBookRepository : IGenericRepository<Domain.Entities.Book>
+    public interface IUserRepository : IGenericRepository<Users>
     {
 
     }

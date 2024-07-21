@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace BookManagementSystem.Domain.Entities
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class InventoryReportDetail
     {
@@ -22,7 +19,7 @@ namespace BookManagementSystem.Domain.Entities
         public required int AdditionalStock { get; set; }
 
         [ForeignKey("ReportID")]
-        public virtual InventoryReport InventoryReport { get; set; } 
+        public virtual InventoryReport InventoryReport { get; set; }
 
         [ForeignKey("BookID")]
         public virtual Book Book { get; set; }

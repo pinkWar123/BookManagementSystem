@@ -13,7 +13,7 @@ namespace BookManagementSystem.Domain.Entities
         [StringLength(5)]
         [Column(TypeName = "char(5)")]
         public required string InvoiceID { get; set; }
-        
+
         [StringLength(5)]
         [Column(TypeName = "char(5)")]
         public required string BookID { get; set; }
@@ -22,7 +22,7 @@ namespace BookManagementSystem.Domain.Entities
         public required int Price { get; set; }
 
         [ForeignKey("InvoiceID")]
-        public virtual Invoice Invoice { get; set; } 
+        public virtual Invoice Invoice { get; set; }
 
         [ForeignKey("BookID")]
         public virtual Book Book { get; set; }

@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookManagementSystem.Domain.Entities
 {
@@ -17,5 +17,5 @@ namespace BookManagementSystem.Domain.Entities
         public required string FullName { get; set; }
 
         public required Roles Role { get; set; }
-    }
+}
 }

@@ -12,7 +12,7 @@ namespace BookManagementSystem.Application.Dtos.Book
         public string? Price { get; set; }
         public string? Content { get; set; }
         public string? PrivateCode { get; set; }
-    
+
     }
 
     public class Book

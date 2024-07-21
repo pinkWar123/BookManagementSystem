@@ -76,7 +76,7 @@ namespace BookManagementSystem.Data
 
             //Users : 
             builder.Entity<Users>()
-                .HasKey(g => g.Id);  
+                .HasKey(g => g.Id);
 
             builder.Entity<Regulation>()
                 .HasKey(p => p.Id);

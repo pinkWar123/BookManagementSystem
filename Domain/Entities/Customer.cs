@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace BookManagementSystem.Domain.Entities
 {
     using System.ComponentModel.DataAnnotations;
@@ -10,8 +5,6 @@ namespace BookManagementSystem.Domain.Entities
 
     public class Customer : Base
     {
-        // [StringLength(100)]
-        // public required string title { get; set; }
 
         [StringLength(45)]
         public required string CustomerName { get; set; }
@@ -29,13 +22,13 @@ namespace BookManagementSystem.Domain.Entities
         [Column(TypeName = "varchar(150)")]
         public string? Email { get; set; }
 
-        public ICollection<PaymentReceive>? PaymentReceives { get; set; }
+        public ICollection<PaymentReceipt>? PaymentReceives { get; set; }
 
         public ICollection<DeptReportDetail>? DeptReportDetails { get; set; }
 
         public ICollection<Invoice>? Invoices { get; set; }
 
-        
+
     }
 
 

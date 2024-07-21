@@ -5,9 +5,10 @@ namespace BookManagementSystem.Domain.Entities
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class Invoice : Base
+    public class PaymentReceipt : Base
     {
         public required DateOnly Date { get; set; }
+    public required int Amount { get; set; }
 
     [StringLength(5)]
     [Column(TypeName = "char(5)")]
@@ -15,7 +16,5 @@ namespace BookManagementSystem.Domain.Entities
 
     [ForeignKey("CustomerID")]
     public virtual Customer Customer { get; set; }
-
-    public ICollection<InvoiceDetail>? InvoiceDetails { get; set; }
 }
 }

@@ -21,7 +21,7 @@ namespace BookManagementSystem.Domain.Entities
 
 
         [ForeignKey("EntryID")]
-        public virtual BookEntry BookEntry { get; set; } 
+        public virtual BookEntry BookEntry { get; set; }
 
         [ForeignKey("BookID")]
         public virtual Book Book { get; set; }

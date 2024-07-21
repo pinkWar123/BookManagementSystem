@@ -9,6 +9,6 @@ namespace BookManagementSystem.Application.Interfaces
     public interface IBookService
     {
         // Task CreateNewBook(CreateBookDto createBookDto);
-        
+
     }
 }

@@ -11,7 +11,7 @@ namespace BookManagementSystem.Application.Validators
     {
         public CreateBookValidator()
         {
-            
+
         }
     }
 }

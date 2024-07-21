@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookManagementSystem.Domain.Entities
 {
@@ -22,7 +18,7 @@ namespace BookManagementSystem.Domain.Entities
         public required int AdditionalDept { get; set; }
 
         [ForeignKey("ReportID")]
-        public virtual DeptReport DeptReport { get; set; } 
+        public virtual DeptReport DeptReport { get; set; }
 
         [ForeignKey("CustomerID")]
         public virtual Customer Customer { get; set; }
