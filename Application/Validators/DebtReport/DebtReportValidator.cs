@@ -15,4 +15,13 @@ namespace BookManagementSystem.Application.Validators
             RuleFor(x => x.ReportYear).NotEmpty().GreaterThan(2023);
         }
     }
+
+    public class UpdateDebtReportValidator : AbstractValidator<UpdateDebtReportDto>
+    {
+        public UpdateDebtReportValidator()
+        {
+            RuleFor(x => x.ReportMonth).NotEmpty().GreaterThan(0).LessThan(13);
+            RuleFor(x => x.ReportYear).NotEmpty().GreaterThan(2023);
+        }
+    }
 }

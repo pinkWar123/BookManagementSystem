@@ -15,22 +15,28 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IDebtReportRepository _debtReportRepository;
         private readonly IMapper _mapper;
-        private readonly CreateBookValidator _createValidator;
+        private readonly CreateDebtReportValidator _createValidator;
+        private readonly UpdateDebtReportValidator _updateValidator;
 
-        public DebtReportService(IDebtReportRepository debtReportRepository, IMapper mapper, CreateBookValidator createValidator)
+        public DebtReportService(
+            IDebtReportRepository debtReportRepository, 
+            IMapper mapper, 
+            CreateDebtReportValidator createValidator,
+            UpdateDebtReportValidator updateValidator)
         {
             _debtReportRepository = debtReportRepository ?? throw new ArgumentNullException(nameof(debtReportRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _createValidator = createValidator ?? throw new ArgumentNullException(nameof(createValidator));
+            _mapper = mapper;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         public async Task<DebtReportDto> CreateNewDebtReport(CreateDebtReportDto createDebtReportDto)
         {
-            // var validationResult = await _createValidator.ValidateAsync(createDebtReportDto);
-            // if (!validationResult.IsValid)
-            // {
-            //     throw new ValidationException(validationResult.Errors);
-            // }
+            var validationResult = await _createValidator.ValidateAsync(createDebtReportDto);
+            if (!validationResult.IsValid)
+            {
+                // throw new ValidationException(validationResult.Errors);
+            }
 
             var debtReport = _mapper.Map<Domain.Entities.DebtReport>(createDebtReportDto);
             await _debtReportRepository.AddAsync(debtReport);
@@ -39,6 +45,12 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<DebtReportDto> UpdateDebtReport(string reportId, UpdateDebtReportDto updateDebtReportDto)
         {
+            var validationReport = await _updateValidator.ValidateAsync(updateDebtReportDto);
+            if (!validationReport.IsValid)
+            {
+                // throw new KeyNotFoundException($"{reportId} is illegal.");
+            }
+
             var existingReport = await _debtReportRepository.GetByIdAsync(reportId);
             if (existingReport == null)
             {
