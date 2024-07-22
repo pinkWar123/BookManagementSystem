@@ -7,6 +7,8 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.DebtReportDetail;
 using BookManagementSystem.Application.Validators;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -14,14 +16,14 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IDebtReportDetailRepository _debtReportDetailRepository;
         private readonly IMapper _mapper;
-        private readonly CreateDebtReportDetailValidator _createValidator;
-        private readonly UpdateDebtReportDetailValidator _updateValidator;
+        private readonly IValidator<CreateDebtReportDetailDto> _createValidator;
+        private readonly IValidator<UpdateDebtReportDetailDto> _updateValidator;
 
         public DebtReportDetailService(
             IDebtReportDetailRepository debtReportDetailRepository, 
             IMapper mapper, 
-            CreateDebtReportDetailValidator createValidator,
-            UpdateDebtReportDetailValidator updateValidator)
+            IValidator<CreateDebtReportDetailDto> createValidator,
+            IValidator<UpdateDebtReportDetailDto> updateValidator)
         {
             _debtReportDetailRepository = debtReportDetailRepository ?? throw new ArgumentNullException(nameof(debtReportDetailRepository));
             _mapper = mapper;
@@ -34,7 +36,7 @@ namespace BookManagementSystem.Application.Services
             var validationResult = await _createValidator.ValidateAsync(createDebtReportDetailDto);
             if (!validationResult.IsValid)
             {
-                // throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(validationResult.Errors);
             }
 
             var debtReportDetail = _mapper.Map<DebtReportDetail>(createDebtReportDetailDto);
@@ -47,7 +49,7 @@ namespace BookManagementSystem.Application.Services
             var validationResult = await _updateValidator.ValidateAsync(updateDebtReportDetailDto);
             if (!validationResult.IsValid)
             {
-                // throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(validationResult.Errors);
             }
 
             // write again GetByIdAsync
