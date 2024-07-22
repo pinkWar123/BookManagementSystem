@@ -7,6 +7,8 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Customer;
 using BookManagementSystem.Application.Validators;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -14,14 +16,14 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
-        private readonly CreateCustomerValidator _createValidator;
-        private readonly UpdateCustomerValidator _updateValidator;
+        private readonly IValidator<CreateCustomerDto> _createValidator;
+        private readonly IValidator<UpdateCustomerDto> _updateValidator;
 
         public CustomerService(
             ICustomerRepository customerRepository,
             IMapper mapper,
-            CreateCustomerValidator createValidator,
-            UpdateCustomerValidator updateValidator)
+            IValidator<CreateCustomerDto> createValidator,
+            IValidator<UpdateCustomerDto> updateValidator)
         {
             _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _mapper = mapper;
@@ -34,7 +36,7 @@ namespace BookManagementSystem.Application.Services
             var validationResult = await _createValidator.ValidateAsync(createCustomerDto);
             if (!validationResult.IsValid)
             {
-                // throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(validationResult.Errors);
             }
 
             var customer = _mapper.Map<Customer>(createCustomerDto);
@@ -47,7 +49,7 @@ namespace BookManagementSystem.Application.Services
             var validationResult = await _updateValidator.ValidateAsync(updateCustomerDto);
             if (!validationResult.IsValid)
             {
-                // throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(validationResult.Errors);
             }
 
             var existingCustomer = await _customerRepository.GetByIdAsync(customerId);
