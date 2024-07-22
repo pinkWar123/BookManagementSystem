@@ -1,10 +1,11 @@
-// File: BookManagementSystem.Application.Services.PaymentReceiptService.cs
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.PaymentReceipt;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.PaymentReceipt;
 using BookManagementSystem.Application.Validators;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -12,14 +13,14 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IPaymentReceiptRepository _paymentReceiptRepository;
         private readonly IMapper _mapper;
-        private readonly CreatePaymentReceiptValidator _createValidator;
-        private readonly UpdatePaymentReceiptValidator _updateValidator;
+        private readonly IValidator<CreatePaymentReceiptDto> _createValidator;
+        private readonly IValidator<UpdatePaymentReceiptDto> _updateValidator;
 
         public PaymentReceiptService(
             IPaymentReceiptRepository paymentReceiptRepository, 
             IMapper mapper,
-            CreatePaymentReceiptValidator createValidator,
-            UpdatePaymentReceiptValidator updateValidator)
+            IValidator<CreatePaymentReceiptDto> createValidator,
+            IValidator<UpdatePaymentReceiptDto> updateValidator)
         {
             _paymentReceiptRepository = paymentReceiptRepository ?? throw new ArgumentNullException(nameof(paymentReceiptRepository));
             _mapper = mapper;
@@ -32,7 +33,7 @@ namespace BookManagementSystem.Application.Services
             var validationResult = await _createValidator.ValidateAsync(createPaymentReceiptDto);
             if (!validationResult.IsValid)
             {
-                // throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(validationResult.Errors);
             }
 
             var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
@@ -45,7 +46,7 @@ namespace BookManagementSystem.Application.Services
             var validationResult = await _updateValidator.ValidateAsync(updatePaymentReceiptDto);
             if (!validationResult.IsValid)
             {
-                // throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(validationResult.Errors);
             }
 
             var updatedReceipt = await _paymentReceiptRepository.UpdateAsync(receiptId, updatePaymentReceiptDto);
