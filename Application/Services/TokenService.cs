@@ -40,7 +40,7 @@ namespace BookManagementSystem.Application.Services
                 new Claim(JwtRegisteredClaimNames.Sub, appUser.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, appUser.Email),
-                new Claim("uid", appUser.Id)
+                new Claim(ClaimTypes.NameIdentifier, appUser.Id)
             }
             .Union(roleClaims)
             .Union(userClaims);
@@ -67,7 +67,7 @@ namespace BookManagementSystem.Application.Services
             if (jwtToken == null)
                 return null;
 
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "uid");
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
             return userIdClaim?.Value;
         }
     }
