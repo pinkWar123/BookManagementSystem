@@ -17,5 +17,6 @@ namespace BookManagementSystem.Data.Repositories
         public Task<T?> UpdateAsync<TUpdateDto>(string id, TUpdateDto entity) where TUpdateDto : class;
         void Remove(T entity);
         void RemoveRange(List<T> entities);
+        
     }
 }
