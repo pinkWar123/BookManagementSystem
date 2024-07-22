@@ -11,8 +11,8 @@ namespace BookManagementSystem.Application.Validators.Users
         public static IRuleBuilderOptions<T, string> Password<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
             return ruleBuilder
-                .NotEmpty()
-                .MinimumLength(12)
+                .NotEmpty().WithMessage("{PropertyName} không được bỏ trống")
+                .MinimumLength(12).WithMessage("{PropertyName} phải có ít nhất 12 kí tự")
                 .Matches("[A-Z]").WithMessage("{PropertyName} phải chứa ít nhất một chữ cái viết hoa")
                 .Matches("[a-z]").WithMessage("{PropertyName} phải chứa ít nhất một chữ cái viết thường")
                 .Matches("[0-9]").WithMessage("{PropertyName} phải chứa ít nhất một chữ số")

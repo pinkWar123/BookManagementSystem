@@ -9,6 +9,7 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Settings;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BookManagementSystem.Application.Services
@@ -16,13 +17,11 @@ namespace BookManagementSystem.Application.Services
     public class TokenService : ITokenService
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<User> _roleManager;
         private readonly JWT _jwt;
-        public TokenService(UserManager<User> userManager, RoleManager<User> roleManager, JWT jwt)
+        public TokenService(UserManager<User> userManager, IOptions<JWT> jwt)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
-            _jwt = jwt;
+            _jwt = jwt.Value;
         }
         public async Task<string> GenerateJwtToken(User appUser)
         {
@@ -30,7 +29,7 @@ namespace BookManagementSystem.Application.Services
             var roles = await _userManager.GetRolesAsync(appUser);
             var roleClaims = new List<Claim>();
 
-            foreach(var role in roles)
+            foreach (var role in roles)
             {
                 roleClaims.Add(new Claim("roles", role));
             }
@@ -44,7 +43,7 @@ namespace BookManagementSystem.Application.Services
             }
             .Union(roleClaims)
             .Union(userClaims);
-            
+
             var symmertricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SigningKey));
             var signingCredentials = new SigningCredentials(symmertricSecurityKey, SecurityAlgorithms.HmacSha256);
 

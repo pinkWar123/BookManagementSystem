@@ -14,12 +14,12 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly RoleManager<User> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserRepository _userRepo;
 
-        public UserService(UserManager<User> userManager, ITokenService tokenService, RoleManager<User> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor, IUserRepository userRepo)
+        public UserService(UserManager<User> userManager, ITokenService tokenService, RoleManager<IdentityRole> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor, IUserRepository userRepo)
         {
             _userManager = userManager;
             _tokenService = tokenService;
@@ -73,24 +73,24 @@ namespace BookManagementSystem.Application.Services
         public async Task<UserDto> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
-            
-            if(user == null)
+
+            if (user == null)
             {
                 return new UserDto
                 {
                     Username = "",
                     IsAuthenticated = false,
-                    Message= "Username không tồn tại",     
+                    Message = "Username không tồn tại",
                 };
             }
 
-            if(await _userManager.CheckPasswordAsync(user, loginDto.Password) == false)
+            if (await _userManager.CheckPasswordAsync(user, loginDto.Password) == false)
             {
                 return new UserDto
                 {
                     Username = "",
                     IsAuthenticated = false,
-                    Message= "Password không đúng",     
+                    Message = "Password không đúng",
                 };
             }
 
@@ -113,7 +113,7 @@ namespace BookManagementSystem.Application.Services
             var user = _mapper.Map<User>(registerDto);
             var createUser = await _userManager.CreateAsync(user);
 
-            if(createUser.Succeeded)
+            if (createUser.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, Roles.Customer.ToString());
                 var createdUser = await _userManager.FindByNameAsync(user.UserName);
@@ -131,7 +131,7 @@ namespace BookManagementSystem.Application.Services
 
             return new UserDto
             {
-                Username= "",
+                Username = "",
                 IsAuthenticated = false
             };
         }
@@ -139,17 +139,18 @@ namespace BookManagementSystem.Application.Services
         public async Task<List<UserViewDto>?> GetAllUsers(UserQuery userQuery)
         {
             var users = await _userRepo.GetValuesAsync(userQuery);
-            
-            var userDtos = users.Select(async(user) => {
-            
-            var role = await _userManager.GetRolesAsync(user);
-            
-            return new UserViewDto
+
+            var userDtos = users.Select(async (user) =>
             {
-                UserName = user.UserName ?? "",
-                Email = user.Email,
-                Roles = role as List<string> ?? []
-            };
+
+                var role = await _userManager.GetRolesAsync(user);
+
+                return new UserViewDto
+                {
+                    UserName = user.UserName ?? "",
+                    Email = user.Email,
+                    Roles = role as List<string> ?? []
+                };
             });
 
             return userDtos as List<UserViewDto>;

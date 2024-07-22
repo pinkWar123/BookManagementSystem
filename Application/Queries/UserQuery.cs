@@ -8,6 +8,6 @@ namespace BookManagementSystem.Application.Queries
 {
     public class UserQuery : QueryObject
     {
-        
+
     }
 }

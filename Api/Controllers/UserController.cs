@@ -28,11 +28,11 @@ namespace BookManagementSystem.Api.Controllers
         {
             var validateResult = await _registerValidator.ValidateAsync(registerDto);
 
-            if(!validateResult.IsValid) return BadRequest(validateResult);
+            if (!validateResult.IsValid) return BadRequest(Results.ValidationProblem(validateResult.ToDictionary()));
 
             var userDto = await _userService.Register(registerDto);
 
-            if(!userDto.IsAuthenticated) return BadRequest(userDto);
+            if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
             return Ok(userDto);
         }
@@ -43,21 +43,20 @@ namespace BookManagementSystem.Api.Controllers
         {
             var validateResult = await _loginValidator.ValidateAsync(loginDto);
 
-            if(!validateResult.IsValid) return BadRequest(validateResult);
+            if (!validateResult.IsValid) return BadRequest(Results.ValidationProblem(validateResult.ToDictionary()));
 
             var userDto = await _userService.Login(loginDto);
 
-            if(!userDto.IsAuthenticated) return BadRequest(userDto);
+            if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
             return Ok(userDto);
         }
 
         [HttpGet]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllUsers(UserQuery userQuery)
+        public async Task<IActionResult> GetAllUsers([FromQuery] UserQuery userQuery)
         {
             var users = await _userService.GetAllUsers(userQuery);
-
             return Ok(users);
         }
     }
