@@ -8,6 +8,8 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.DebtReport;
 using BookManagementSystem.Application.Validators;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -15,14 +17,14 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IDebtReportRepository _debtReportRepository;
         private readonly IMapper _mapper;
-        private readonly CreateDebtReportValidator _createValidator;
-        private readonly UpdateDebtReportValidator _updateValidator;
+        private readonly IValidator<CreateDebtReportDto> _createValidator;
+        private readonly IValidator<UpdateDebtReportDto> _updateValidator;
 
         public DebtReportService(
             IDebtReportRepository debtReportRepository, 
             IMapper mapper, 
-            CreateDebtReportValidator createValidator,
-            UpdateDebtReportValidator updateValidator)
+            IValidator<CreateDebtReportDto> createValidator,
+            IValidator<UpdateDebtReportDto> updateValidator)
         {
             _debtReportRepository = debtReportRepository ?? throw new ArgumentNullException(nameof(debtReportRepository));
             _mapper = mapper;
@@ -35,7 +37,7 @@ namespace BookManagementSystem.Application.Services
             var validationResult = await _createValidator.ValidateAsync(createDebtReportDto);
             if (!validationResult.IsValid)
             {
-                // throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(validationResult.Errors);
             }
 
             var debtReport = _mapper.Map<Domain.Entities.DebtReport>(createDebtReportDto);
@@ -45,10 +47,10 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<DebtReportDto> UpdateDebtReport(string reportId, UpdateDebtReportDto updateDebtReportDto)
         {
-            var validationReport = await _updateValidator.ValidateAsync(updateDebtReportDto);
-            if (!validationReport.IsValid)
+            var validationResult = await _updateValidator.ValidateAsync(updateDebtReportDto);
+            if (!validationResult.IsValid)
             {
-                // throw new KeyNotFoundException($"{reportId} is illegal.");
+                throw new ValidationException(validationResult.Errors);
             }
 
             var existingReport = await _debtReportRepository.GetByIdAsync(reportId);
