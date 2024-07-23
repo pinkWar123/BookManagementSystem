@@ -8,23 +8,25 @@ namespace BookManagementSystem.Application.Validators
         public CreateDebtReportDetailValidator()
         {
             RuleFor(x => x.ReportID)
-                .NotEmpty().WithMessage("ReportID is required.")
-                .MaximumLength(5).WithMessage("ReportID must not exceed 5 characters.");
+                .NotEmpty().WithMessage("Mã báo cáo không được để trống.")
+                .Length(5).WithMessage("Mã báo cáo phải có độ dài là 5 ký tự.");
 
             RuleFor(x => x.CustomerID)
-                .NotEmpty().WithMessage("CustomerID is required.")
-                .MaximumLength(5).WithMessage("CustomerID must not exceed 5 characters.");
+                .NotEmpty().WithMessage("Mã khách hàng không được để trống.")
+                .Length(5).WithMessage("Mã khách hàng phải có độ dài là 5 ký tự.");
 
             RuleFor(x => x.InitialDebt)
-                .NotEmpty().WithMessage("InitialDebt is required.")
-                .GreaterThanOrEqualTo(0).WithMessage("InitialDebt must be non-negative.");
+                .NotEmpty().WithMessage("Số nợ ban đầu không được để trống.")
+                .GreaterThanOrEqualTo(0).WithMessage("Số nợ ban đầu phải là số không âm.");
 
             RuleFor(x => x.FinalDebt)
-                .GreaterThanOrEqualTo(0).WithMessage("FinalDebt must be non-negative.");
+                .NotEmpty().WithMessage("Số nợ cuối không được để trống.")
+                .GreaterThanOrEqualTo(0).WithMessage("Số nợ cuối phải là số không âm.");
 
-            RuleFor(x => x.DebtChange)
-                .Must((dto, debtChange) => dto.FinalDebt - dto.InitialDebt == debtChange)
-                .WithMessage("DebtChange must equal FinalDebt minus InitialDebt.");
+            RuleFor(x => x.AdditionalDebt)
+                .NotEmpty().WithMessage("Số nợ thay đổi không được để trống.")
+                .Must((dto, AdditionalDebt) => dto.FinalDebt - dto.InitialDebt == AdditionalDebt)
+                .WithMessage("Số nợ thay đổi phải bằng nợ cuối trừ nợ đầu.");
         }
     }
 }
