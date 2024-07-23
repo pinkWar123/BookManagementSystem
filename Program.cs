@@ -1,11 +1,14 @@
 using System.Text;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Services;
+using BookManagementSystem.Application.Validators.Users;
 using BookManagementSystem.Data;
 using BookManagementSystem.Data.Repositories;
 using BookManagementSystem.Data.UnitOfWork;
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Infrastructure.Data.Seed;
 using BookManagementSystem.Infrastructure.Repositories.Book;
+using BookManagementSystem.Infrastructure.Repositories.User;
 using BookManagementSystem.Middlewares;
 using BookManagementSystem.Settings;
 using FluentValidation;
@@ -101,24 +104,29 @@ builder.Services.AddAuthentication(options =>
     options.IncludeErrorDetails = true;
 });
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Register repositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 // Register services 
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserService, UserService>();
 // DI Container
-builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
 
-// builder.Services.AddValidatorsFromAssemblyContaining<CreateTestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
 
 
 var app = builder.Build();
-// SeedDatabase(app.Services);
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//     var userManager = services.GetRequiredService<UserManager<User>>();
-//     SeedData.Initialize(services, userManager).Wait();
-// }
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<User>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    SeedData.SeedEssentialsAsync(userManager, roleManager).Wait();
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
