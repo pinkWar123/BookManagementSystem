@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace BookManagementSystem.Application.Validators
 {
-    public class CreateBookEntryValidator : AbstractValidator<UpdateBookEntryDto>
+    public class CreateBookEntryValidator : AbstractValidator<CreateBookEntryDto>
     {
         private bool BeAValidDate(string? date)
         {
