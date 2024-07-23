@@ -1,9 +1,12 @@
 using BookManagementSystem.Application.Dtos.User;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -15,11 +18,13 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IUserService _userService;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
-        public UserController(IUserService userService, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator)
+        private readonly UserManager<User> _userManager;
+        public UserController(IUserService userService, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator, UserManager<User> userManager)
         {
             _userService = userService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
+            _userManager = userManager;
         }
 
         [HttpPost("register")]
@@ -53,7 +58,8 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        // [Authorize(Roles = "Manager")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserQuery userQuery)
         {
             var users = await _userService.GetAllUsers(userQuery);

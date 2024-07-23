@@ -136,24 +136,22 @@ namespace BookManagementSystem.Application.Services
             };
         }
 
+
         public async Task<List<UserViewDto>?> GetAllUsers(UserQuery userQuery)
         {
-            var users = await _userRepo.GetValuesAsync(userQuery);
-
-            var userDtos = users.Select(async (user) =>
+            var users = await _userManager.Users.ToListAsync();
+            var userDtos = new List<UserViewDto>();
+            foreach (var user in users)
             {
-
                 var role = await _userManager.GetRolesAsync(user);
-
-                return new UserViewDto
+                userDtos.Add(new UserViewDto
                 {
                     UserName = user.UserName ?? "",
                     Email = user.Email,
                     Roles = role as List<string> ?? []
-                };
-            });
-
-            return userDtos as List<UserViewDto>;
+                });
+            }
+            return userDtos;
         }
 
     }
