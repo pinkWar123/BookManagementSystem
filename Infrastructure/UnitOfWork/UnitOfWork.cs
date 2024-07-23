@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookManagementSystem.Data.Repositories;
+using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Infrastructure.Repositories.User;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BookManagementSystem.Data.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
+        // private IUserRepository _userRepository;
+
         private readonly ApplicationDBContext _context;
         private IDbContextTransaction _transaction;
 
@@ -19,8 +23,9 @@ namespace BookManagementSystem.Data.UnitOfWork
             _context = context;
         }
 
-        // public IGenericRepository<Test> TestRepository
+        // public IGenericRepository<User> TestRepository
         // => _testRepo ??= new TestRepository(_context);
+
         public void Dispose()
         {
             _context.Dispose();
