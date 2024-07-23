@@ -38,6 +38,7 @@ namespace BookManagementSystem.Application.Services
 
             var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
             await _paymentReceiptRepository.AddAsync(paymentReceipt);
+            await _paymentReceiptRepository.SaveChangesAsync();
             return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
 
@@ -54,7 +55,7 @@ namespace BookManagementSystem.Application.Services
             {
                 throw new KeyNotFoundException($"PaymentReceipt with ID {receiptId} not found.");
             }
-
+            await _paymentReceiptRepository.SaveChangesAsync();
             return _mapper.Map<PaymentReceiptDto>(updatedReceipt);
         }
 
@@ -82,6 +83,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
             }
             _paymentReceiptRepository.Remove(paymentReceipt);
+            await _paymentReceiptRepository.SaveChangesAsync();
             return true;
         }
     }
