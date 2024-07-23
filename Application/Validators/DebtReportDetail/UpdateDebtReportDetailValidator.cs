@@ -1,5 +1,5 @@
-using FluentValidation;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
+using FluentValidation;
 
 namespace BookManagementSystem.Application.Validators
 {

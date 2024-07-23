@@ -1,7 +1,10 @@
 using BookManagementSystem.Application.Dtos.User;
+using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Wrappers;
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Helpers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,12 +19,19 @@ namespace BookManagementSystem.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUriService _uriService;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
         private readonly UserManager<User> _userManager;
-        public UserController(IUserService userService, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator, UserManager<User> userManager)
+        public UserController(
+        IUserService userService,
+        IUriService uriService,
+        IValidator<RegisterDto> registerValidator,
+        IValidator<LoginDto> loginValidator,
+        UserManager<User> userManager)
         {
             _userService = userService;
+            _uriService = uriService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
             _userManager = userManager;
@@ -63,7 +73,11 @@ namespace BookManagementSystem.Api.Controllers
         public async Task<IActionResult> GetAllUsers([FromQuery] UserQuery userQuery)
         {
             var users = await _userService.GetAllUsers(userQuery);
-            return Ok(users);
+            var totalRecords = users?.Count ?? 0;
+            var validFilter = new PaginationFilter(userQuery.PageNumber, userQuery.PageSize);
+            var pagedUsers = users.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedUsers, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
         }
     }
 }

@@ -1,5 +1,5 @@
-using FluentValidation;
 using BookManagementSystem.Application.Dtos.Customer;
+using FluentValidation;
 
 namespace BookManagementSystem.Application.Validators
 {

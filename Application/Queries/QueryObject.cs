@@ -9,8 +9,8 @@ namespace BookManagementSystem.Data.Repositories
     {
         public string? SortBy { get; set; }
         public bool IsDescending { get; set; }
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
+        public required int PageNumber { get; set; }
+        public required int PageSize { get; set; }
         public static List<string> GetFilterExcludes()
         {
             return typeof(QueryObject).GetProperties().Select(x => x.Name).ToList();

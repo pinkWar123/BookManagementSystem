@@ -110,6 +110,13 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 // Register services 
+builder.Services.AddSingleton<IUriService>(o =>
+{
+    IHttpContextAccessor accessor = o.GetRequiredService<IHttpContextAccessor>();
+    HttpRequest? request = accessor.HttpContext.Request;
+    string? uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+    return new UriService(uri);
+});
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
