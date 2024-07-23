@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.Book;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Book;
+using FluentValidation;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -14,22 +16,87 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
-        public BookService(IBookRepository bookRepository, IMapper mapper)
+        private readonly IValidator<CreateBookValidator> _createValidator;
+        private readonly IValidator<UpdateBookValidator> _updateValidator;
+
+
+        public BookService(
+            IBookRepository bookRepository,
+            IMapper mapper,
+            IValidator<CreateBookValidator> _createValidator,
+            IValidator<UpdateBookValidator> _updateValidator)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+            this._createValidator = _createValidator;
+            this._updateValidator = _updateValidator;
         }
 
-        public async Task CreateNewBook(CreateBookDto createBookDto)
+        public async Task<bool> CheckBookExists(string bookId)
         {
-            var book = _mapper.Map<Domain.Entities.Book>(createBookDto);
-            await _bookRepository.AddAsync(book);
+            var book = await _bookRepository.GetByIdAsync(bookId);
+            return book != null;
         }
 
-        // public async Task UpdateBookById(UpdateBookDto updateBookDto, string bookId)
-        // {
-        //     var book = _mapper.Map<Domain.Entities.Book>(createBookDto);
-        //     await _bookRepository.UpdateAsync(bookId, )
-        // }
+        public async Task<BookDto> CreateBook(CreateBookDto createBookDto)
+        {
+            var validationResult = await _createValidator.ValidateAsync((IValidationContext)createBookDto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
+            var book = _mapper.Map<Book>(createBookDto);
+            await _bookRepository.AddAsync(book);
+            await _bookRepository.SaveChangesAsync();
+            return _mapper.Map<BookDto>(book);
+        }
+
+        public async Task<bool> DeleteBook(string BookId)
+        {
+            var book = await _bookRepository.GetByIdAsync(BookId);
+
+            if(book == null)
+            {
+                return false;
+            }
+
+            _bookRepository.Remove(book);
+            await _bookRepository.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<BookDto> GetBookById(string BookId)
+        {
+            var book = await _bookRepository.GetByIdAsync(BookId);
+
+            if(book == null)
+            {
+                 throw new KeyNotFoundException($"Không tìm thấy BookId");
+            }
+
+            return _mapper.Map<BookDto>(book);
+        }
+
+        public async Task<BookDto> UpdateBook(string BookId, UpdateBookDto updateBookDto)
+        {
+            var validationResult = await _createValidator.ValidateAsync((IValidationContext)updateBookDto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
+            var book = await _bookRepository.GetByIdAsync(BookId);
+
+            if(book == null)
+            {
+                 throw new KeyNotFoundException($"Không tìm thấy BookId, không thể cập nhật");
+            }
+            _mapper.Map(updateBookDto, book);
+            await _bookRepository.UpdateAsync(BookId, book);
+            await _bookRepository.SaveChangesAsync();
+            return _mapper.Map<BookDto>(book);
+
+        }
     }
 }

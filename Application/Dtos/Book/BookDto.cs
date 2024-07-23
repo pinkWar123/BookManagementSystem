@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 
 namespace BookManagementSystem.Application.Dtos.Book
 {
-    public class CreateBookDto
+    public class BookDto
     {
+        public required string BookId { get; set; }
         public required string Title { get; set; }
+
         public required string Genre { get; set; }
         public required string Author { get; set; }
-        public required int Quantity { get; set; }
+
+        public required int StockQuantity { get; set; }
         public required int Price { get; set; }
     }
 }

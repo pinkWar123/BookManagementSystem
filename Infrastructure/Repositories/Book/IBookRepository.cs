@@ -9,6 +9,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.Book
 {
     public interface IBookRepository : IGenericRepository<Domain.Entities.Book>
     {
-
+        
     }
 }

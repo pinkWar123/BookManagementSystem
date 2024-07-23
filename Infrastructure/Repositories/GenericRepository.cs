@@ -86,8 +86,8 @@ namespace BookManagementSystem.Data.Repositories
 
 
             }
-            var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
-            return items.Skip(skipNumber).Take(queryObject.PageSize);
+
+            return items;
         }
         public async Task<List<T>?> GetValuesAsync(QueryObject queryObject)
         {
@@ -144,8 +144,10 @@ namespace BookManagementSystem.Data.Repositories
             return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameter);
         }
 
-
-
+        public Task<int> SaveChangesAsync()
+        {
+            return _context.SaveChangesAsync();
+        }
 
     }
 }

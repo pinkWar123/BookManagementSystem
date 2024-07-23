@@ -12,3 +12,6 @@ insert_final_newline = true
 csharp_style_var_forBuiltInTypes = true:suggestion
 dotnet_code_quality_unused_parameters = all
 dotnet_sort_system_directives_first = true
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = none
