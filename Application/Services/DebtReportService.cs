@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.DebtReport;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.DebtReport;
-using BookManagementSystem.Application.Validators;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -21,8 +21,8 @@ namespace BookManagementSystem.Application.Services
         private readonly IValidator<UpdateDebtReportDto> _updateValidator;
 
         public DebtReportService(
-            IDebtReportRepository debtReportRepository, 
-            IMapper mapper, 
+            IDebtReportRepository debtReportRepository,
+            IMapper mapper,
             IValidator<CreateDebtReportDto> createValidator,
             IValidator<UpdateDebtReportDto> updateValidator)
         {

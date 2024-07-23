@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.Customer;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Customer;
-using BookManagementSystem.Application.Validators;
 using FluentValidation;
 using FluentValidation.Results;
 

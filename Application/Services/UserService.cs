@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.User;
+using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Data.Repositories;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.User;
 using Microsoft.AspNetCore.Identity;
@@ -139,11 +141,12 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<List<UserViewDto>?> GetAllUsers(UserQuery userQuery)
         {
-            var users = await _userManager.Users.ToListAsync();
+            List<User>? users = await _userManager.Users
+                .ToListAsync();
             var userDtos = new List<UserViewDto>();
-            foreach (var user in users)
+            foreach (User user in users)
             {
-                var role = await _userManager.GetRolesAsync(user);
+                IList<string>? role = await _userManager.GetRolesAsync(user);
                 userDtos.Add(new UserViewDto
                 {
                     UserName = user.UserName ?? "",

@@ -1,9 +1,9 @@
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.PaymentReceipt;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.PaymentReceipt;
-using BookManagementSystem.Application.Validators;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -17,7 +17,7 @@ namespace BookManagementSystem.Application.Services
         private readonly IValidator<UpdatePaymentReceiptDto> _updateValidator;
 
         public PaymentReceiptService(
-            IPaymentReceiptRepository paymentReceiptRepository, 
+            IPaymentReceiptRepository paymentReceiptRepository,
             IMapper mapper,
             IValidator<CreatePaymentReceiptDto> createValidator,
             IValidator<UpdatePaymentReceiptDto> updateValidator)
