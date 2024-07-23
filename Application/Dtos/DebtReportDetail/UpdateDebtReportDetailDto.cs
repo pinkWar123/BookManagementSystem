@@ -4,6 +4,6 @@ namespace BookManagementSystem.Application.Dtos.DebtReportDetail
     {
         public int? InitialDebt { get; set; }
         public int? FinalDebt { get; set; }
-        public int? DebtChange { get; set; }
+        public int? AdditionalDebt { get; set; }
     }
 }
