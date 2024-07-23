@@ -13,6 +13,6 @@ namespace BookManagementSystem.Application.Interfaces
         Task<BookEntryDto> UpdateBookEntry(string EntryID, UpdateBookEntryDto updateBookEntryDto);
         Task<BookEntryDto> GetBookEntryById(string EntryID);
         // Task<IEnumerable<BookEntryDto>> GetAllBookEntry();
-        Task<bool> DeleteBookEntryDto(string EntryID);
+        Task<bool> DeleteBookEntry(string EntryID);
     }
 }

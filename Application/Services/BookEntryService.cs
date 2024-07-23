@@ -78,7 +78,7 @@ namespace BookManagementSystem.Application.Services
 
        
 
-        public async Task<bool> DeleteBookEntryDto(string EntryID)
+        public async Task<bool> DeleteBookEntry(string EntryID)
         {
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
