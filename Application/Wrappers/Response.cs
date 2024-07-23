@@ -12,11 +12,11 @@ namespace BookManagementSystem.Application.Wrappers
         public string[] Errors { get; set; }
         public string Message { get; set; }
         public Response() { }
-        public Response(T data)
+        public Response(T data, string? message, string[]? errors, bool? succeeded)
         {
-            Succeeded = true;
-            Message = string.Empty;
-            Errors = [];
+            Succeeded = succeeded ?? true;
+            Message = message ?? string.Empty;
+            Errors = errors ?? [];
             Data = data;
         }
     }

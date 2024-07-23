@@ -144,8 +144,10 @@ namespace BookManagementSystem.Data.Repositories
             return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameter);
         }
 
-
-
+        public Task<int> SaveChangesAsync()
+        {
+            return _context.SaveChangesAsync();
+        }
 
     }
 }

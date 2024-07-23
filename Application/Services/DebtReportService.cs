@@ -61,6 +61,7 @@ namespace BookManagementSystem.Application.Services
 
             _mapper.Map(updateDebtReportDto, existingReport);
             var updatedReport = await _debtReportRepository.UpdateAsync(reportId, existingReport);
+            await _debtReportRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDto>(updatedReport);
         }
 

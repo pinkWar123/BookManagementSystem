@@ -17,14 +17,13 @@ namespace BookManagementSystem.Application.Wrappers
         public Uri NextPage { get; set; }
         public Uri PreviousPage { get; set; }
 
-        public PagedResponse(T data, int pageNumber, int pageSize)
+        public PagedResponse(T data,int pageNumber, int pageSize, string? message, string[]? errors, bool? succeeded)
         {
-            this.PageNumber = pageNumber;
-            this.PageSize = pageSize;
-            this.Data = data;
-            this.Message = string.Empty;
-            this.Succeeded = true;
-            this.Errors = [];
+            PageNumber = pageNumber;
+            PageSize = pageSize;
+            Message = message ?? string.Empty;
+            Errors = errors ?? [];
+            Succeeded = succeeded ?? true;
         }
     }
 }
