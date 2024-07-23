@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookManagementSystem.Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,7 +57,11 @@ namespace BookManagementSystem.Middlewares
                 problemDetails.Extensions.Add("errors", validationErrors);
             }
 
-
+            else if(exception is BaseException e)
+            {
+                httpContext.Response.StatusCode = (int)e.StatusCode;
+                problemDetails.Title = e.Message;
+            }
 
             else
             {

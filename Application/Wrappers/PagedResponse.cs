@@ -17,7 +17,7 @@ namespace BookManagementSystem.Application.Wrappers
         public Uri NextPage { get; set; }
         public Uri PreviousPage { get; set; }
 
-        public PagedResponse(T data,int pageNumber, int pageSize, string? message, string[]? errors, bool? succeeded)
+        public PagedResponse(T data, int pageNumber, int pageSize, string? message, string[]? errors, bool? succeeded)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;
