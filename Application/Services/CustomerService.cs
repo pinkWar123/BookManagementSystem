@@ -45,7 +45,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<CustomerDto>(customer);
         }
 
-        public async Task<CustomerDto> UpdateCustomer(string customerId, UpdateCustomerDto updateCustomerDto)
+        public async Task<CustomerDto> UpdateCustomer(int customerId, UpdateCustomerDto updateCustomerDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(updateCustomerDto);
             if (!validationResult.IsValid)
@@ -64,7 +64,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<CustomerDto>(existingCustomer);
         }
 
-        public async Task<CustomerDto> GetCustomerById(string customerId)
+        public async Task<CustomerDto> GetCustomerById(int customerId)
         {
             var customer = await _customerRepository.GetByIdAsync(customerId);
             if (customer == null)
@@ -80,7 +80,7 @@ namespace BookManagementSystem.Application.Services
         //     return _mapper.Map<IEnumerable<CustomerDto>>(customers);
         // }
 
-        public async Task<bool> DeleteCustomer(string customerId)
+        public async Task<bool> DeleteCustomer(int customerId)
         {
             var customer = await _customerRepository.GetByIdAsync(customerId);
             if (customer == null)

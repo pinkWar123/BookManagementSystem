@@ -30,7 +30,7 @@ namespace BookManagementSystem.Data.Repositories
             return await _context.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(string id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await GetContext().FindAsync(id);
         }
@@ -106,7 +106,7 @@ namespace BookManagementSystem.Data.Repositories
             GetContext().RemoveRange(entities);
         }
 
-        public async Task<T?> UpdateAsync<TUpdateDto>(string id, TUpdateDto entity) where TUpdateDto : class
+        public async Task<T?> UpdateAsync<TUpdateDto>(int id, TUpdateDto entity) where TUpdateDto : class
         {
             var existingEntity = await GetByIdAsync(id);
             if (existingEntity == null)

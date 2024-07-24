@@ -7,9 +7,9 @@ namespace BookManagementSystem.Application.Interfaces
     public interface ICustomerService
     {
         Task<CustomerDto> CreateCustomer(CreateCustomerDto createCustomerDto);
-        Task<CustomerDto> UpdateCustomer(string customerId, UpdateCustomerDto updateCustomerDto);
-        Task<CustomerDto> GetCustomerById(string customerId);
+        Task<CustomerDto> UpdateCustomer(int customerId, UpdateCustomerDto updateCustomerDto);
+        Task<CustomerDto> GetCustomerById(int customerId);
         // Task<IEnumerable<CustomerDto>> GetAllCustomers();
-        Task<bool> DeleteCustomer(string customerId);
+        Task<bool> DeleteCustomer(int customerId);
     }
 }

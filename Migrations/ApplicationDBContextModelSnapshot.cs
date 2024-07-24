@@ -24,9 +24,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.Book", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Author")
                         .IsRequired()
@@ -56,9 +58,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.BookEntry", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -70,13 +74,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.BookEntryDetail", b =>
                 {
-                    b.Property<string>("EntryID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("EntryID")
+                        .HasColumnType("int");
 
-                    b.Property<string>("BookID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("BookID")
+                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -90,10 +92,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.Customer", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -124,9 +127,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.DebtReport", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ReportMonth")
                         .HasColumnType("int");
@@ -141,13 +146,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.DebtReportDetail", b =>
                 {
-                    b.Property<string>("ReportID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("ReportID")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CustomerID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("CustomerID")
+                        .HasColumnType("int");
 
                     b.Property<int>("AdditionalDebt")
                         .HasColumnType("int");
@@ -167,9 +170,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.InventoryReport", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ReportMonth")
                         .HasColumnType("int");
@@ -184,13 +189,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.InventoryReportDetail", b =>
                 {
-                    b.Property<string>("ReportID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("ReportID")
+                        .HasColumnType("int");
 
-                    b.Property<string>("BookID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("BookID")
+                        .HasColumnType("int");
 
                     b.Property<int>("AdditionalStock")
                         .HasColumnType("int");
@@ -210,14 +213,14 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.Invoice", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("CustomerID")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerID")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -231,13 +234,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.InvoiceDetail", b =>
                 {
-                    b.Property<string>("InvoiceID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("InvoiceID")
+                        .HasColumnType("int");
 
-                    b.Property<string>("BookID")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("BookID")
+                        .HasColumnType("int");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
@@ -254,17 +255,17 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.PaymentReceipt", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<string>("CustomerID")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("CustomerID")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -278,9 +279,11 @@ namespace BookManagementSystem.Migrations
 
             modelBuilder.Entity("BookManagementSystem.Domain.Entities.Regulation", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(5)
-                        .HasColumnType("char(5)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()

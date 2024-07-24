@@ -20,7 +20,8 @@ namespace BookManagementSystem.Application.Validators.Users
                 .MaximumLength(100).WithMessage("{ProperyName} không được vượt quá 100 kí tự");
 
             RuleFor(x => x.UserName)
-                .MustAsync((userName, cancellation) => IsUsernameUniqueAsync(userName)).WithMessage("{PropertyName} đã tồn tại");
+                .MustAsync((userName, cancellation) => IsUsernameUniqueAsync(userName))
+                .WithMessage("{PropertyName} đã tồn tại");
 
             RuleFor(x => x.Email)
                 .EmailAddress().WithMessage("{PropertyName} không hợp lệ")

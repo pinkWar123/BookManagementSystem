@@ -6,12 +6,8 @@ namespace BookManagementSystem.Domain.Entities
 
     public class DebtReportDetail
     {
-        [StringLength(5)]
-        [Column(TypeName = "char(5)")]
-        public required string ReportID { get; set; }
-        [StringLength(5)]
-        [Column(TypeName = "char(5)")]
-        public required string CustomerID { get; set; }
+        public int ReportID { get; set; }
+        public int CustomerID { get; set; }
 
         public required int InitalDebt { get; set; }
         public required int FinalDebt { get; set; }

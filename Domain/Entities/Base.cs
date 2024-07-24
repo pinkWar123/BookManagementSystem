@@ -9,8 +9,6 @@ namespace BookManagementSystem.Domain.Entities
 {
     public class Base
     {
-        [StringLength(5)]
-        [Column(TypeName = "char(5)")]
-        public required string Id { get; set; }
+        public int Id { get; set; }
     }
 }

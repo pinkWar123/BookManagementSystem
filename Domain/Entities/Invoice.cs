@@ -9,9 +9,7 @@ namespace BookManagementSystem.Domain.Entities
     {
         public required DateOnly Date { get; set; }
 
-    [StringLength(5)]
-    [Column(TypeName = "char(5)")]
-    public required string CustomerID { get; set; }
+    public int CustomerID { get; set; }
 
     [ForeignKey("CustomerID")]
     public virtual Customer Customer { get; set; }

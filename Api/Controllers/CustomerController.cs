@@ -7,6 +7,7 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -36,7 +37,13 @@ namespace BookManagementSystem.Api.Controllers
             var customer = await _customerService.CreateCustomer(createCustomerDto);
             
             return Ok(new Response<CustomerDto>(customer));
+        }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCustomerById([FromRoute] int id)
+        {
+            var customer = await _customerService.GetCustomerById(id);
+            return Ok(new Response<CustomerDto>(customer));
         }
     }
 }
