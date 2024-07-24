@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.User;
+using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
@@ -113,7 +114,7 @@ namespace BookManagementSystem.Application.Services
         public async Task<UserDto> Register(RegisterDto registerDto)
         {
             var user = _mapper.Map<User>(registerDto);
-            var createUser = await _userManager.CreateAsync(user);
+            var createUser = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (createUser.Succeeded)
             {
@@ -125,17 +126,25 @@ namespace BookManagementSystem.Application.Services
                     Message = "Đăng ký thành công!",
                     IsAuthenticated = true,
                     Username = createdUser.UserName ?? "",
-                    Email = createdUser.Email,
+                    Email = createdUser.Email ?? null,
                     Token = token,
                     Roles = new List<string>() { Roles.Customer.ToString() }
                 };
             }
-
-            return new UserDto
+            else
             {
-                Username = "",
-                IsAuthenticated = false
-            };
+                return new UserDto
+                {
+                    Errors = createUser.Errors.Select(error => error.Description).ToList(),
+                    Username = ""
+                };
+            }
+
+            // return new UserDto
+            // {
+            //     Username = "",
+            //     IsAuthenticated = false
+            // };
         }
 
 
@@ -157,5 +166,9 @@ namespace BookManagementSystem.Application.Services
             return userDtos;
         }
 
+        public async Task<bool> DoesUsernameExist(string username)
+        {
+            return await _userManager.FindByNameAsync(username) != null;
+        }
     }
 }

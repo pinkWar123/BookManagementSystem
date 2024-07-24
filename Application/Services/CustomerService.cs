@@ -41,6 +41,7 @@ namespace BookManagementSystem.Application.Services
 
             var customer = _mapper.Map<Customer>(createCustomerDto);
             await _customerRepository.AddAsync(customer);
+            await _customerRepository.SaveChangesAsync();
             return _mapper.Map<CustomerDto>(customer);
         }
 

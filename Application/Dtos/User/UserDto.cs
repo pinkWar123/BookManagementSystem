@@ -8,6 +8,7 @@ namespace BookManagementSystem.Application.Dtos.User
     public class UserDto
     {
         public string? Message { get; set; }
+        public List<string>? Errors { get; set; }
         public bool IsAuthenticated { get; set; }
         public required string Username { get; set; }
         public string? Email { get; set; }

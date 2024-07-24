@@ -49,7 +49,7 @@ namespace BookManagementSystem.Api.Controllers
 
             if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
-            return Ok(userDto);
+            return Ok(new Response<UserDto>(userDto));
         }
 
         [HttpPost("login")]
@@ -64,12 +64,12 @@ namespace BookManagementSystem.Api.Controllers
 
             if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
-            return Ok(userDto);
+            return Ok(new Response<UserDto>(userDto));
         }
 
         [HttpGet]
-        // [Authorize(Roles = "Manager")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Manager, Cashier")]
+        // [AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserQuery userQuery)
         {
             var users = await _userService.GetAllUsers(userQuery);
@@ -78,6 +78,14 @@ namespace BookManagementSystem.Api.Controllers
             var pagedUsers = users.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
             var pagedResponse = PaginationHelper.CreatePagedResponse(pagedUsers, validFilter, totalRecords, _uriService, Request.Path.Value);
             return Ok(pagedResponse);
+        }
+
+        [HttpGet("check-username")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DoesUserNameExist([FromQuery] string username)
+        {
+            var doesUserNameExist = await _userService.DoesUsernameExist(username);
+            return Ok(new Response<CheckUserDto>(new CheckUserDto{HasExisted = doesUserNameExist}));
         }
     }
 }

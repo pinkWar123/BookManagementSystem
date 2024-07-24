@@ -54,6 +54,11 @@ namespace BookManagementSystem.Data
             builder.Entity<Customer>()
                 .HasKey(p => p.Id);
 
+            builder.Entity<Customer>()
+                .Property(c => c.Id)
+                .ValueGeneratedOnAdd();
+                
+
             //payment Receive : 
             builder.Entity<PaymentReceipt>()
                 .HasKey(p => p.Id);

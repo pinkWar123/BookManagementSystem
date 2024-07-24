@@ -27,6 +27,7 @@ namespace BookManagementSystem.Helpers
             respose.LastPage = uriService.GetPageUri(new PaginationFilter(roundedTotalPages, validFilter.PageSize), route);
             respose.TotalPages = roundedTotalPages;
             respose.TotalRecords = totalRecords;
+            respose.Data = pagedData;
             return respose;
         }
     }

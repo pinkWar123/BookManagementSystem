@@ -38,7 +38,7 @@ namespace BookManagementSystem.Application.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, appUser.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, appUser.Email),
+                new Claim(JwtRegisteredClaimNames.Email, appUser.Email ?? ""),
                 new Claim(ClaimTypes.NameIdentifier, appUser.Id)
             }
             .Union(roleClaims)
