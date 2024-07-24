@@ -41,7 +41,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
 
-        public async Task<PaymentReceiptDto> UpdatePaymentReceipt(string receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto)
+        public async Task<PaymentReceiptDto> UpdatePaymentReceipt(int receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(updatePaymentReceiptDto);
             if (!validationResult.IsValid)
@@ -58,7 +58,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<PaymentReceiptDto>(updatedReceipt);
         }
 
-        public async Task<PaymentReceiptDto> GetPaymentReceiptById(string receiptId)
+        public async Task<PaymentReceiptDto> GetPaymentReceiptById(int receiptId)
         {
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)
@@ -74,7 +74,7 @@ namespace BookManagementSystem.Application.Services
         //     return _mapper.Map<IEnumerable<PaymentReceiptDto>>(paymentReceipts);
         // }
 
-        public async Task<bool> DeletePaymentReceipt(string receiptId)
+        public async Task<bool> DeletePaymentReceipt(int receiptId)
         {
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)

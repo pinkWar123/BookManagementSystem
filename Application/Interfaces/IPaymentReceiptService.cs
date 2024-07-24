@@ -5,9 +5,9 @@ namespace BookManagementSystem.Application.Interfaces
     public interface IPaymentReceiptService
     {
         Task<PaymentReceiptDto> CreateNewPaymentReceipt(CreatePaymentReceiptDto createPaymentReceiptDto);
-        Task<PaymentReceiptDto> UpdatePaymentReceipt(string receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto);
-        Task<PaymentReceiptDto> GetPaymentReceiptById(string receiptId);
+        Task<PaymentReceiptDto> UpdatePaymentReceipt(int receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto);
+        Task<PaymentReceiptDto> GetPaymentReceiptById(int receiptId);
         // Task<IEnumerable<PaymentReceiptDto>> GetAllPaymentReceipts();
-        Task<bool> DeletePaymentReceipt(string receiptId);
+        Task<bool> DeletePaymentReceipt(int receiptId);
     }
 }

@@ -68,7 +68,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager, Cashier")]
+        [Authorize(Roles = "Manager")]
         // [AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserQuery userQuery)
         {

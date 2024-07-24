@@ -44,7 +44,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
         }
 
-        public async Task<DebtReportDetailDto> UpdateDebtReportDetail(string reportId, string customerId, UpdateDebtReportDetailDto updateDebtReportDetailDto)
+        public async Task<DebtReportDetailDto> UpdateDebtReportDetail(int reportId, int customerId, UpdateDebtReportDetailDto updateDebtReportDetailDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(updateDebtReportDetailDto);
             if (!validationResult.IsValid)
@@ -70,7 +70,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<DebtReportDetailDto>(updatedDetail);
         }
 
-        public async Task<DebtReportDetailDto> GetDebtReportDetailById(string reportId, string customerId)
+        public async Task<DebtReportDetailDto> GetDebtReportDetailById(int reportId, int customerId)
         {
             // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
@@ -87,7 +87,7 @@ namespace BookManagementSystem.Application.Services
         //     return _mapper.Map<IEnumerable<DebtReportDetailDto>>(debtReportDetails);
         // }
 
-        public async Task<bool> DeleteDebtReportDetail(string reportId, string customerId)
+        public async Task<bool> DeleteDebtReportDetail(int reportId, int customerId)
         {
             // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);

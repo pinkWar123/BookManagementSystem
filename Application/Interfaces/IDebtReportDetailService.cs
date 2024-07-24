@@ -7,9 +7,9 @@ namespace BookManagementSystem.Application.Interfaces
     public interface IDebtReportDetailService
     {
         Task<DebtReportDetailDto> CreateNewDebtReportDetail(CreateDebtReportDetailDto createDebtReportDetailDto);
-        Task<DebtReportDetailDto> UpdateDebtReportDetail(string reportId, string customerId, UpdateDebtReportDetailDto updateDebtReportDetailDto);
-        Task<DebtReportDetailDto> GetDebtReportDetailById(string reportId, string customerId);
+        Task<DebtReportDetailDto> UpdateDebtReportDetail(int reportId, int customerId, UpdateDebtReportDetailDto updateDebtReportDetailDto);
+        Task<DebtReportDetailDto> GetDebtReportDetailById(int reportId, int customerId);
         // Task<IEnumerable<DebtReportDetailDto>> GetAllDebtReportDetails();
-        Task<bool> DeleteDebtReportDetail(string reportId, string customerId);
+        Task<bool> DeleteDebtReportDetail(int reportId, int customerId);
     }
 }
