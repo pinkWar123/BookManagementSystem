@@ -4,9 +4,9 @@ using BookManagementSystem.Domain.Entities;
 
 namespace BookManagementSystem.Application.Mappers
 {
-    public class DebtReportDetailProfile : Profile
+    public class InventoryReportDetailProfile : Profile
     {
-        public DebtReportDetailProfile()
+        public InventoryReportDetailProfile()
         {
             CreateMap<CreateInventoryReportDetailDto, InventoryReportDetail>();
             CreateMap<InventoryReportDetail, InventoryReportDetailDto>();

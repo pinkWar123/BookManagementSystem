@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace BookManagementSystem.Application.Validators
 {
-    public class CreateDebtReportDetailValidator : AbstractValidator<CreateInventoryReportDetailDto>
+    public class CreateInventoryReportDetailValidator : AbstractValidator<CreateInventoryReportDetailDto>
     {
-        public CreateDebtReportDetailValidator()
+        public CreateInventoryReportDetailValidator()
         {
             RuleFor(x => x.ReportID)
                 .NotEmpty().WithMessage("Mã báo cáo không được để trống.")

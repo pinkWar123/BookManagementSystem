@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace BookManagementSystem.Application.Validators
 {
-    public class UpdateDebtReportDetailValidator : AbstractValidator<UpdateInventoryReportDetailDto>
+    public class UpdateInventoryReportDetailValidator : AbstractValidator<UpdateInventoryReportDetailDto>
     {
-        public UpdateDebtReportDetailValidator()
+        public UpdateInventoryReportDetailValidator()
         {
             RuleFor(x => x.InitialStock)
                 .GreaterThanOrEqualTo(0).When(x => x.InitialStock.HasValue)

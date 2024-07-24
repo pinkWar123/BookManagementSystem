@@ -8,17 +8,17 @@ using BookManagementSystem.Domain.Entities;
 
 namespace BookManagementSystem.Application.Mappers
 {
-    public class DebtReportProfile : Profile
+    public class InventoryReportProfile : Profile
     {
-        public DebtReportProfile()
+        public InventoryReportProfile()
         {
-            // Map from CreateDebtReportDto to DebtReport entity
+            // Map from CreateInventoryReportDto to InventoryReport entity
             CreateMap<CreateInventoryReportDto, InventoryReport>();
 
-            // Map from DebtReport entity to DebtReportDto
+            // Map from InventoryReport entity to InventoryReportDto
             CreateMap<InventoryReport, InventoryReportDto>();
 
-            // Map from UpdateDebtReportDto to DebtReport entity
+            // Map from UpdateInventoryReportDto to InventoryReport entity
             CreateMap<UpdateInventoryReportDto, DebtReport>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
