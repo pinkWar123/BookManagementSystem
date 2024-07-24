@@ -41,6 +41,7 @@ namespace BookManagementSystem.Application.Services
 
             var debtReportDetail = _mapper.Map<DebtReportDetail>(createDebtReportDetailDto);
             await _debtReportDetailRepository.AddAsync(debtReportDetail);
+            await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
         }
 
@@ -66,7 +67,7 @@ namespace BookManagementSystem.Application.Services
             // write again UpdateAsync
             // var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, customerId, existingDetail);
             var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, existingDetail);
-
+            await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(updatedDetail);
         }
 
@@ -96,6 +97,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
             }
             _debtReportDetailRepository.Remove(debtReportDetail);
+            await _debtReportDetailRepository.SaveChangesAsync();
             return true;
         }
     }
