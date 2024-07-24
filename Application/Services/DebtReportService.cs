@@ -42,6 +42,7 @@ namespace BookManagementSystem.Application.Services
 
             var debtReport = _mapper.Map<Domain.Entities.DebtReport>(createDebtReportDto);
             await _debtReportRepository.AddAsync(debtReport);
+            await _debtReportRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDto>(debtReport);
         }
 
@@ -94,6 +95,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
             }
             _debtReportRepository.Remove(debtReport);
+            await _debtReportRepository.SaveChangesAsync();
             return true;
         }
     }

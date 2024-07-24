@@ -61,6 +61,7 @@ namespace BookManagementSystem.Application.Services
 
             _mapper.Map(updateCustomerDto, existingCustomer);
             await _customerRepository.UpdateAsync(customerId, existingCustomer);
+            await _customerRepository.SaveChangesAsync();
             return _mapper.Map<CustomerDto>(existingCustomer);
         }
 
@@ -88,6 +89,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
             }
             _customerRepository.Remove(customer);
+            await _customerRepository.SaveChangesAsync();
             return true;
         }
     }
