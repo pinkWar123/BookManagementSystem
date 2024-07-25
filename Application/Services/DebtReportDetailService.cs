@@ -56,8 +56,7 @@ namespace BookManagementSystem.Application.Services
             }
 
             // write again GetByIdAsync
-            // var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-            var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
+            var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
 
             if (existingDetail == null)
             {
@@ -66,17 +65,14 @@ namespace BookManagementSystem.Application.Services
 
             _mapper.Map(updateDebtReportDetailDto, existingDetail);
 
-            // write again UpdateAsync
-            // var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, customerId, existingDetail);
-            var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, existingDetail);
+            var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, customerId, existingDetail);
             await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(updatedDetail);
         }
 
         public async Task<DebtReportDetailDto> GetDebtReportDetailById(int reportId, int customerId)
         {
-            // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
+            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             if (debtReportDetail == null)
             {
                 throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
@@ -92,8 +88,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<bool> DeleteDebtReportDetail(int reportId, int customerId)
         {
-            // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
+            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             if (debtReportDetail == null)
             {
                 return false;
