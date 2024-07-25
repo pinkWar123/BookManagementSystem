@@ -42,9 +42,9 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Response<DebtReportDto>(createdDebtReport));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{reportId}")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> UpdateDebtReport(int id, UpdateDebtReportDto updateDebtReportDto)
+        public async Task<IActionResult> UpdateDebtReport([FromRoute] int reportId, UpdateDebtReportDto updateDebtReportDto)
         {
             var validateResult = await _updateDebtReportValidator.ValidateAsync(updateDebtReportDto);
 
@@ -53,15 +53,15 @@ namespace BookManagementSystem.Api.Controllers
                 return BadRequest(Results.ValidationProblem(validateResult.ToDictionary()));
             }
 
-            var existingDebtReport = await _debtReportService.GetDebtReportById(id);
+            var existingDebtReport = await _debtReportService.GetDebtReportById(reportId);
             if (existingDebtReport == null)
             {
-                return NotFound($"Debt report with ID {id} not found.");
+                return NotFound($"Debt report with ID {reportId} not found.");
             }
 
             try
             {
-                var updatedDebtReport = await _debtReportService.UpdateDebtReport(id, updateDebtReportDto);
+                var updatedDebtReport = await _debtReportService.UpdateDebtReport(reportId, updateDebtReportDto);
                 return Ok(new Response<DebtReportDto>(updatedDebtReport));
             }
             catch (Exception ex)
@@ -82,22 +82,22 @@ namespace BookManagementSystem.Api.Controllers
         //     return Ok(pagedResponse);
         // }
 
-        [HttpGet("{id}")]
+        [HttpGet("{reportId}")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetDebtReportById(int id)
+        public async Task<IActionResult> GetDebtReportById([FromRoute] int reportId)
         {
-            var debtReport = await _debtReportService.GetDebtReportById(id);
+            var debtReport = await _debtReportService.GetDebtReportById(reportId);
 
             if (debtReport == null) return NotFound();
 
             return Ok(new Response<DebtReportDto>(debtReport));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{reportId}")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> DeleteDebtReport(int id)
+        public async Task<IActionResult> DeleteDebtReport([FromRoute] int reportId)
         {
-            var result = await _debtReportService.DeleteDebtReport(id);
+            var result = await _debtReportService.DeleteDebtReport(reportId);
 
             if (!result) return NotFound();
 
