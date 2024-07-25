@@ -9,6 +9,8 @@ using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Customer;
 using FluentValidation;
 using FluentValidation.Results;
+using BookManagementSystem.Application.Exceptions;
+using System.Net;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -56,7 +58,7 @@ namespace BookManagementSystem.Application.Services
             var existingCustomer = await _customerRepository.GetByIdAsync(customerId);
             if (existingCustomer == null)
             {
-                throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
+                throw new CustomerException($"Không tìm thấy khách hàng với ID {customerId}.", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(updateCustomerDto, existingCustomer);
@@ -70,7 +72,7 @@ namespace BookManagementSystem.Application.Services
             var customer = await _customerRepository.GetByIdAsync(customerId);
             if (customer == null)
             {
-                throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
+                throw new CustomerException($"Không tìm thấy khách hàng với ID {customerId}.", HttpStatusCode.NotFound);
             }
             return _mapper.Map<CustomerDto>(customer);
         }

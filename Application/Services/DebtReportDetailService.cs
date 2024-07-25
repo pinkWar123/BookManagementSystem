@@ -9,7 +9,9 @@ using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.DebtReportDetail;
 using FluentValidation;
 using FluentValidation.Results;
-
+using BookManagementSystem.Application.Exceptions;
+using System.Net;
+ 
 namespace BookManagementSystem.Application.Services
 {
     public class DebtReportDetailService : IDebtReportDetailService
@@ -59,7 +61,7 @@ namespace BookManagementSystem.Application.Services
 
             if (existingDetail == null)
             {
-                throw new KeyNotFoundException($"DebtReportDetail with ReportID {reportId} and CustomerID {customerId} not found.");
+                throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(updateDebtReportDetailDto, existingDetail);
@@ -77,7 +79,7 @@ namespace BookManagementSystem.Application.Services
             var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
             if (debtReportDetail == null)
             {
-                throw new KeyNotFoundException($"DebtReportDetail with ReportID {reportId} and CustomerID {customerId} not found.");
+                throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
             }
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
         }

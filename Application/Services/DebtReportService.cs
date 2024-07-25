@@ -10,6 +10,8 @@ using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.DebtReport;
 using FluentValidation;
 using FluentValidation.Results;
+using BookManagementSystem.Application.Exceptions;
+using System.Net;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -57,7 +59,7 @@ namespace BookManagementSystem.Application.Services
             var existingReport = await _debtReportRepository.GetByIdAsync(reportId);
             if (existingReport == null)
             {
-                throw new KeyNotFoundException($"DebtReport with ID {reportId} not found.");
+                throw new DebtReportException($"Không tìm thấy báo cáo với ID {reportId}.", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(updateDebtReportDto, existingReport);
@@ -71,7 +73,7 @@ namespace BookManagementSystem.Application.Services
             var debtReport = await _debtReportRepository.GetByIdAsync(reportId);
             if (debtReport == null)
             {
-                throw new KeyNotFoundException($"DebtReport with ID {reportId} not found.");
+                throw new DebtReportException($"Không tìm thấy báo cáo với ID {reportId}.", HttpStatusCode.NotFound);
             }
             return _mapper.Map<DebtReportDto>(debtReport);
         }
