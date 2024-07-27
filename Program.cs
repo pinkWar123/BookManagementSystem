@@ -10,6 +10,10 @@ using BookManagementSystem.Infrastructure.Data.Seed;
 using BookManagementSystem.Infrastructure.Repositories.Book;
 using BookManagementSystem.Infrastructure.Repositories.Customer;
 using BookManagementSystem.Infrastructure.Repositories.User;
+using BookManagementSystem.Infrastructure.Repositories.Invoice;
+using BookManagementSystem.Infrastructure.Repositories.InvoiceDetail;
+using BookManagementSystem.Infrastructure.Repositories.BookEntry;
+using BookManagementSystem.Infrastructure.Repositories.BookEntryDetail;
 using BookManagementSystem.Middlewares;
 using BookManagementSystem.Settings;
 using FluentValidation;
@@ -111,6 +115,10 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IInvoiceDetailRepository, InvoiceDetailRepository>();
+builder.Services.AddScoped<IBookEntryRepository, BookEntryRepository>();
+builder.Services.AddScoped<IBookEntryDetailRepository, BookEntryDetailRepository>();
 // Register services 
 builder.Services.AddSingleton<IUriService>(o =>
 {
@@ -123,6 +131,10 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IInvoiceDetailService, InvoiceDetailService>();
+builder.Services.AddScoped<IBookEntryService, BookEntryService>();
+builder.Services.AddScoped<IBookEntryDetailService, BookEntryDetailService>();
 
 // DI Container
 builder.Services.AddAutoMapper(typeof(Program));
