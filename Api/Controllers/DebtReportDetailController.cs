@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookManagementSystem.Api.Controllers
 {
     [Authorize]
-    [Route("api/debt-reports")]
+    [Route("api/debt-report-detail")]
     [ApiController]
     public class DebtReportDetailDetailController : ControllerBase
     {
