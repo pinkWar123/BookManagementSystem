@@ -14,7 +14,6 @@ namespace BookManagementSystem.Application.Validators
         }
         public CreateInvoiceValidator()
         {
-            RuleFor(x => x.InvoiceID).NotEmpty().WithMessage("InvoiceID không được để trống");
             RuleFor(x => x.CustomerID).NotEmpty().WithMessage("CustomerID không được để trống");
             RuleFor(x => x.InvoiceDate)
                 .Cascade(CascadeMode.Stop)
