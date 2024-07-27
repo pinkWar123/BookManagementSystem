@@ -46,7 +46,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
-        public async Task<InvoiceDto> UpdateInvoice(string EntryID, UpdateInvoiceDto updateInvoiceDto)
+        public async Task<InvoiceDto> UpdateInvoice(int  InvoiceID, UpdateInvoiceDto updateInvoiceDto)
         {   
             
             var validationResult = await _updateValidator.ValidateAsync(updateInvoiceDto);
@@ -54,33 +54,33 @@ namespace BookManagementSystem.Application.Services
             {
                 throw new ValidationException(validationResult.Errors);
             }
-            var existingEntry = await _invoiceRepository.GetByIdAsync(EntryID);
+            var existingEntry = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (existingEntry == null)
             {
-                throw new KeyNotFoundException($"Invoice with ID {EntryID} not found.");
+                throw new KeyNotFoundException($"Invoice with ID {InvoiceID} not found.");
             }
 
             _mapper.Map(updateInvoiceDto, existingEntry);
-            var updatedEntry = await _invoiceRepository.UpdateAsync(EntryID, existingEntry);
+            var updatedEntry = await _invoiceRepository.UpdateAsync(InvoiceID, existingEntry);
             return _mapper.Map<InvoiceDto>(updatedEntry);
         }
 
-        public async Task<InvoiceDto> GetInvoiceById(string EntryID)
+        public async Task<InvoiceDto> GetInvoiceById(int InvoiceID)
         {
             
-            var invoice = await _invoiceRepository.GetByIdAsync(EntryID);
+            var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
-                throw new KeyNotFoundException($"Invoice with ID {EntryID} not found.");
+                throw new KeyNotFoundException($"Invoice with ID {InvoiceID} not found.");
             }
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
        
 
-        public async Task<bool> DeleteInvoice(string EntryID)
+        public async Task<bool> DeleteInvoice(int InvoiceID)
         {
-            var invoice = await _invoiceRepository.GetByIdAsync(EntryID);
+            var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
                 return false;

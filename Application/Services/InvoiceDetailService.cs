@@ -44,7 +44,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }
 
-        public async Task<InvoiceDetailDto> UpdateInvoiceDetail(string InvoiceID, string BookID, UpdateInvoiceDetailDto updateInvoiceDetailDto)
+        public async Task<InvoiceDetailDto> UpdateInvoiceDetail(int InvoiceID, int BookID, UpdateInvoiceDetailDto updateInvoiceDetailDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(updateInvoiceDetailDto);
             if (!validationResult.IsValid)
@@ -70,7 +70,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InvoiceDetailDto>(updatedDetail);
         }
 
-        public async Task<InvoiceDetailDto> GetInvoiceDetailById(string InvoiceID, string BookID)
+        public async Task<InvoiceDetailDto> GetInvoiceDetailById(int InvoiceID, int BookID)
         {
             // var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
@@ -80,7 +80,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }
 
-        public async Task<bool> DeleteInvoiceDetail(string InvoiceID, string BookID)
+        public async Task<bool> DeleteInvoiceDetail(int InvoiceID, int BookID)
         {
             // var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
