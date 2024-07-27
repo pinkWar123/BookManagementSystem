@@ -57,7 +57,7 @@ namespace BookManagementSystem.Application.Services
             var existingEntry = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (existingEntry == null)
             {
-                throw new KeyNotFoundException($"Invoice with ID {InvoiceID} not found.");
+                throw new InvoiceException($"Invoice with ID {InvoiceID} not found.");
             }
 
             _mapper.Map(updateInvoiceDto, existingEntry);
@@ -71,7 +71,7 @@ namespace BookManagementSystem.Application.Services
             var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
-                throw new KeyNotFoundException($"Invoice with ID {InvoiceID} not found.");
+                throw new InvoiceException($"Invoice with ID {InvoiceID} not found.");
             }
             return _mapper.Map<InvoiceDto>(invoice);
         }

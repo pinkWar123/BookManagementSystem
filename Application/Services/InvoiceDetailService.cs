@@ -58,7 +58,7 @@ namespace BookManagementSystem.Application.Services
 
             if (existingDetail == null)
             {
-                throw new KeyNotFoundException($"InvoiceDetail with InvoiceID {InvoiceID} and BookID {BookID} not found.");
+                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với InvoiceID {InvoiceID} và BookID {BookID}");
             }
 
             _mapper.Map(updateInvoiceDetailDto, existingDetail);
@@ -75,7 +75,7 @@ namespace BookManagementSystem.Application.Services
             // var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
             if (invoiceDetail == null)
-                throw new KeyNotFoundException($"InvoiceDetail with InvoiceID {InvoiceID} and BookID {BookID} not found.");
+                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với InvoiceID {InvoiceID} và BookID {BookID}");
             
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }

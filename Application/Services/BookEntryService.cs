@@ -57,7 +57,7 @@ namespace BookManagementSystem.Application.Services
             var existingEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (existingEntry == null)
             {
-                throw new KeyNotFoundException($"BookEntry with ID {EntryID} not found.");
+                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}.");
             }
 
             _mapper.Map(updateBookEntryDto, existingEntry);
@@ -71,7 +71,7 @@ namespace BookManagementSystem.Application.Services
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
             {
-                throw new KeyNotFoundException($"BookEntry with ID {EntryID} not found.");
+                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}.");
             }
             return _mapper.Map<BookEntryDto>(bookEntry);
         }
