@@ -44,7 +44,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<BookEntryDetailDto>(bookEntryDetail);
         }
 
-        public async Task<BookEntryDetailDto> UpdateBookEntryDetail(string EntryID, string BookID, UpdateBookEntryDetailDto updateBookEntryDetailDto)
+        public async Task<BookEntryDetailDto> UpdateBookEntryDetail(int EntryID, int BookID, UpdateBookEntryDetailDto updateBookEntryDetailDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(updateBookEntryDetailDto);
             if (!validationResult.IsValid)
@@ -70,7 +70,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<BookEntryDetailDto>(updatedDetail);
         }
 
-        public async Task<BookEntryDetailDto> GetBookEntryDetailById(string EntryID, string BookID)
+        public async Task<BookEntryDetailDto> GetBookEntryDetailById(int EntryID, int BookID)
         {
             // var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID);
@@ -82,7 +82,7 @@ namespace BookManagementSystem.Application.Services
 
 
 
-        public async Task<bool> DeleteBookEntryDetail(string EntryID, string BookID)
+        public async Task<bool> DeleteBookEntryDetail(int EntryID, int BookID)
         {
             // var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID);
