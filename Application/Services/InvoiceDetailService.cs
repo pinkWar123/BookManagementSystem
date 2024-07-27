@@ -41,6 +41,7 @@ namespace BookManagementSystem.Application.Services
 
             var invoiceDetail = _mapper.Map<InvoiceDetail>(createInvoiceDetailDto);
             await _invoiceDetailRepository.AddAsync(invoiceDetail);
+            await _invoiceDetailRepository.SaveChangesAsync();
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }
 
@@ -53,8 +54,8 @@ namespace BookManagementSystem.Application.Services
             }
 
             // write again GetByIdAsync
-            // var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
-            var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
+            var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
+            
 
             if (existingDetail == null)
             {
@@ -63,9 +64,8 @@ namespace BookManagementSystem.Application.Services
 
             _mapper.Map(updateInvoiceDetailDto, existingDetail);
 
-            // write again UpdateAsync
-            // var updatedDetail = await _invoiceDetailRepository.UpdateAsync(InvoiceID, BookID, existingDetail);
-            var updatedDetail = await _invoiceDetailRepository.UpdateAsync(InvoiceID, existingDetail);
+            var updatedDetail = await _invoiceDetailRepository.UpdateAsync(InvoiceID, BookID, existingDetail);
+            await _invoiceDetailRepository.SaveChangesAsync();
 
             return _mapper.Map<InvoiceDetailDto>(updatedDetail);
         }
@@ -88,6 +88,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
         
             _invoiceDetailRepository.Remove(invoiceDetail);
+            await _invoiceDetailRepository.SaveChangesAsync();
             return true;
         }
     }

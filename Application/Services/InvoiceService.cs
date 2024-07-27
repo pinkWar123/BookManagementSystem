@@ -43,6 +43,7 @@ namespace BookManagementSystem.Application.Services
 
             var invoice = _mapper.Map<Domain.Entities.Invoice>(createInvoiceDto);
             await _invoiceRepository.AddAsync(invoice);
+            await _invoiceRepository.SaveChangesAsync();
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
@@ -57,11 +58,12 @@ namespace BookManagementSystem.Application.Services
             var existingEntry = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (existingEntry == null)
             {
-                throw new InvoiceException($"Invoice with ID {InvoiceID} not found.");
+                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
             }
 
             _mapper.Map(updateInvoiceDto, existingEntry);
             var updatedEntry = await _invoiceRepository.UpdateAsync(InvoiceID, existingEntry);
+            await _invoiceRepository.SaveChangesAsync();
             return _mapper.Map<InvoiceDto>(updatedEntry);
         }
 
@@ -71,7 +73,7 @@ namespace BookManagementSystem.Application.Services
             var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
-                throw new InvoiceException($"Invoice with ID {InvoiceID} not found.");
+                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
             }
             return _mapper.Map<InvoiceDto>(invoice);
         }
@@ -86,6 +88,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
             }
             _invoiceRepository.Remove(invoice);
+            await _invoiceRepository.SaveChangesAsync();
             return true;
         }
     }

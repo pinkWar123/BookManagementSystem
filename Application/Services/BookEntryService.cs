@@ -43,6 +43,7 @@ namespace BookManagementSystem.Application.Services
 
             var bookEntry = _mapper.Map<Domain.Entities.BookEntry>(createBookEntryDto);
             await _bookEntryRepository.AddAsync(bookEntry);
+            await _bookEntryRepository.SaveChangesAsync();
             return _mapper.Map<BookEntryDto>(bookEntry);
         }
 
@@ -62,6 +63,7 @@ namespace BookManagementSystem.Application.Services
 
             _mapper.Map(updateBookEntryDto, existingEntry);
             var updatedEntry = await _bookEntryRepository.UpdateAsync(EntryID, existingEntry);
+            await _bookEntryRepository.SaveChangesAsync();
             return _mapper.Map<BookEntryDto>(updatedEntry);
         }
 
@@ -86,6 +88,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
             }
             _bookEntryRepository.Remove(bookEntry);
+            await _bookEntryRepository.SaveChangesAsync();
             return true;
         }
     }

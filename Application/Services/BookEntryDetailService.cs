@@ -42,6 +42,7 @@ namespace BookManagementSystem.Application.Services
 
             var bookEntryDetail = _mapper.Map<BookEntryDetail>(createBookEntryDetailDto);
             await _bookEntryDetailRepository.AddAsync(bookEntryDetail);
+            await _bookEntryDetailRepository.SaveChangesAsync();
             return _mapper.Map<BookEntryDetailDto>(bookEntryDetail);
         }
 
@@ -62,9 +63,8 @@ namespace BookManagementSystem.Application.Services
 
             _mapper.Map(updateBookEntryDetailDto, existingDetail);
 
-            // write again UpdateAsync
             var updatedDetail = await _bookEntryDetailRepository.UpdateAsync(EntryID, BookID, existingDetail);
-
+            await _bookEntryDetailRepository.SaveChangesAsync();
             return _mapper.Map<BookEntryDetailDto>(updatedDetail);
         }
 
@@ -81,12 +81,12 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<bool> DeleteBookEntryDetail(string EntryID, string BookID)
         {
-            // var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
-            var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID);
+            var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             if (bookEntryDetail == null)
                 return false;
         
             _bookEntryDetailRepository.Remove(bookEntryDetail);
+            await _bookEntryDetailRepository.SaveChangesAsync();
             return true;
         }
     }
