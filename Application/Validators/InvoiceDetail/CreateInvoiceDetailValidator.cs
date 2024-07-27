@@ -12,10 +12,15 @@ namespace BookManagementSystem.Application.Validators.InvoiceDetail
         public CreateInvoiceDetailValidator()
         {
         RuleFor(x => x.InvoiceID).NotEmpty().WithMessage("InvoiceID không được để trống");
-            RuleFor(x => x.CustomerID).NotEmpty().WithMessage("BookID không được để trống");
-            RuleFor(x => x.InvoiceDate)
+            RuleFor(x => x.BookID).NotEmpty().WithMessage("BookID không được để trống");
+            RuleFor(x => x.Quantity)
                 .NotEmpty()
-                .WithMessage("InvoiceDate không được để trống");
+                .GreaterThanOrEqualTo(0).WithMessage("Quantity không được nhỏ hơn 0")
+                .WithMessage("Quantity không được để trống");
+            RuleFor(x => x.Price)
+                .NotEmpty()
+                .GreaterThanOrEqualTo(0).WithMessage("Price không được nhỏ hơn 0")
+                .WithMessage("Price không được để trống");
             
         }
     }
