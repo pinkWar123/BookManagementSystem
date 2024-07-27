@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BookManagementSystem.Data.Repositories;
-using BookManagementSystem.Domain.Entities;
-
 namespace BookManagementSystem.Infrastructure.Repositories.BookEntryDetail
 {
     public interface IBookEntryDetailRepository : IGenericRepository<Domain.Entities.BookEntryDetail>
     {
+        Task<Domain.Entities.BookEntryDetail?> GetByIdAsync(int EntryID, int BookID);
+        Task<Domain.Entities.BookEntryDetail?> UpdateAsync<TUpdateDto>(int EntryID,int BookID, TUpdateDto entity) where TUpdateDto : class;
     }
 }
