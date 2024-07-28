@@ -46,7 +46,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<RegulationDto>(book);
         }
 
-        public async Task<bool> DeleteRegulation(string RegulationId)
+        public async Task<bool> DeleteRegulation(int RegulationId)
         {
             var book = await _RegulationRepository.GetByIdAsync(RegulationId);
 
@@ -60,7 +60,7 @@ namespace BookManagementSystem.Application.Services
             return true;
         }
 
-        public async Task<RegulationDto> GetRegulationById(string RegulationId)
+        public async Task<RegulationDto> GetRegulationById(int RegulationId)
         {
             var regulation = await _RegulationRepository.GetByIdAsync(RegulationId);
 
@@ -72,7 +72,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<RegulationDto>(regulation);
         }
 
-        public async Task<RegulationDto> UpdateRegulation(string RegulationId, UpdateRegulationDto updateRegulationDto)
+        public async Task<RegulationDto> UpdateRegulation(int RegulationId, UpdateRegulationDto updateRegulationDto)
         {
             var validationResult = await _createValidator.ValidateAsync((IValidationContext)updateRegulationDto);
             if (!validationResult.IsValid)

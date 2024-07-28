@@ -11,7 +11,9 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail
 {
     public interface IInventoryReportDetailRepository : IGenericRepository<Domain.Entities.InventoryReportDetail>
     {
-        Task<Domain.Entities.InventoryReportDetail> UpdateAsync(string id, string id2, UpdateInventoryReportDetailDto entity);
-        Task<Domain.Entities.InventoryReportDetail?> GetByIdAsync(string id, string id2);
+        Task<Domain.Entities.InventoryReportDetail> UpdateAsync(int id, int id2, UpdateInventoryReportDetailDto entity);
+        Task<Domain.Entities.InventoryReportDetail?> GetByIdAsync(int id, int id2);
+
+        Task<List<Domain.Entities.InventoryReportDetail>> GetListInventoryReportDetailsByIdAsync(int id);
     }
 }

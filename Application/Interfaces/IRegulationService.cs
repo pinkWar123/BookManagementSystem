@@ -9,9 +9,9 @@ namespace BookManagementSystem.Application.Interfaces
     public interface IRegulationService
     {
         Task<RegulationDto> CreateRegulation(CreateRegulationDto createRegulationDto);
-        Task<RegulationDto> UpdateRegulation(string RegulationId, UpdateRegulationDto updateRegulationDto);
-        Task<RegulationDto> GetRegulationById(string RegulationId);
-        Task<bool> DeleteRegulation(string RegulationId);
+        Task<RegulationDto> UpdateRegulation(int RegulationId, UpdateRegulationDto updateRegulationDto);
+        Task<RegulationDto> GetRegulationById(int RegulationId);
+        Task<bool> DeleteRegulation(int RegulationId);
 
     }
 }

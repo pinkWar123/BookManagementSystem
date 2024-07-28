@@ -7,6 +7,7 @@ namespace BookManagementSystem.Application.Dtos.Regulation
 {
     public class RegulationDto
     {
+         public required int RegulationId { get; set; }
         public required string Code { get; set; }
         public required string Content { get; set; }
         public required int Value { get; set; }

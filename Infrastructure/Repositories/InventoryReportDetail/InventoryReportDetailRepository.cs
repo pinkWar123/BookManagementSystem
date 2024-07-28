@@ -1,14 +1,15 @@
 using BookManagementSystem.Application.Dtos.InventoryReportDetail;
 using BookManagementSystem.Data;
 using BookManagementSystem.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail
 {
     public class InventoryReportDetailRepository : GenericRepository<Domain.Entities.InventoryReportDetail>, IInventoryReportDetailRepository
     {
         public InventoryReportDetailRepository(ApplicationDBContext applicationDbContext) : base(applicationDbContext)
-        {}
-        public async Task<Domain.Entities.InventoryReportDetail> UpdateAsync(string id, string id2, UpdateInventoryReportDetailDto entity)
+        { }
+        public async Task<Domain.Entities.InventoryReportDetail> UpdateAsync(int id, int id2, UpdateInventoryReportDetailDto entity)
         {
             var existingEntity = await GetByIdAsync(id, id2);
             if (existingEntity == null)
@@ -39,10 +40,17 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail
             return existingEntity;
         }
 
-        public async Task<Domain.Entities.InventoryReportDetail?> GetByIdAsync(string id, string id2)
+        public async Task<Domain.Entities.InventoryReportDetail?> GetByIdAsync(int id, int id2)
         {
 
             return await GetContext().FindAsync(id, id2);
+        }
+
+        public async Task<List<Domain.Entities.InventoryReportDetail>> GetListInventoryReportDetailsByIdAsync(int id)
+        {
+            return await _context.InventoryReportDetails
+                                 .Where(o => o.ReportID == id)
+                                 .ToListAsync();
         }
     }
 
