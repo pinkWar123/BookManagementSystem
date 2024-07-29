@@ -20,9 +20,13 @@ namespace BookManagementSystem.Application.Validators.Users
                 .MaximumLength(100).WithMessage("{ProperyName} không được vượt quá 100 kí tự");
 
             RuleFor(x => x.UserName)
-                .MustAsync((userName, cancellation) => IsUsernameUniqueAsync(userName)).WithMessage("{PropertyName} đã tồn tại");
+                .MustAsync((userName, cancellation) => IsUsernameUniqueAsync(userName))
+                .WithMessage("{PropertyName} đã tồn tại");
 
-            RuleFor(x => x.Email).EmailAddress().When(email => email != null).WithMessage("{PropertyName} không hợp lệ");
+            RuleFor(x => x.Email)
+                .EmailAddress().WithMessage("{PropertyName} không hợp lệ")
+                .When(x => !string.IsNullOrEmpty(x.Email))
+                .WithMessage("{PropertyName} không hợp lệ");
 
             RuleFor(x => x.Password).Password();
 
@@ -30,7 +34,8 @@ namespace BookManagementSystem.Application.Validators.Users
         }
         public async Task<bool> IsUsernameUniqueAsync(string username)
         {
-            return await _userRepository.FindAllAsync(x => x.UserName == username) != null;
+            var users = await _userRepository.FindAllAsync(x => x.UserName == username);
+            return users == null || users.Count == 0;
         }
     }
 }

@@ -10,12 +10,9 @@ namespace BookManagementSystem.Domain.Entities
 
     public class BookEntryDetail
     {
-        [StringLength(5)]
-        [Column(TypeName = "char(5)")]
-        public required string EntryID { get; set; }
-        [StringLength(5)]
-        [Column(TypeName = "char(5)")]
-        public required string BookID { get; set; }
+        public int EntryID { get; set; }
+        
+        public int BookID { get; set; }
         [Required]
         public required int Quantity { get; set; }
 

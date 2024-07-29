@@ -8,7 +8,11 @@ namespace BookManagementSystem.Application.Interfaces
 {
     public interface IBookService
     {
-        Task CreateNewBook(CreateBookDto createBookDto);
-        // Task UpdateBookById(UpdateBookDto updateBookDto, string bookId);
+        Task<BookDto> CreateBook(CreateBookDto createBookDto);
+        Task<BookDto> UpdateBook(int BookId, UpdateBookDto updateBookDto);
+        Task<BookDto> GetBookById(int BookId);
+        Task<bool> DeleteBook(int BookId);
+
+        Task<bool> CheckBookExists(int bookId);
     }
 }

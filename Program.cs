@@ -8,6 +8,7 @@ using BookManagementSystem.Data.UnitOfWork;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Data.Seed;
 using BookManagementSystem.Infrastructure.Repositories.Book;
+using BookManagementSystem.Infrastructure.Repositories.Customer;
 using BookManagementSystem.Infrastructure.Repositories.User;
 using BookManagementSystem.Middlewares;
 using BookManagementSystem.Settings;
@@ -109,6 +110,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 // Register services 
 builder.Services.AddSingleton<IUriService>(o =>
 {
@@ -120,6 +122,8 @@ builder.Services.AddSingleton<IUriService>(o =>
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 // DI Container
 builder.Services.AddAutoMapper(typeof(Program));
 

@@ -1,9 +1,12 @@
 using BookManagementSystem.Application.Dtos.User;
 using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Wrappers;
+using BookManagementSystem.Application.Wrappers;
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Helpers;
 using BookManagementSystem.Helpers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +23,7 @@ namespace BookManagementSystem.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUriService _uriService;
+        private readonly IUriService _uriService;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
         private readonly UserManager<User> _userManager;
@@ -29,8 +33,15 @@ namespace BookManagementSystem.Api.Controllers
         IValidator<RegisterDto> registerValidator,
         IValidator<LoginDto> loginValidator,
         UserManager<User> userManager)
+        public UserController(
+        IUserService userService,
+        IUriService uriService,
+        IValidator<RegisterDto> registerValidator,
+        IValidator<LoginDto> loginValidator,
+        UserManager<User> userManager)
         {
             _userService = userService;
+            _uriService = uriService;
             _uriService = uriService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
@@ -50,6 +61,7 @@ namespace BookManagementSystem.Api.Controllers
             if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
             return Ok(new Response<UserDto>(userDto));
+            return Ok(new Response<UserDto>(userDto));
         }
 
         [HttpPost("login")]
@@ -65,11 +77,12 @@ namespace BookManagementSystem.Api.Controllers
             if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
             return Ok(new Response<UserDto>(userDto));
+            return Ok(new Response<UserDto>(userDto));
         }
 
         [HttpGet]
-        // [Authorize(Roles = "Manager")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Manager")]
+        // [AllowAnonymous]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserQuery userQuery)
         {
             var users = await _userService.GetAllUsers(userQuery);

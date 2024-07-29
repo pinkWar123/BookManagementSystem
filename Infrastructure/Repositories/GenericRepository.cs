@@ -30,7 +30,7 @@ namespace BookManagementSystem.Data.Repositories
             return await _context.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(string id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await GetContext().FindAsync(id);
         }
@@ -86,8 +86,8 @@ namespace BookManagementSystem.Data.Repositories
 
 
             }
-            var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
-            return items.Skip(skipNumber).Take(queryObject.PageSize);
+
+            return items;
         }
         public async Task<List<T>?> GetValuesAsync(QueryObject queryObject)
         {
@@ -106,7 +106,7 @@ namespace BookManagementSystem.Data.Repositories
             GetContext().RemoveRange(entities);
         }
 
-        public async Task<T?> UpdateAsync<TUpdateDto>(string id, TUpdateDto entity) where TUpdateDto : class
+        public async Task<T?> UpdateAsync<TUpdateDto>(int id, TUpdateDto entity) where TUpdateDto : class
         {
             var existingEntity = await GetByIdAsync(id);
             if (existingEntity == null)
@@ -144,8 +144,10 @@ namespace BookManagementSystem.Data.Repositories
             return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameter);
         }
 
-
-
+        public Task<int> SaveChangesAsync()
+        {
+            return _context.SaveChangesAsync();
+        }
 
     }
 }

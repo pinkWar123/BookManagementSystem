@@ -18,9 +18,9 @@ namespace BookManagementSystem.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<PaymentReceipt> PaymentReceipts { get; set; }
 
-        public DbSet<DeptReport> DeptReports { get; set; }
+        public DbSet<DebtReport> DebtReports { get; set; }
 
-        public DbSet<DeptReportDetail> DeptReportDetails { get; set; }
+        public DbSet<DebtReportDetail> DebtReportDetails { get; set; }
 
         public DbSet<Invoice> Invoices { get; set; }
 
@@ -54,16 +54,20 @@ namespace BookManagementSystem.Data
             builder.Entity<Customer>()
                 .HasKey(p => p.Id);
 
+            builder.Entity<Customer>()
+                .Property(c => c.Id);
+                
+
             //payment Receive : 
             builder.Entity<PaymentReceipt>()
                 .HasKey(p => p.Id);
 
-            //Dept Report : 
-            builder.Entity<DeptReport>()
+            //Debt Report : 
+            builder.Entity<DebtReport>()
                 .HasKey(p => p.Id);
 
-            // Dept Report Details : 
-            builder.Entity<DeptReportDetail>()
+            // Debt Report Details : 
+            builder.Entity<DebtReportDetail>()
                 .HasKey(b => new { b.ReportID, b.CustomerID });
 
             //Invoice : 
@@ -119,17 +123,17 @@ namespace BookManagementSystem.Data
             .HasForeignKey(bed => bed.CustomerID)
             .HasConstraintName("FK_PaymentReceipt_Customer");
 
-            builder.Entity<DeptReportDetail>()
-            .HasOne(bed => bed.DeptReport)
-            .WithMany(be => be.DeptReportDetails)
+            builder.Entity<DebtReportDetail>()
+            .HasOne(bed => bed.DebtReport)
+            .WithMany(be => be.DebtReportDetails)
             .HasForeignKey(bed => bed.ReportID)
-            .HasConstraintName("FK_DeptReportDetail_DeptReport");
+            .HasConstraintName("FK_DebtReportDetail_DebtReport");
 
-            builder.Entity<DeptReportDetail>()
+            builder.Entity<DebtReportDetail>()
             .HasOne(bed => bed.Customer)
-            .WithMany(be => be.DeptReportDetails)
+            .WithMany(be => be.DebtReportDetails)
             .HasForeignKey(bed => bed.CustomerID)
-            .HasConstraintName("FK_DeptReportDetail_Customer");
+            .HasConstraintName("FK_DebtReportDetail_Customer");
 
             builder.Entity<Invoice>()
             .HasOne(bed => bed.Customer)

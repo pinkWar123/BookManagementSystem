@@ -9,7 +9,7 @@ namespace BookManagementSystem.Domain.Entities
         [StringLength(45)]
         public required string CustomerName { get; set; }
 
-        public required int TotalDept { get; set; }
+        public required int TotalDebt { get; set; }
 
         [StringLength(150)]
         public required string Address { get; set; }
@@ -24,7 +24,7 @@ namespace BookManagementSystem.Domain.Entities
 
         public ICollection<PaymentReceipt>? PaymentReceipts { get; set; }
 
-        public ICollection<DeptReportDetail>? DeptReportDetails { get; set; }
+        public ICollection<DebtReportDetail>? DebtReportDetails { get; set; }
 
         public ICollection<Invoice>? Invoices { get; set; }
 

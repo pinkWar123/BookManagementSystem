@@ -117,6 +117,7 @@ namespace BookManagementSystem.Application.Services
         {
             var user = _mapper.Map<User>(registerDto);
             var createUser = await _userManager.CreateAsync(user, registerDto.Password);
+            var createUser = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (createUser.Succeeded)
             {
@@ -128,17 +129,25 @@ namespace BookManagementSystem.Application.Services
                     Message = "Đăng ký thành công!",
                     IsAuthenticated = true,
                     Username = createdUser.UserName ?? "",
-                    Email = createdUser.Email,
+                    Email = createdUser.Email ?? null,
                     Token = token,
                     Roles = new List<string>() { Roles.Customer.ToString() }
                 };
             }
-
-            return new UserDto
+            else
             {
-                Username = "",
-                IsAuthenticated = false
-            };
+                return new UserDto
+                {
+                    Errors = createUser.Errors.Select(error => error.Description).ToList(),
+                    Username = ""
+                };
+            }
+
+            // return new UserDto
+            // {
+            //     Username = "",
+            //     IsAuthenticated = false
+            // };
         }
 
 
@@ -170,7 +179,7 @@ namespace BookManagementSystem.Application.Services
 
             foreach (var user in users)
             {
-                var role = await _userManager.GetRolesAsync(user);
+                IList<string>? role = await _userManager.GetRolesAsync(user);
                 userDtos.Add(new UserViewDto
                 {
                     Id = user.Id,

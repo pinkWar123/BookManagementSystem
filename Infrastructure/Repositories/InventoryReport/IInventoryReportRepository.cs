@@ -8,7 +8,5 @@ using BookManagementSystem.Domain.Entities;
 namespace BookManagementSystem.Infrastructure.Repositories.InventoryReport
 {
     public interface IInventoryReportRepository : IGenericRepository<Domain.Entities.InventoryReport>
-    {
-
-    }
+    { }
 }

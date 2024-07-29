@@ -8,15 +8,15 @@ namespace BookManagementSystem.Data.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<T?> GetByIdAsync(string id);
+        Task<T?> GetByIdAsync(int id);
         Task<List<T>?> GetValuesAsync(QueryObject queryObject);
         IQueryable<T>? GetValuesByQuery(QueryObject queryObject);
         Task<List<T>?> FindAllAsync(Expression<Func<T, bool>> predicate);
         Task AddAsync(T entity);
         Task AddRangeAsync(List<T> entities);
-        public Task<T?> UpdateAsync<TUpdateDto>(string id, TUpdateDto entity) where TUpdateDto : class;
+        public Task<T?> UpdateAsync<TUpdateDto>(int id, TUpdateDto entity) where TUpdateDto : class;
         void Remove(T entity);
         void RemoveRange(List<T> entities);
-
+        Task<int> SaveChangesAsync();
     }
 }

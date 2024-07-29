@@ -10,13 +10,9 @@ namespace BookManagementSystem.Domain.Entities
 
     public class InvoiceDetail
     {
-        [StringLength(5)]
-        [Column(TypeName = "char(5)")]
-        public required string InvoiceID { get; set; }
+        public int InvoiceID { get; set; }
 
-        [StringLength(5)]
-        [Column(TypeName = "char(5)")]
-        public required string BookID { get; set; }
+        public int BookID { get; set; }
         public required int Quantity { get; set; }
 
         public required int Price { get; set; }
