@@ -23,16 +23,10 @@ namespace BookManagementSystem.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUriService _uriService;
-        private readonly IUriService _uriService;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
         private readonly UserManager<User> _userManager;
-        public UserController(
-        IUserService userService,
-        IUriService uriService,
-        IValidator<RegisterDto> registerValidator,
-        IValidator<LoginDto> loginValidator,
-        UserManager<User> userManager)
+        
         public UserController(
         IUserService userService,
         IUriService uriService,
@@ -41,7 +35,6 @@ namespace BookManagementSystem.Api.Controllers
         UserManager<User> userManager)
         {
             _userService = userService;
-            _uriService = uriService;
             _uriService = uriService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
@@ -61,7 +54,6 @@ namespace BookManagementSystem.Api.Controllers
             if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
             return Ok(new Response<UserDto>(userDto));
-            return Ok(new Response<UserDto>(userDto));
         }
 
         [HttpPost("login")]
@@ -76,7 +68,6 @@ namespace BookManagementSystem.Api.Controllers
 
             if (!userDto.IsAuthenticated) return BadRequest(userDto);
 
-            return Ok(new Response<UserDto>(userDto));
             return Ok(new Response<UserDto>(userDto));
         }
 

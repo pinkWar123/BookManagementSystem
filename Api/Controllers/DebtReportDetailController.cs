@@ -82,7 +82,7 @@ namespace BookManagementSystem.Api.Controllers
         //     return Ok(pagedResponse);
         // }
 
-        [HttpGet("{reportId, customerId}")]
+        [HttpGet("{reportId}/{customerId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetDebtReportDetailById([FromRoute] int reportId, [FromRoute] int customerId)
         {

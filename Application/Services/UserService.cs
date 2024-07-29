@@ -117,7 +117,7 @@ namespace BookManagementSystem.Application.Services
         {
             var user = _mapper.Map<User>(registerDto);
             var createUser = await _userManager.CreateAsync(user, registerDto.Password);
-            var createUser = await _userManager.CreateAsync(user, registerDto.Password);
+            
 
             if (createUser.Succeeded)
             {
@@ -142,12 +142,6 @@ namespace BookManagementSystem.Application.Services
                     Username = ""
                 };
             }
-
-            // return new UserDto
-            // {
-            //     Username = "",
-            //     IsAuthenticated = false
-            // };
         }
 
 
@@ -189,6 +183,7 @@ namespace BookManagementSystem.Application.Services
                     Roles = role as List<string> ?? []
                 });
             }
+            
             return userDtos;
         }
 

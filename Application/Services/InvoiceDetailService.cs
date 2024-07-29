@@ -9,6 +9,7 @@ using BookManagementSystem.Infrastructure.Repositories.InvoiceDetail;
 using BookManagementSystem.Application.Validators;
 using FluentValidation;
 using FluentValidation.Results;
+using BookManagementSystem.Application.Exceptions;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -41,10 +42,11 @@ namespace BookManagementSystem.Application.Services
 
             var invoiceDetail = _mapper.Map<InvoiceDetail>(createInvoiceDetailDto);
             await _invoiceDetailRepository.AddAsync(invoiceDetail);
+            await _invoiceDetailRepository.SaveChangesAsync();
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }
 
-        public async Task<InvoiceDetailDto> UpdateInvoiceDetail(string InvoiceID, string BookID, UpdateInvoiceDetailDto updateInvoiceDetailDto)
+        public async Task<InvoiceDetailDto> UpdateInvoiceDetail(int InvoiceID, int BookID, UpdateInvoiceDetailDto updateInvoiceDetailDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(updateInvoiceDetailDto);
             if (!validationResult.IsValid)
@@ -53,34 +55,33 @@ namespace BookManagementSystem.Application.Services
             }
 
             // write again GetByIdAsync
-            // var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
-            var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
+            var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
+            
 
             if (existingDetail == null)
             {
-                throw new KeyNotFoundException($"InvoiceDetail with InvoiceID {InvoiceID} and BookID {BookID} not found.");
+                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với InvoiceID {InvoiceID} và BookID {BookID}");
             }
 
             _mapper.Map(updateInvoiceDetailDto, existingDetail);
 
-            // write again UpdateAsync
-            // var updatedDetail = await _invoiceDetailRepository.UpdateAsync(InvoiceID, BookID, existingDetail);
-            var updatedDetail = await _invoiceDetailRepository.UpdateAsync(InvoiceID, existingDetail);
+            var updatedDetail = await _invoiceDetailRepository.UpdateAsync(InvoiceID, BookID, existingDetail);
+            await _invoiceDetailRepository.SaveChangesAsync();
 
             return _mapper.Map<InvoiceDetailDto>(updatedDetail);
         }
 
-        public async Task<InvoiceDetailDto> GetInvoiceDetailById(string InvoiceID, string BookID)
+        public async Task<InvoiceDetailDto> GetInvoiceDetailById(int InvoiceID, int BookID)
         {
             // var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
             if (invoiceDetail == null)
-                throw new KeyNotFoundException($"InvoiceDetail with InvoiceID {InvoiceID} and BookID {BookID} not found.");
+                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với InvoiceID {InvoiceID} và BookID {BookID}");
             
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }
 
-        public async Task<bool> DeleteInvoiceDetail(string InvoiceID, string BookID)
+        public async Task<bool> DeleteInvoiceDetail(int InvoiceID, int BookID)
         {
             // var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
@@ -88,6 +89,7 @@ namespace BookManagementSystem.Application.Services
                 return false;
         
             _invoiceDetailRepository.Remove(invoiceDetail);
+            await _invoiceDetailRepository.SaveChangesAsync();
             return true;
         }
     }

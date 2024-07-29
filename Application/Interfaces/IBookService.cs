@@ -12,7 +12,6 @@ namespace BookManagementSystem.Application.Interfaces
         Task<BookDto> UpdateBook(int BookId, UpdateBookDto updateBookDto);
         Task<BookDto> GetBookById(int BookId);
         Task<bool> DeleteBook(int BookId);
-
         Task<bool> CheckBookExists(int bookId);
     }
 }

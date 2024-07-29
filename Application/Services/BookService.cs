@@ -16,20 +16,20 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateBookValidator> _createValidator;
-        private readonly IValidator<UpdateBookValidator> _updateValidator;
+        private readonly IValidator<CreateBookDto> _createValidator;
+        private readonly IValidator<UpdateBookDto> _updateValidator;
 
 
         public BookService(
             IBookRepository bookRepository,
             IMapper mapper,
-            IValidator<CreateBookValidator> _createValidator,
-            IValidator<UpdateBookValidator> _updateValidator)
+            IValidator<CreateBookDto> createValidator,
+            IValidator<UpdateBookDto> updateValidator)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
-            this._createValidator = _createValidator;
-            this._updateValidator = _updateValidator;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         public async Task<bool> CheckBookExists(int bookId)
@@ -74,7 +74,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookDto> UpdateBook(int BookId, UpdateBookDto updateBookDto)
         {
-            var validationResult = await _createValidator.ValidateAsync((IValidationContext)updateBookDto);
+            var validationResult = await _updateValidator.ValidateAsync(updateBookDto);
             if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors);

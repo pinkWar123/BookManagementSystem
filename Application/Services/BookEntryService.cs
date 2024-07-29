@@ -10,6 +10,7 @@ using BookManagementSystem.Infrastructure.Repositories.BookEntry;
 using BookManagementSystem.Application.Validators;
 using FluentValidation;
 using FluentValidation.Results;
+using BookManagementSystem.Application.Exceptions;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -43,10 +44,11 @@ namespace BookManagementSystem.Application.Services
 
             var bookEntry = _mapper.Map<Domain.Entities.BookEntry>(createBookEntryDto);
             await _bookEntryRepository.AddAsync(bookEntry);
+            await _bookEntryRepository.SaveChangesAsync();
             return _mapper.Map<BookEntryDto>(bookEntry);
         }
 
-        public async Task<BookEntryDto> UpdateBookEntry(string EntryID, UpdateBookEntryDto updateBookEntryDto)
+        public async Task<BookEntryDto> UpdateBookEntry(int EntryID, UpdateBookEntryDto updateBookEntryDto)
         {   
             
             var validationResult = await _updateValidator.ValidateAsync(updateBookEntryDto);
@@ -57,28 +59,29 @@ namespace BookManagementSystem.Application.Services
             var existingEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (existingEntry == null)
             {
-                throw new KeyNotFoundException($"BookEntry with ID {EntryID} not found.");
+                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}.");
             }
 
             _mapper.Map(updateBookEntryDto, existingEntry);
             var updatedEntry = await _bookEntryRepository.UpdateAsync(EntryID, existingEntry);
+            await _bookEntryRepository.SaveChangesAsync();
             return _mapper.Map<BookEntryDto>(updatedEntry);
         }
 
-        public async Task<BookEntryDto> GetBookEntryById(string EntryID)
+        public async Task<BookEntryDto> GetBookEntryById(int EntryID)
         {
             
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
             {
-                throw new KeyNotFoundException($"BookEntry with ID {EntryID} not found.");
+                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}.");
             }
             return _mapper.Map<BookEntryDto>(bookEntry);
         }
 
        
 
-        public async Task<bool> DeleteBookEntry(string EntryID)
+        public async Task<bool> DeleteBookEntry(int EntryID)
         {
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
@@ -86,6 +89,8 @@ namespace BookManagementSystem.Application.Services
                 return false;
             }
             _bookEntryRepository.Remove(bookEntry);
+            await _bookEntryRepository.SaveChangesAsync();
+            
             return true;
         }
     }

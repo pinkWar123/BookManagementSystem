@@ -12,6 +12,20 @@ namespace BookManagementSystem.Infrastructure.Repositories.InvoiceDetail
         public InvoiceDetailRepository(ApplicationDBContext applicationDbContext) : base(applicationDbContext)
         {
         }
+        public async Task<Domain.Entities.InvoiceDetail?> GetByIdAsync(int InvoiceID, int BookID)
+        {
+            return await _context.Set<Domain.Entities.InvoiceDetail>().FindAsync(InvoiceID, BookID);
+        }
+        public async Task<Domain.Entities.InvoiceDetail?> UpdateAsync<TUpdateDto>(int InvoiceID, int BookID, TUpdateDto entity) where TUpdateDto : class
+        {
+            var existingEntity = await GetByIdAsync(InvoiceID, BookID);
+            if (existingEntity == null)
+            {
+            return null;
+            }
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+            return existingEntity;
+        }
     }
 
 }

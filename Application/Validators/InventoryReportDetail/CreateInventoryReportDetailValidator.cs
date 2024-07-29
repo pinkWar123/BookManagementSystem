@@ -7,13 +7,6 @@ namespace BookManagementSystem.Application.Validators
     {
         public CreateInventoryReportDetailValidator()
         {
-            RuleFor(x => x.ReportID)
-                .NotEmpty().WithMessage("Mã báo cáo không được để trống.")
-                .Length(5).WithMessage("Mã báo cáo phải có độ dài là 5 ký tự.");
-
-            RuleFor(x => x.BookID)
-                .NotEmpty().WithMessage("Mã khách hàng không được để trống.")
-                .Length(5).WithMessage("Mã sách phải có độ dài là 5 ký tự.");
 
             RuleFor(x => x.InitialStock)
                 .NotEmpty().WithMessage("Số lượng ban đầu không được để trống.")

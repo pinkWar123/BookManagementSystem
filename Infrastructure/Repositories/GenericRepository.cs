@@ -11,6 +11,12 @@ namespace BookManagementSystem.Data.Repositories
         {
             _context = applicationDbContext;
         }
+
+        public GenericRepository()
+        {
+        }
+
+
         public DbSet<T> GetContext()
         {
             return _context.Set<T>();
@@ -83,7 +89,6 @@ namespace BookManagementSystem.Data.Repositories
                 {
                     items = items.Where(CreateWhereExpression<T>(property.Name, stringValue));
                 }
-
 
             }
 
