@@ -48,7 +48,20 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InventoryReportDetailDto>(InventoryReport);
         }
 
-        public async Task<bool> DeleteInventoryReportDetail(string reportId, string BookID)
+        public async Task<bool> DeleteAllInventoryReportDetailWithReportId(int reportId) {
+            var InventoryReportDetaillist = await _inventoryReportDetailRepository.GetListInventoryReportDetailsByIdAsync(reportId);
+            if(InventoryReportDetaillist == null)
+                return false;
+            
+            foreach (var temp in InventoryReportDetaillist)
+            {
+                _inventoryReportDetailRepository.Remove(temp);
+            }
+            await _inventoryReportDetailRepository.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteInventoryReportDetail(int reportId, int BookID)
         {
             // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             var InventoryReportDetail = await _inventoryReportDetailRepository.GetByIdAsync(reportId);
@@ -61,7 +74,7 @@ namespace BookManagementSystem.Application.Services
             return true;
         }
 
-        public async Task<InventoryReportDetailDto> GetInventoryReportDetailById(string reportId, string BookID)
+        public async Task<InventoryReportDetailDto> GetInventoryReportDetailById(int reportId, int BookID)
         {
             var existingReport = await _inventoryReportDetailRepository.GetByIdAsync(reportId, BookID);
             if (existingReport == null)
@@ -70,11 +83,11 @@ namespace BookManagementSystem.Application.Services
             }
 
             //_mapper.Map(_updateInventoryReportDetailDto, existingReport);
-            
+
             return _mapper.Map<InventoryReportDetailDto>(existingReport);
         }
 
-        public async Task<InventoryReportDetailDto> UpdateInventoryReportDetail(string reportId, string BookID, UpdateInventoryReportDetailDto _updateInventoryReportDetailDto)
+        public async Task<InventoryReportDetailDto> UpdateInventoryReportDetail(int reportId, int BookID, UpdateInventoryReportDetailDto _updateInventoryReportDetailDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(_updateInventoryReportDetailDto);
             if (!validationResult.IsValid)
@@ -94,5 +107,7 @@ namespace BookManagementSystem.Application.Services
             await _inventoryReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<InventoryReportDetailDto>(updatedReport);
         }
+
+       
     }
 }

@@ -1,13 +1,15 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.User;
 using BookManagementSystem.Application.Exceptions;
-using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
-using BookManagementSystem.Data.Repositories;
+using BookManagementSystem.Application.Wrappers;
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Helpers;
 using BookManagementSystem.Infrastructure.Repositories.User;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -115,6 +117,7 @@ namespace BookManagementSystem.Application.Services
         {
             var user = _mapper.Map<User>(registerDto);
             var createUser = await _userManager.CreateAsync(user, registerDto.Password);
+            
 
             if (createUser.Succeeded)
             {
@@ -139,30 +142,48 @@ namespace BookManagementSystem.Application.Services
                     Username = ""
                 };
             }
-
-            // return new UserDto
-            // {
-            //     Username = "",
-            //     IsAuthenticated = false
-            // };
         }
 
 
         public async Task<List<UserViewDto>?> GetAllUsers(UserQuery userQuery)
         {
-            List<User>? users = await _userManager.Users
-                .ToListAsync();
+            var users = await _userManager.Users.ToListAsync();
+
+            if (userQuery.FullName != null)
+            {
+                var normalizedSearchTerm = userQuery.FullName.RemoveDiacritics().ToLower();
+                Console.WriteLine(normalizedSearchTerm);
+                users = users.Where(u => Regex.IsMatch(u.FullName.RemoveDiacritics().ToLower(), normalizedSearchTerm, RegexOptions.IgnoreCase)).ToList();
+            }
+
+            if(userQuery.Role != null)
+            {
+                for(int i = 0; i < users.Count; i++)
+                {
+                    var role = await _userManager.GetRolesAsync(users[i]);
+                    if(!role.Contains(userQuery.Role))
+                    {
+                        users.RemoveAt(i);
+                        --i;
+                    }
+                }
+            }
+
             var userDtos = new List<UserViewDto>();
-            foreach (User user in users)
+
+            foreach (var user in users)
             {
                 IList<string>? role = await _userManager.GetRolesAsync(user);
                 userDtos.Add(new UserViewDto
                 {
+                    Id = user.Id,
                     UserName = user.UserName ?? "",
+                    FullName = user.FullName,
                     Email = user.Email,
                     Roles = role as List<string> ?? []
                 });
             }
+            
             return userDtos;
         }
 
@@ -170,5 +191,31 @@ namespace BookManagementSystem.Application.Services
         {
             return await _userManager.FindByNameAsync(username) != null;
         }
+
+        public async Task<UserDto> GetUserByAccessToken(string accessToken)
+        {
+            var userId = _tokenService.GetUserIdFromToken(accessToken);
+
+            if (userId == null) throw new BaseException("Access token không tồn tại", System.Net.HttpStatusCode.BadRequest);
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null) throw new BaseException("User không tồn tại", System.Net.HttpStatusCode.NotFound);
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var userDto = new UserDto
+            {
+                Message = "Tìm thấy user",
+                IsAuthenticated = false,
+                Username = user.UserName,
+                Email = user.Email ?? null,
+                Token = accessToken,
+                Roles = roles as List<string>
+            };
+
+            return userDto;
+        }
+
     }
 }

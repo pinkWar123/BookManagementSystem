@@ -9,10 +9,9 @@ namespace BookManagementSystem.Application.Interfaces
     public interface IBookService
     {
         Task<BookDto> CreateBook(CreateBookDto createBookDto);
-        Task<BookDto> UpdateBook(string BookId, UpdateBookDto updateBookDto);
-        Task<BookDto> GetBookById(string BookId);
-        Task<bool> DeleteBook(string BookId);
-
-        Task<bool> CheckBookExists(string bookId);
+        Task<BookDto> UpdateBook(int BookId, UpdateBookDto updateBookDto);
+        Task<BookDto> GetBookById(int BookId);
+        Task<bool> DeleteBook(int BookId);
+        Task<bool> CheckBookExists(int bookId);
     }
 }

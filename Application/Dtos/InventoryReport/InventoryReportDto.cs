@@ -7,7 +7,7 @@ namespace BookManagementSystem.Application.Dtos.InventoryReport
 {
     public class InventoryReportDto 
     {
-        public required string ReportID { get; set; }
+        public required int ReportID { get; set; }
         public required int ReportMonth { get; set; }
         public required int ReportYear { get; set; }
     }

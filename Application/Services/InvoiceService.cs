@@ -10,6 +10,7 @@ using BookManagementSystem.Infrastructure.Repositories.Invoice;
 using BookManagementSystem.Application.Validators;
 using FluentValidation;
 using FluentValidation.Results;
+using BookManagementSystem.Application.Exceptions;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -43,10 +44,11 @@ namespace BookManagementSystem.Application.Services
 
             var invoice = _mapper.Map<Domain.Entities.Invoice>(createInvoiceDto);
             await _invoiceRepository.AddAsync(invoice);
+            await _invoiceRepository.SaveChangesAsync();
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
-        public async Task<InvoiceDto> UpdateInvoice(string EntryID, UpdateInvoiceDto updateInvoiceDto)
+        public async Task<InvoiceDto> UpdateInvoice(int  InvoiceID, UpdateInvoiceDto updateInvoiceDto)
         {   
             
             var validationResult = await _updateValidator.ValidateAsync(updateInvoiceDto);
@@ -54,38 +56,40 @@ namespace BookManagementSystem.Application.Services
             {
                 throw new ValidationException(validationResult.Errors);
             }
-            var existingEntry = await _invoiceRepository.GetByIdAsync(EntryID);
+            var existingEntry = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (existingEntry == null)
             {
-                throw new KeyNotFoundException($"Invoice with ID {EntryID} not found.");
+                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
             }
 
             _mapper.Map(updateInvoiceDto, existingEntry);
-            var updatedEntry = await _invoiceRepository.UpdateAsync(EntryID, existingEntry);
+            var updatedEntry = await _invoiceRepository.UpdateAsync(InvoiceID, existingEntry);
+            await _invoiceRepository.SaveChangesAsync();
             return _mapper.Map<InvoiceDto>(updatedEntry);
         }
 
-        public async Task<InvoiceDto> GetInvoiceById(string EntryID)
+        public async Task<InvoiceDto> GetInvoiceById(int InvoiceID)
         {
             
-            var invoice = await _invoiceRepository.GetByIdAsync(EntryID);
+            var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
-                throw new KeyNotFoundException($"Invoice with ID {EntryID} not found.");
+                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
             }
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
        
 
-        public async Task<bool> DeleteInvoice(string EntryID)
+        public async Task<bool> DeleteInvoice(int InvoiceID)
         {
-            var invoice = await _invoiceRepository.GetByIdAsync(EntryID);
+            var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
                 return false;
             }
             _invoiceRepository.Remove(invoice);
+            await _invoiceRepository.SaveChangesAsync();
             return true;
         }
     }

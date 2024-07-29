@@ -1,9 +1,9 @@
 namespace BookManagementSystem.Application.Dtos.InvoiceDetail
 {
+    //properties: InvoiceID, BookID, Quantity, Price
     public class CreateInvoiceDetailDto
     {
-        public string? InvoiceID { get; set; }
-        public string? InvoiceDate { get; set; }
-        public string? CustomerID { get; set; }
+        public int Quantity { get; set; }
+        public double Price { get; set; }
     }
 }

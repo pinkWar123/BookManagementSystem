@@ -7,14 +7,6 @@ namespace BookManagementSystem.Application.Validators
     {
         public CreateDebtReportDetailValidator()
         {
-            RuleFor(x => x.ReportID)
-                .NotEmpty().WithMessage("Mã báo cáo không được để trống.")
-                .Length(5).WithMessage("Mã báo cáo phải có độ dài là 5 ký tự.");
-
-            RuleFor(x => x.CustomerID)
-                .NotEmpty().WithMessage("Mã khách hàng không được để trống.")
-                .Length(5).WithMessage("Mã khách hàng phải có độ dài là 5 ký tự.");
-
             RuleFor(x => x.InitialDebt)
                 .NotEmpty().WithMessage("Số nợ ban đầu không được để trống.")
                 .GreaterThanOrEqualTo(0).WithMessage("Số nợ ban đầu phải là số không âm.");

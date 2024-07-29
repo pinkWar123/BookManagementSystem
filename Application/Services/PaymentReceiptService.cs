@@ -6,6 +6,8 @@ using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.PaymentReceipt;
 using FluentValidation;
 using FluentValidation.Results;
+using BookManagementSystem.Application.Exceptions;
+using System.Net;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -53,7 +55,7 @@ namespace BookManagementSystem.Application.Services
             var updatedReceipt = await _paymentReceiptRepository.UpdateAsync(receiptId, updatePaymentReceiptDto);
             if (updatedReceipt == null)
             {
-                throw new KeyNotFoundException($"PaymentReceipt with ID {receiptId} not found.");
+                throw new PaymentReceiptException($"Không tìm thấy hóa đơn với ID {receiptId}.", HttpStatusCode.NotFound);
             }
             await _paymentReceiptRepository.SaveChangesAsync();
             return _mapper.Map<PaymentReceiptDto>(updatedReceipt);
@@ -64,7 +66,7 @@ namespace BookManagementSystem.Application.Services
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)
             {
-                throw new KeyNotFoundException($"PaymentReceipt with ID {receiptId} not found.");
+                throw new PaymentReceiptException($"Không tìm thấy hóa đơn với ID {receiptId}.", HttpStatusCode.NotFound);
             }
             return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }

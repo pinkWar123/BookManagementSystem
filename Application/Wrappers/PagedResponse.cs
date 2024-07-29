@@ -19,6 +19,7 @@ namespace BookManagementSystem.Application.Wrappers
 
         public PagedResponse(T data, int pageNumber, int pageSize, string? message, string[]? errors, bool? succeeded)
         {
+            Data = data;
             PageNumber = pageNumber;
             PageSize = pageSize;
             Message = message ?? string.Empty;

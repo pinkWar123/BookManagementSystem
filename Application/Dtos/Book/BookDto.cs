@@ -7,7 +7,7 @@ namespace BookManagementSystem.Application.Dtos.Book
 {
     public class BookDto
     {
-        public required string BookId { get; set; }
+        public required int BookId { get; set; }
         public required string Title { get; set; }
 
         public required string Genre { get; set; }

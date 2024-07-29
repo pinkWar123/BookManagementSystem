@@ -51,7 +51,7 @@ namespace BookManagementSystem.Application.Services
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwt.DurationInMinutes),
+                expires: DateTime.UtcNow.AddMinutes(_jwt.DurationInMinute),
                 signingCredentials: signingCredentials
             );
 

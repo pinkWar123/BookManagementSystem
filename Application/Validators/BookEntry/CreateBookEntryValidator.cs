@@ -13,8 +13,6 @@ namespace BookManagementSystem.Application.Validators
         }
         public CreateBookEntryValidator()
         {
-            RuleFor(x => x.EntryID).NotEmpty().WithMessage("EntryID không được để trống");
-
             RuleFor(x => x.EntryDate)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("")

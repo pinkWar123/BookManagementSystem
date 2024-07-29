@@ -14,12 +14,13 @@ namespace BookManagementSystem.Application.Mappers
         {
 
             CreateMap<CreateBookDto, Book>()
-            .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
+                .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
 
             CreateMap<UpdateBookDto, Book>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); 
 
-            CreateMap<Book, BookDto>();
+            CreateMap<Book, BookDto>()
+                .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => src.Id));
         }
     }
 }

@@ -8,6 +8,7 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.InventoryReport;
+using BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail;
 using FluentValidation;
 using FluentValidation.Results;
 namespace BookManagementSystem.Application.Services
@@ -15,6 +16,7 @@ namespace BookManagementSystem.Application.Services
     public class InventoryReportService : IInventoryReportService
     {
         private readonly IInventoryReportRepository _inventoryReportRepository;
+        private readonly IInventoryReportDetailService _inventoryReportDetailService;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateInventoryReportDto> _createValidator;
         private readonly IValidator<UpdateInventoryReportDto> _updateValidator;
@@ -22,11 +24,13 @@ namespace BookManagementSystem.Application.Services
 
         public InventoryReportService(
             IInventoryReportRepository _inventoryReportRepository,
+            IInventoryReportDetailRepository _inventoryReportDetailRepository,
             IMapper mapper,
             IValidator<CreateInventoryReportDto> _createValidator,
             IValidator<UpdateInventoryReportDto> _updateValidator)
         {
             this._inventoryReportRepository = _inventoryReportRepository;
+            this._inventoryReportDetailService = _inventoryReportDetailService;
             _mapper = mapper;
             this._createValidator = _createValidator;
             this._updateValidator = _updateValidator;
@@ -46,21 +50,23 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InventoryReportDto>(InventoryReport);
         }
 
-        public async Task<bool> DeleteInventoryReport(string reportId)
+        public async Task<bool> DeleteInventoryReport(int reportId)
         {
             var inventoryReport = await _inventoryReportRepository.GetByIdAsync(reportId);
             if (inventoryReport == null)
             {
                 return false;
             }
-
+            bool checkdelete = await _inventoryReportDetailService.DeleteAllInventoryReportDetailWithReportId(reportId);
+            if(checkdelete == false)
+                return false;
             _inventoryReportRepository.Remove(inventoryReport);
             await _inventoryReportRepository.SaveChangesAsync();
             
             return true;
         }
 
-        public async Task<InventoryReportDto> GetInventoryReportById(string reportId)
+        public async Task<InventoryReportDto> GetInventoryReportById(int reportId)
         {
             var inventoryReport = await _inventoryReportRepository.GetByIdAsync(reportId);
             if (inventoryReport == null)
@@ -71,7 +77,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InventoryReportDto>(inventoryReport);
         }
 
-        public async Task<InventoryReportDto> UpdateInventoryReport(string reportId, UpdateInventoryReportDto _updateInventoryReportDto)
+        public async Task<InventoryReportDto> UpdateInventoryReport(int reportId, UpdateInventoryReportDto _updateInventoryReportDto)
         {
             var validationResult = await _updateValidator.ValidateAsync(_updateInventoryReportDto);
             if (!validationResult.IsValid)

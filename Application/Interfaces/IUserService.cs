@@ -15,7 +15,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<UserDto> GetUserByToken(string token);
         Task<User?> GetCurrentUser();
         Task<List<UserViewDto>?> GetAllUsers(UserQuery userQuery);
-
         Task<bool> DoesUsernameExist(string username);
+        Task<UserDto> GetUserByAccessToken(string accessToken);
     }
 }

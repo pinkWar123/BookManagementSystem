@@ -11,3 +11,4 @@ obj/
 *.sln
 appsettings.json
 /Migrations
+.fake

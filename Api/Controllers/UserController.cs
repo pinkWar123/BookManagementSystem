@@ -1,9 +1,12 @@
 using BookManagementSystem.Application.Dtos.User;
 using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Wrappers;
+using BookManagementSystem.Application.Wrappers;
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Helpers;
 using BookManagementSystem.Helpers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +26,7 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
         private readonly UserManager<User> _userManager;
+        
         public UserController(
         IUserService userService,
         IUriService uriService,
@@ -85,7 +89,15 @@ namespace BookManagementSystem.Api.Controllers
         public async Task<IActionResult> DoesUserNameExist([FromQuery] string username)
         {
             var doesUserNameExist = await _userService.DoesUsernameExist(username);
-            return Ok(new Response<CheckUserDto>(new CheckUserDto{HasExisted = doesUserNameExist}));
+            return Ok(new Response<CheckUserDto>(new CheckUserDto { HasExisted = doesUserNameExist }));
+        }
+
+        [HttpGet("get-user")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserByAccessToken(string accessToken)
+        {
+            var userDto = await _userService.GetUserByAccessToken(accessToken);
+            return Ok(new Response<UserDto>(userDto));
         }
     }
 }

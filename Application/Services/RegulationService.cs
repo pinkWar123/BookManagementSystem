@@ -17,15 +17,15 @@ namespace BookManagementSystem.Application.Services
 
         private readonly IRegulationRepository _RegulationRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateRegulationValidator> _createValidator;
-        private readonly IValidator<UpdateRegulationValidator> _updateValidator;
+        private readonly IValidator<CreateRegulationDto> _createValidator;
+        private readonly IValidator<UpdateRegulationDto> _updateValidator;
 
 
         public RegulationService(
             IRegulationRepository RegulationRepository,
             IMapper mapper,
-            IValidator<CreateRegulationValidator> _createValidator,
-            IValidator<UpdateRegulationValidator> _updateValidator)
+            IValidator<CreateRegulationDto> _createValidator,
+            IValidator<UpdateRegulationDto> _updateValidator)
         {
             this._RegulationRepository = RegulationRepository;
             _mapper = mapper;
@@ -34,7 +34,7 @@ namespace BookManagementSystem.Application.Services
         }
         public async Task<RegulationDto> CreateRegulation(CreateRegulationDto createRegulationDto)
         {
-            var validationResult = await _createValidator.ValidateAsync((IValidationContext)createRegulationDto);
+            var validationResult = await _createValidator.ValidateAsync(createRegulationDto);
             if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors);
@@ -46,7 +46,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<RegulationDto>(book);
         }
 
-        public async Task<bool> DeleteRegulation(string RegulationId)
+        public async Task<bool> DeleteRegulation(int RegulationId)
         {
             var book = await _RegulationRepository.GetByIdAsync(RegulationId);
 
@@ -60,7 +60,7 @@ namespace BookManagementSystem.Application.Services
             return true;
         }
 
-        public async Task<RegulationDto> GetRegulationById(string RegulationId)
+        public async Task<RegulationDto> GetRegulationById(int RegulationId)
         {
             var regulation = await _RegulationRepository.GetByIdAsync(RegulationId);
 
@@ -72,9 +72,9 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<RegulationDto>(regulation);
         }
 
-        public async Task<RegulationDto> UpdateRegulation(string RegulationId, UpdateRegulationDto updateRegulationDto)
+        public async Task<RegulationDto> UpdateRegulation(int RegulationId, UpdateRegulationDto updateRegulationDto)
         {
-            var validationResult = await _createValidator.ValidateAsync((IValidationContext)updateRegulationDto);
+            var validationResult = await _updateValidator.ValidateAsync(updateRegulationDto);
             if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors);

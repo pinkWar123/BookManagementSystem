@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Application.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
