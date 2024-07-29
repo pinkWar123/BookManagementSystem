@@ -9,7 +9,9 @@ using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.DebtReportDetail;
 using FluentValidation;
 using FluentValidation.Results;
-
+using BookManagementSystem.Application.Exceptions;
+using System.Net;
+ 
 namespace BookManagementSystem.Application.Services
 {
     public class DebtReportDetailService : IDebtReportDetailService
@@ -54,30 +56,26 @@ namespace BookManagementSystem.Application.Services
             }
 
             // write again GetByIdAsync
-            // var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-            var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
+            var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
 
             if (existingDetail == null)
             {
-                throw new KeyNotFoundException($"DebtReportDetail with ReportID {reportId} and CustomerID {customerId} not found.");
+                throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(updateDebtReportDetailDto, existingDetail);
 
-            // write again UpdateAsync
-            // var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, customerId, existingDetail);
-            var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, existingDetail);
+            var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, customerId, existingDetail);
             await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(updatedDetail);
         }
 
         public async Task<DebtReportDetailDto> GetDebtReportDetailById(int reportId, int customerId)
         {
-            // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
+            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             if (debtReportDetail == null)
             {
-                throw new KeyNotFoundException($"DebtReportDetail with ReportID {reportId} and CustomerID {customerId} not found.");
+                throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
             }
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
         }
@@ -90,8 +88,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<bool> DeleteDebtReportDetail(int reportId, int customerId)
         {
-            // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId);
+            var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             if (debtReportDetail == null)
             {
                 return false;

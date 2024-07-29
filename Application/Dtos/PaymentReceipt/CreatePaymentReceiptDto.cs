@@ -9,6 +9,6 @@ namespace BookManagementSystem.Application.Dtos.PaymentReceipt
     {
         public DateTime? ReceiptDate { get; set; }
         public int? Amount { get; set; }
-        public string? CustomerID { get; set; }
+        public int? CustomerID { get; set; }
     }
 }

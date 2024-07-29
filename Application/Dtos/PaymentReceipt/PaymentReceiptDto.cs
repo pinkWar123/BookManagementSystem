@@ -7,9 +7,9 @@ namespace BookManagementSystem.Application.Dtos.PaymentReceipt
 {
     public class PaymentReceiptDto
     {
-        public required string ReceiptID { get; set; }
+        // public required int ReceiptID { get; set; }
         public required DateTime ReceiptDate { get; set; }
-    public required int Amount { get; set; }
-    public required string CustomerID { get; set; }
-}
+        public required int Amount { get; set; }
+        public required int CustomerID { get; set; }
+    }
 }
