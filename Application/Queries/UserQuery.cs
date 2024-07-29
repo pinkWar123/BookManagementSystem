@@ -8,6 +8,7 @@ namespace BookManagementSystem.Application.Queries
 {
     public class UserQuery : QueryObject
     {
-
+        public string? FullName { get; set; }
+        public string? Role { get; set; }
     }
 }
