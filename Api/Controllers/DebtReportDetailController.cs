@@ -42,7 +42,7 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Response<DebtReportDetailDto>(createdDebtReportDetail));
         }
 
-        [HttpPut("{reportId, customerId}")]
+        [HttpPut("{reportId}/{customerId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateDebtReportDetail([FromRoute] int reportId, [FromRoute] int customerId, UpdateDebtReportDetailDto updateDebtReportDetailDto)
         {
@@ -93,7 +93,7 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Response<DebtReportDetailDto>(debtReportDetail));
         }
 
-        [HttpDelete("{reportId, customerId}")]
+        [HttpDelete("{reportId}/{customerId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteDebtReportDetail([FromRoute] int reportId, [FromRoute] int customerId)
         {
