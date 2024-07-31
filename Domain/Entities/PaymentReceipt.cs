@@ -7,7 +7,7 @@ namespace BookManagementSystem.Domain.Entities
 
     public class PaymentReceipt : Base
     {
-        public required DateOnly Date { get; set; }
+        public required DateTime Date { get; set; }
         public required int Amount { get; set; }
 
         public int CustomerID { get; set; }
