@@ -9,7 +9,7 @@ namespace BookManagementSystem.Domain.Entities
         public int ReportID { get; set; }
         public int CustomerID { get; set; }
 
-        public required int InitalDebt { get; set; }
+        public required int InitialDebt { get; set; }
         public required int FinalDebt { get; set; }
         public required int AdditionalDebt { get; set; }
 

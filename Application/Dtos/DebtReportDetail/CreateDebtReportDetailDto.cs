@@ -6,6 +6,5 @@ namespace BookManagementSystem.Application.Dtos.DebtReportDetail
         public int? CustomerID { get; set; }
         public int? InitialDebt { get; set; }
         public int? FinalDebt { get; set; }
-        public int? AdditionalDebt { get; set; }
     }
 }

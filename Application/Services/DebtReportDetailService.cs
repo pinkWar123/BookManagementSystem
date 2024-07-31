@@ -30,6 +30,16 @@ namespace BookManagementSystem.Application.Services
         public async Task<DebtReportDetailDto> CreateNewDebtReportDetail(CreateDebtReportDetailDto createDebtReportDetailDto)
         {
             var debtReportDetail = _mapper.Map<DebtReportDetail>(createDebtReportDetailDto);
+            
+            if (createDebtReportDetailDto.InitialDebt.HasValue && createDebtReportDetailDto.FinalDebt.HasValue)
+            {
+                debtReportDetail.AdditionalDebt = createDebtReportDetailDto.FinalDebt.Value - createDebtReportDetailDto.InitialDebt.Value;
+            }
+            else
+            {
+                debtReportDetail.AdditionalDebt = 0;
+            }
+            
             await _debtReportDetailRepository.AddAsync(debtReportDetail);
             await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
