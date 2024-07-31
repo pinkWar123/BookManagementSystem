@@ -15,29 +15,17 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IPaymentReceiptRepository _paymentReceiptRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreatePaymentReceiptDto> _createValidator;
-        private readonly IValidator<UpdatePaymentReceiptDto> _updateValidator;
 
         public PaymentReceiptService(
             IPaymentReceiptRepository paymentReceiptRepository,
-            IMapper mapper,
-            IValidator<CreatePaymentReceiptDto> createValidator,
-            IValidator<UpdatePaymentReceiptDto> updateValidator)
+            IMapper mapper)
         {
             _paymentReceiptRepository = paymentReceiptRepository ?? throw new ArgumentNullException(nameof(paymentReceiptRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
         }
 
         public async Task<PaymentReceiptDto> CreateNewPaymentReceipt(CreatePaymentReceiptDto createPaymentReceiptDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createPaymentReceiptDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
             await _paymentReceiptRepository.AddAsync(paymentReceipt);
             await _paymentReceiptRepository.SaveChangesAsync();
@@ -46,12 +34,6 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<PaymentReceiptDto> UpdatePaymentReceipt(int receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updatePaymentReceiptDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var updatedReceipt = await _paymentReceiptRepository.UpdateAsync(receiptId, updatePaymentReceiptDto);
             if (updatedReceipt == null)
             {

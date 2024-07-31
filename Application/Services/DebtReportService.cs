@@ -19,29 +19,16 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IDebtReportRepository _debtReportRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateDebtReportDto> _createValidator;
-        private readonly IValidator<UpdateDebtReportDto> _updateValidator;
-
         public DebtReportService(
             IDebtReportRepository debtReportRepository,
-            IMapper mapper,
-            IValidator<CreateDebtReportDto> createValidator,
-            IValidator<UpdateDebtReportDto> updateValidator)
+            IMapper mapper)
         {
             _debtReportRepository = debtReportRepository ?? throw new ArgumentNullException(nameof(debtReportRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
         }
 
         public async Task<DebtReportDto> CreateNewDebtReport(CreateDebtReportDto createDebtReportDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createDebtReportDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var debtReport = _mapper.Map<Domain.Entities.DebtReport>(createDebtReportDto);
             await _debtReportRepository.AddAsync(debtReport);
             await _debtReportRepository.SaveChangesAsync();
@@ -50,12 +37,6 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<DebtReportDto> UpdateDebtReport(int reportId, UpdateDebtReportDto updateDebtReportDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updateDebtReportDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var existingReport = await _debtReportRepository.GetByIdAsync(reportId);
             if (existingReport == null)
             {
