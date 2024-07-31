@@ -8,6 +8,10 @@ using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
+using BookManagementSystem.Application.Queries;
+using Microsoft.AspNetCore.Authorization;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -19,16 +23,18 @@ namespace BookManagementSystem.Api.Controllers
         private readonly ICustomerService _customerService;
         private readonly IValidator<CreateCustomerDto> _createCustomerValidator;
         private readonly IValidator<UpdateCustomerDto> _updateCustomerValidator;
+        private readonly IUriService _uriService;
 
         public CustomerController(
             ICustomerService customerService,
             IValidator<CreateCustomerDto> createCustomerValidator,
-            IValidator<UpdateCustomerDto> updateCustomerValidator
-            )
+            IValidator<UpdateCustomerDto> updateCustomerValidator,
+            IUriService uriService)
         {
             _customerService = customerService;
             _createCustomerValidator = createCustomerValidator;
             _updateCustomerValidator = updateCustomerValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -69,16 +75,19 @@ namespace BookManagementSystem.Api.Controllers
                 return StatusCode(500, $"An error occurred while updating customer: {ex.Message}");
             }
         }
-        // [HttpGet]
-        // public async Task<IActionResult> GetAllCustomers([FromQuery] CustomerQuery customerQuery)
-        // {
-        //     var customers = await _customerService.GetAllCustomers(customerQuery);
-        //     var totalRecords = customers?.Count ?? 0;
-        //     var validFilter = new PaginationFilter(customerQuery.PageNumber, customerQuery.PageSize);
-        //     var pagedCustomers = customers.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
-        //     var pagedResponse = PaginationHelper.CreatePagedResponse(pagedCustomers, validFilter, totalRecords, _uriService, Request.Path.Value);
-        //     return Ok(pagedResponse);
-        // }
+
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllCustomers([FromQuery] CustomerQuery customerQuery)
+        {
+            var customers = await _customerService.GetAllCustomers(customerQuery);
+            var totalRecords = customers != null ? customers.Count() : 0;
+            var validFilter = new PaginationFilter(customerQuery.PageNumber, customerQuery.PageSize);
+            var pagedCustomers = customers.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedCustomers, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCustomerById([FromRoute] int id)
