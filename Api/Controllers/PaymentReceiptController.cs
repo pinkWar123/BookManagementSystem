@@ -4,6 +4,9 @@ using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
+using BookManagementSystem.Application.Queries;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -15,19 +18,22 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IPaymentReceiptService _paymentReceiptService;
         private readonly IValidator<CreatePaymentReceiptDto> _createPaymentReceiptValidator;
         private readonly IValidator<UpdatePaymentReceiptDto> _updatePaymentReceiptValidator;
+        private readonly IUriService _uriService;
         public PaymentReceiptController(
             IPaymentReceiptService paymentReceiptService,
             IValidator<CreatePaymentReceiptDto> createPaymentReceiptValidator,
-            IValidator<UpdatePaymentReceiptDto> updatePaymentReceiptValidator    
-        )
+            IValidator<UpdatePaymentReceiptDto> updatePaymentReceiptValidator,
+            IUriService uriService)
         {
             _paymentReceiptService = paymentReceiptService;
             _createPaymentReceiptValidator = createPaymentReceiptValidator;
             _updatePaymentReceiptValidator = updatePaymentReceiptValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
-        [Authorize(Roles = "Cashier")]
+        // [Authorize(Roles = "Cashier")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> CreateNewPaymentReceipt(CreatePaymentReceiptDto createPaymentReceiptDto)
         {
             var validateResult = await _createPaymentReceiptValidator.ValidateAsync(createPaymentReceiptDto);
@@ -43,7 +49,8 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPut("{receiptID}")]
-        [Authorize(Roles = "Cashier")]
+        // [Authorize(Roles = "Cashier")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> UpdatePaymentReceipt([FromRoute] int receiptID, UpdatePaymentReceiptDto updatePaymentReceiptDto)
         {
             var validateResult = await _updatePaymentReceiptValidator.ValidateAsync(updatePaymentReceiptDto);
@@ -70,20 +77,22 @@ namespace BookManagementSystem.Api.Controllers
             }
         }
 
-        // [HttpGet]
+        [HttpGet]
         // [Authorize(Roles = "Cashier")]
-        // public async Task<IActionResult> GetAllPaymentReceipts([FromQuery] PaymentReceiptQuery paymentReceiptQuery)
-        // {
-        //     var paymentReceipts = await _paymentReceiptService.GetAllPaymentReceipts(paymentReceiptQuery);
-        //     var totalRecords = paymentReceipts?.Count ?? 0;
-        //     var validFilter = new PaginationFilter(paymentReceiptQuery.PageNumber, paymentReceiptQuery.PageSize);
-        //     var pagedPaymentReceipts = paymentReceipts.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
-        //     var pagedResponse = PaginationHelper.CreatePagedResponse(pagedPaymentReceipts, validFilter, totalRecords, _uriService, Request.Path.Value);
-        //     return Ok(pagedResponse);
-        // }
+        [Authorize(Roles = "Manager, Cashier")]
+        public async Task<IActionResult> GetAllPaymentReceipts([FromQuery] PaymentReceiptQuery paymentReceiptQuery)
+        {
+            var paymentReceipts = await _paymentReceiptService.GetAllPaymentReceipts(paymentReceiptQuery);
+            var totalRecords = paymentReceipts != null ? paymentReceipts.Count() : 0;
+            var validFilter = new PaginationFilter(paymentReceiptQuery.PageNumber, paymentReceiptQuery.PageSize);
+            var pagedPaymentReceipts = paymentReceipts.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedPaymentReceipts, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
+        }
 
         [HttpGet("{receiptID}")]
-        [Authorize(Roles = "Cashier")]
+        // [Authorize(Roles = "Cashier")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetPaymentReceiptById([FromRoute] int receiptID)
         {
             var paymentReceipt = await _paymentReceiptService.GetPaymentReceiptById(receiptID);
@@ -94,7 +103,8 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{receiptID}")]
-        [Authorize(Roles = "Cashier")]
+        // [Authorize(Roles = "Cashier")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> DeletePaymentReceipt([FromRoute] int receiptID)
         {
             var result = await _paymentReceiptService.DeletePaymentReceipt(receiptID);

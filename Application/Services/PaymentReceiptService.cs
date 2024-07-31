@@ -8,6 +8,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using System.Net;
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -53,11 +55,18 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
 
-        // public async Task<IEnumerable<PaymentReceiptDto>> GetAllPaymentReceipts()
-        // {
-        //     var paymentReceipts = await _paymentReceiptRepository.GetAllAsync();
-        //     return _mapper.Map<IEnumerable<PaymentReceiptDto>>(paymentReceipts);
-        // }
+        public async Task<IEnumerable<PaymentReceiptDto>> GetAllPaymentReceipts(PaymentReceiptQuery paymentReceiptQuery)
+        {
+            var query = _paymentReceiptRepository.GetValuesByQuery(paymentReceiptQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<PaymentReceiptDto>();
+            }
+            
+            var paymentReceipt = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<PaymentReceiptDto>>(paymentReceipt);
+        }
 
         public async Task<bool> DeletePaymentReceipt(int receiptId)
         {
