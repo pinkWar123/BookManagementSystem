@@ -38,6 +38,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
             var validateResult = await _createCustomerValidator.ValidateAsync(createCustomerDto);
@@ -50,6 +51,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateCustomer([FromRoute] int id, UpdateCustomerDto updateCustomerDto)
         {
             var validateResult = await _updateCustomerValidator.ValidateAsync(updateCustomerDto);
@@ -90,6 +92,7 @@ namespace BookManagementSystem.Api.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCustomerById([FromRoute] int id)
         {
             var customer = await _customerService.GetCustomerById(id);
@@ -100,6 +103,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteCustomer([FromRoute] int id)
         {
             var result = await _customerService.DeleteCustomer(id);
