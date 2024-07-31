@@ -7,7 +7,7 @@ namespace BookManagementSystem.Application.Dtos.PaymentReceipt
 {
     public class UpdatePaymentReceiptDto
     {
-        public string? ReceiptDate { get; set; }
+        public DateOnly? ReceiptDate { get; set; }
         public int? Amount { get; set; }
     }
 }

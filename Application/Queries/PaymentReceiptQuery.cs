@@ -9,7 +9,7 @@ namespace BookManagementSystem.Application.Queries
     public class PaymentReceiptQuery : QueryObject
     {
         public int? Id { get; set; }
-        public string? ReceiptDate { get; set; }
+        public DateOnly? Date { get; set; }
         public string? Amount { get; set; }
         public string? CustomerId { get; set; }
     }
