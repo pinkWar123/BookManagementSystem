@@ -30,6 +30,7 @@ using Newtonsoft.Json;
 using BookManagementSystem.Infrastructure.Repositories.InventoryReport;
 using BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail;
 using BookManagementSystem.Infrastructure.Repositories.Regulation;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 });
 
+builder.Services.AddDateOnlyTimeOnlyStringConverters();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
@@ -67,6 +69,7 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
+    option.UseDateOnlyTimeOnlyStringConverters();
 });
 builder.Services.AddCors(options =>
 {
