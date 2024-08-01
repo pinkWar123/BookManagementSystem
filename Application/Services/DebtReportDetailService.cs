@@ -11,7 +11,9 @@ using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using System.Net;
- 
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
+
 namespace BookManagementSystem.Application.Services
 {
     public class DebtReportDetailService : IDebtReportDetailService
@@ -70,11 +72,17 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
         }
 
-        // public async Task<IEnumerable<DebtReportDetailDto>> GetAllDebtReportDetails()
-        // {
-        //     var debtReportDetails = await _debtReportDetailRepository.GetAllAsync();
-        //     return _mapper.Map<IEnumerable<DebtReportDetailDto>>(debtReportDetails);
-        // }
+        public async Task<IEnumerable<DebtReportDetailDto>> GetAllDebtReportDetails(DebtReportDetailQuery debtReportDetailQuery)
+        {
+            var query = _debtReportDetailRepository.GetValuesByQuery(debtReportDetailQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<DebtReportDetailDto>();
+            }
+            var debtReports = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<DebtReportDetailDto>>(debtReports);
+        }
 
         public async Task<bool> DeleteDebtReportDetail(int reportId, int customerId)
         {

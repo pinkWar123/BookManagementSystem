@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookManagementSystem.Application.Dtos.DebtReport;
+using BookManagementSystem.Application.Queries;
 
 namespace BookManagementSystem.Application.Interfaces
 {
@@ -11,7 +12,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<DebtReportDto> CreateNewDebtReport(CreateDebtReportDto createDebtReportDto);
         Task<DebtReportDto> UpdateDebtReport(int reportId, UpdateDebtReportDto updateDebtReportDto);
         Task<DebtReportDto> GetDebtReportById(int reportId);
-        // Task<IEnumerable<DebtReportDto>> GetAllDebtReports();
+        Task<IEnumerable<DebtReportDto>> GetAllDebtReports(DebtReportQuery debtReportQuery);
         Task<bool> DeleteDebtReport(int reportId);
     }
 }
