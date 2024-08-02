@@ -36,14 +36,20 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<PaymentReceiptDto> UpdatePaymentReceipt(int receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto)
         {
-            var updatedReceipt = await _paymentReceiptRepository.UpdateAsync(receiptId, updatePaymentReceiptDto);
-            if (updatedReceipt == null)
+            var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
+            if (paymentReceipt == null)
             {
-                throw new PaymentReceiptException($"Không tìm thấy hóa đơn với ID {receiptId}.", HttpStatusCode.NotFound);
+                throw new KeyNotFoundException("PaymentReceipt not found");
             }
+
+            _mapper.Map(updatePaymentReceiptDto, paymentReceipt);
+
+            await _paymentReceiptRepository.UpdateAsync(receiptId, paymentReceipt);
             await _paymentReceiptRepository.SaveChangesAsync();
-            return _mapper.Map<PaymentReceiptDto>(updatedReceipt);
+
+            return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
+
 
         public async Task<PaymentReceiptDto> GetPaymentReceiptById(int receiptId)
         {

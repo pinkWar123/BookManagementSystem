@@ -15,6 +15,7 @@ public class PaymentReceiptProfile : Profile
         
         CreateMap<UpdatePaymentReceiptDto, PaymentReceipt>()
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => 
-                string.IsNullOrEmpty(src.ReceiptDate) ? default : DateOnly.Parse(src.ReceiptDate)));
+                string.IsNullOrEmpty(src.ReceiptDate) ? default : DateOnly.Parse(src.ReceiptDate)))
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
     }
 }
