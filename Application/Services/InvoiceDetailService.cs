@@ -65,6 +65,18 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }
 
+        public async Task<IEnumerable<InvoiceDetailDto>> GetAllInvoiceDetail(InvoiceDetailQuery invoiceDetailQuery)
+        {
+            var query = _invoiceDetailRepository.GetValuesByQuery(invoiceDetailQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<InvoiceDetailDto>();
+            }
+
+            var invoiceDetails = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<InvoiceDetailDto>>(invoiceDetails);
+        }
         public async Task<bool> DeleteInvoiceDetail(int InvoiceID, int BookID)
         {
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);

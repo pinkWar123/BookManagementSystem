@@ -60,7 +60,18 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<BookEntryDetailDto>(bookEntryDetail);
         }
 
+        public async Task<IEnumerable<BookEntryDetailDto>> GetAllBookEntryDetail(BookEntryDetailQuery bookEntryDetailQuery)
+        {
+            var query = _bookEntryDetailRepository.GetValuesByQuery(bookEntryDetailQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<BookEntryDetailDto>();
+            }
 
+            var bookEntryDetails = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<BookEntryDetailDto>>(bookEntryDetails);
+        }
 
         public async Task<bool> DeleteBookEntryDetail(int EntryID, int BookID)
         {

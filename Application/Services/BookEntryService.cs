@@ -6,6 +6,7 @@ using FluentValidation;
 using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
+using BookManagementSystem.Domain.Entities;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -59,6 +60,18 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<BookEntryDto>(bookEntry);
         }
 
+        public async Task<IEnumerable<BookEntryDto>> GetAllBookEntries(BookEntryQuery bookEntryQuery)
+        {
+            var query = _bookEntryRepository.GetValuesByQuery(bookEntryQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<BookEntryDto>();
+            }
+
+            var bookEntries = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<BookEntryDto>>(bookEntries);
+        }
        
 
         public async Task<bool> DeleteBookEntry(int EntryID)
