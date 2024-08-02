@@ -4,7 +4,9 @@ using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 namespace BookManagementSystem.Api.Controllers
 {
     [Authorize]
@@ -15,15 +17,18 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IBookEntryDetailService _bookEntryDetailService;
         private readonly IValidator<CreateBookEntryDetailDto> _createBookEntryDetailValidator;
         private readonly IValidator<UpdateBookEntryDetailDto> _updateBookEntryDetailValidator;
+        private readonly IUriService _uriService;
 
         public BookEntryDetailController(
             IBookEntryDetailService bookEntryDetailService,
             IValidator<CreateBookEntryDetailDto> createBookEntryDetailValidator,
-            IValidator<UpdateBookEntryDetailDto> updateBookEntryDetailValidator)
+            IValidator<UpdateBookEntryDetailDto> updateBookEntryDetailValidator,
+            IUriService uriService)
         {
             _bookEntryDetailService = bookEntryDetailService;
             _createBookEntryDetailValidator = createBookEntryDetailValidator;
             _updateBookEntryDetailValidator = updateBookEntryDetailValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -80,6 +85,20 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Response<BookEntryDetailDto>(bookEntryDetail));
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllBookEntryDetailsAsync([FromQuery] BookEntryDetailQuery query)
+        {
+            var bookEntryDetails = await _bookEntryDetailService.GetAllBookEntryDetail(query);
+            var totalRecords = bookEntryDetails != null ? bookEntryDetails.Count() : 0;
+            
+            var validFilter = new PaginationFilter(query.PageNumber, query.PageSize);
+            var pagedBookEntryDetails = bookEntryDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedBookEntryDetails, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse); 
+        }
+    
+
         [HttpDelete("{entryID}/{bookID}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteBookEntryDetailAsync([FromRoute] int entryID, [FromRoute] int bookID)
@@ -92,5 +111,7 @@ namespace BookManagementSystem.Api.Controllers
 
             return NoContent();
         }
+
+    
     }
 }

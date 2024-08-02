@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 namespace BookManagementSystem.Api.Controllers.Invoice
 {
     [Authorize]
@@ -16,15 +19,18 @@ namespace BookManagementSystem.Api.Controllers.Invoice
         private readonly IInvoiceService _invoiceService;
         private readonly IValidator<CreateInvoiceDto> _createInvoiceValidator;
         private readonly IValidator<UpdateInvoiceDto> _updateInvoiceValidator;
+        private readonly IUriService _uriService;
 
         public InvoiceController(
             IInvoiceService invoiceService,
             IValidator<CreateInvoiceDto> createInvoiceValidator,
-            IValidator<UpdateInvoiceDto> updateInvoiceValidator)
+            IValidator<UpdateInvoiceDto> updateInvoiceValidator,
+            IUriService uriService)
         {
             _invoiceService = invoiceService;
             _createInvoiceValidator = createInvoiceValidator;
             _updateInvoiceValidator = updateInvoiceValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -80,6 +86,19 @@ namespace BookManagementSystem.Api.Controllers.Invoice
             if (invoice == null) return NotFound();
 
             return Ok(new Response<InvoiceDto>(invoice));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllInvoicesAsync([FromQuery] InvoiceQuery query)
+        {
+            var invoices = await _invoiceService.GetAllInvoice(query);
+            var totalRecords = invoices != null ? invoices.Count() : 0;
+            
+            var validFilter = new PaginationFilter(query.PageNumber, query.PageSize);
+            var pagedInvoices = invoices.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInvoices, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse); 
         }
 
         [HttpDelete("{invoiceId}")]
