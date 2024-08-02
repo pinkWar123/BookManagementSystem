@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.BookEntryDetail;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.BookEntryDetail;
-using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Application.Exceptions;
-using FluentValidation;
-using FluentValidation.Results;
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
+
+
 
 namespace BookManagementSystem.Application.Services
 {
@@ -17,28 +15,20 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IBookEntryDetailRepository _bookEntryDetailRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateBookEntryDetailDto> _createValidator;
-        private readonly IValidator<UpdateBookEntryDetailDto> _updateValidator;
+
 
         public BookEntryDetailService(
             IBookEntryDetailRepository bookEntryDetailRepository, 
-            IMapper mapper, 
-            IValidator<CreateBookEntryDetailDto> createValidator,
-            IValidator<UpdateBookEntryDetailDto> updateValidator)
+            IMapper mapper)
         {
             _bookEntryDetailRepository = bookEntryDetailRepository ?? throw new ArgumentNullException(nameof(bookEntryDetailRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
+           
         }
 
         public async Task<BookEntryDetailDto> CreateNewBookEntryDetail(CreateBookEntryDetailDto createBookEntryDetailDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createBookEntryDetailDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
+            
 
             var bookEntryDetail = _mapper.Map<BookEntryDetail>(createBookEntryDetailDto);
             await _bookEntryDetailRepository.AddAsync(bookEntryDetail);
@@ -48,11 +38,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookEntryDetailDto> UpdateBookEntryDetail(int EntryID, int BookID, UpdateBookEntryDetailDto updateBookEntryDetailDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updateBookEntryDetailDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
+            
             var existingDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             
 

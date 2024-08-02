@@ -6,10 +6,10 @@ using BookManagementSystem.Application.Dtos.InvoiceDetail;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.InvoiceDetail;
-using BookManagementSystem.Application.Validators;
 using FluentValidation;
-using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -17,28 +17,20 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IInvoiceDetailRepository _invoiceDetailRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateInvoiceDetailDto> _createValidator;
-        private readonly IValidator<UpdateInvoiceDetailDto> _updateValidator;
+      
 
         public InvoiceDetailService(
             IInvoiceDetailRepository invoiceDetailRepository, 
-            IMapper mapper, 
-            IValidator<CreateInvoiceDetailDto> createValidator,
-            IValidator<UpdateInvoiceDetailDto> updateValidator)
+            IMapper mapper)
         {
             _invoiceDetailRepository = invoiceDetailRepository ?? throw new ArgumentNullException(nameof(invoiceDetailRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
+            
         }
 
         public async Task<InvoiceDetailDto> CreateNewInvoiceDetail(CreateInvoiceDetailDto createInvoiceDetailDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createInvoiceDetailDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
+           
 
             var invoiceDetail = _mapper.Map<InvoiceDetail>(createInvoiceDetailDto);
             await _invoiceDetailRepository.AddAsync(invoiceDetail);
@@ -48,13 +40,6 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<InvoiceDetailDto> UpdateInvoiceDetail(int InvoiceID, int BookID, UpdateInvoiceDetailDto updateInvoiceDetailDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updateInvoiceDetailDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
-            // write again GetByIdAsync
             var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             
 
@@ -73,8 +58,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<InvoiceDetailDto> GetInvoiceDetailById(int InvoiceID, int BookID)
         {
-            // var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
-            var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
+            var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             if (invoiceDetail == null)
                 throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với InvoiceID {InvoiceID} và BookID {BookID}");
             
@@ -83,8 +67,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<bool> DeleteInvoiceDetail(int InvoiceID, int BookID)
         {
-            // var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
-            var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID);
+            var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             if (invoiceDetail == null)
                 return false;
         
