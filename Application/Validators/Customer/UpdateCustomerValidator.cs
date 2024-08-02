@@ -20,7 +20,7 @@ namespace BookManagementSystem.Application.Validators
             //     .When(x => !string.IsNullOrEmpty(x.Address));
 
             // RuleFor(x => x.PhoneNumber)
-            //     .MaximumLength(10).WithMessage("Số điện thoại không được vượt quá 10 kí tự.")
+            //     .Length(10).WithMessage("Số điện thoại phải có đúng 10 kí tự.")
             //     .Matches(@"^\d+$").WithMessage("Số điện thoại chỉ được chứa chữ số.")
             //     .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
 
