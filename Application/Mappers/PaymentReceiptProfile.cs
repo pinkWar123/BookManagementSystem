@@ -2,16 +2,19 @@ using AutoMapper;
 using BookManagementSystem.Application.Dtos.PaymentReceipt;
 using BookManagementSystem.Domain.Entities;
 
-namespace BookManagementSystem.Application.Mappers
+public class PaymentReceiptProfile : Profile
 {
-    public class PaymentReceiptProfile : Profile
+    public PaymentReceiptProfile()
     {
-        public PaymentReceiptProfile()
-        {
-            CreateMap<CreatePaymentReceiptDto, PaymentReceipt>();
-            CreateMap<PaymentReceipt, PaymentReceiptDto>();
-            CreateMap<UpdatePaymentReceiptDto, PaymentReceipt>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-        }
+        CreateMap<CreatePaymentReceiptDto, PaymentReceipt>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => 
+                string.IsNullOrEmpty(src.ReceiptDate) ? default : DateOnly.Parse(src.ReceiptDate)));
+
+        CreateMap<PaymentReceipt, PaymentReceiptDto>()
+            .ForMember(dest => dest.ReceiptDate, opt => opt.MapFrom(src => src.Date));
+        
+        CreateMap<UpdatePaymentReceiptDto, PaymentReceipt>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => 
+                string.IsNullOrEmpty(src.ReceiptDate) ? default : DateOnly.Parse(src.ReceiptDate)));
     }
 }
