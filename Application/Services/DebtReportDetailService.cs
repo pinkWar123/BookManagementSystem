@@ -56,7 +56,9 @@ namespace BookManagementSystem.Application.Services
             }
 
             _mapper.Map(updateDebtReportDetailDto, existingDetail);
-
+            
+            existingDetail.AdditionalDebt = updateDebtReportDetailDto.FinalDebt.Value - existingDetail.InitialDebt;
+            
             var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, customerId, existingDetail);
             await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(updatedDetail);
