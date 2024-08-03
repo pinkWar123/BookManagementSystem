@@ -9,7 +9,6 @@ namespace BookManagementSystem.Domain.Entities
     {
         public required DateOnly Date { get; set; }
         public required int Amount { get; set; }
-
         public int CustomerID { get; set; }
 
         [ForeignKey("CustomerID")]

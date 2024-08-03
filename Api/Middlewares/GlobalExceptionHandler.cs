@@ -61,17 +61,17 @@ namespace BookManagementSystem.Middlewares
             else if (exception is BaseException e)
             {
                 problemDetails.Status = (int)e.StatusCode;
-                problemDetails.Title = exception.Message;
+                problemDetails.Title = e.Message;
             }
 
             else
             {
+                problemDetails.Status = httpContext.Response.StatusCode;
                 problemDetails.Title = exception.Message;
             }
 
             _logger.LogError("{ProblemDetailsTitle}", problemDetails.Title);
 
-            problemDetails.Status = httpContext.Response.StatusCode;
             await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
             return true;
         }

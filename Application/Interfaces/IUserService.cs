@@ -17,5 +17,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<List<UserViewDto>?> GetAllUsers(UserQuery userQuery);
         Task<bool> DoesUsernameExist(string username);
         Task<UserDto> GetUserByAccessToken(string accessToken);
+        Task<UserDto> ChangeUserRole(string userId, ChangeRoleDto changeRoleDto);
+        Task<UserDto> DeleteUserById(string userId);
     }
 }

@@ -1,4 +1,5 @@
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Helpers;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,16 @@ namespace BookManagementSystem.Data
         public DbSet<Invoice> Invoices { get; set; }
 
         public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+        // protected override void ConfigureConventions
+        // (ModelConfigurationBuilder builder)        
+        // {
+        //     builder.Properties<DateOnly>()                
+        //         .HaveConversion<DateOnlyConverter>()                
+        //         .HaveColumnType("date");
+        //     builder.Properties<DateOnly?>()                
+        //         .HaveConversion<NullableDateOnlyConverter>()                
+        //         .HaveColumnType("date");        
+        // }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

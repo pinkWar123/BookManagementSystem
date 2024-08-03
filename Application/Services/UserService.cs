@@ -194,6 +194,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<UserDto> GetUserByAccessToken(string accessToken)
         {
+
             var userId = _tokenService.GetUserIdFromToken(accessToken);
 
             if (userId == null) throw new BaseException("Access token không tồn tại", System.Net.HttpStatusCode.BadRequest);
@@ -217,5 +218,51 @@ namespace BookManagementSystem.Application.Services
             return userDto;
         }
 
+        public async Task<UserDto> ChangeUserRole(string userId, ChangeRoleDto changeRoleDto)
+        {
+            var user = await _userManager.FindByIdAsync(userId) ?? throw new UserException($"Không tìm thấy user. Id không hợp lệ", System.Net.HttpStatusCode.NotFound);
+
+            var oldRole = await _userManager.GetRolesAsync(user) as List<string> ?? throw new UserException("User này không có vai trò!!!");
+            
+            if (!oldRole.Contains(changeRoleDto.Role))
+            {
+                await _userManager.RemoveFromRolesAsync(user, oldRole);
+                await _userManager.AddToRoleAsync(user, changeRoleDto.Role);
+            }
+
+            var newRole = new List<string>{changeRoleDto.Role};
+
+            var userDto = new UserDto
+            {
+                Message = "Thay đổi role của user thành công",
+                Username = user.UserName,
+                Email = user.Email ?? null,
+                Roles = newRole
+            };
+
+            return userDto;
+        }
+
+        public async Task<UserDto> DeleteUserById(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId) ?? throw new UserException("Không tìm thấy user!!", System.Net.HttpStatusCode.NotFound);
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if(result.Succeeded)
+            {
+                var userDto = new UserDto
+                {
+                    Message = "Xóa user thành công!",
+                    Username = user.UserName
+                };
+
+                return userDto;
+            }
+            else 
+            {
+                throw new UserException($"{result.Errors.ToList()}", System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }
