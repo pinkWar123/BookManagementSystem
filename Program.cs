@@ -123,7 +123,6 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IDebtReportRepository, DebtReportRepository>();
 builder.Services.AddScoped<IDebtReportDetailRepository, DebtReportDetailRepository>();
-builder.Services.AddScoped<IPaymentReceiptRepository, PaymentReceiptRepository>();
 builder.Services.AddScoped<IInventoryReportDetailRepository, InventoryReportDetailRepository>();
 builder.Services.AddScoped<IInventoryReportRepository, InventoryReportRepository>();
 builder.Services.AddScoped<IRegulationRepository, RegulationRepository>();

@@ -33,7 +33,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> CreateNewBookEntryAsync(CreateBookEntryDto createBookEntryDto)
         {
             var validateResult = await _createBookEntryValidator.ValidateAsync(createBookEntryDto);

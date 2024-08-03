@@ -28,7 +28,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookEntryDto> CreateNewBookEntry(CreateBookEntryDto createBookEntryDto)
         {
-            var bookEntry = _mapper.Map<Domain.Entities.BookEntry>(createBookEntryDto);
+            var bookEntry = _mapper.Map<BookEntry>(createBookEntryDto);
             await _bookEntryRepository.AddAsync(bookEntry);
             await _bookEntryRepository.SaveChangesAsync();
             return _mapper.Map<BookEntryDto>(bookEntry);

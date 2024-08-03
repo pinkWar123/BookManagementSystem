@@ -15,7 +15,7 @@ namespace BookManagementSystem.Application.Validators
         {
             RuleFor(x => x.EntryDate)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("")
+                .NotEmpty().WithMessage("EntryDate không được để trống.")
                 .Must(BeAValidDate).WithMessage("EntryDate phải là giá trị ngày tháng năm hợp lệ.");
         } 
     }
