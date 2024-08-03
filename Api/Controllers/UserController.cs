@@ -25,6 +25,7 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IUriService _uriService;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
+        private readonly IValidator<ChangeRoleDto> _changeRoleValidator;
         private readonly UserManager<User> _userManager;
         
         public UserController(
@@ -32,12 +33,14 @@ namespace BookManagementSystem.Api.Controllers
         IUriService uriService,
         IValidator<RegisterDto> registerValidator,
         IValidator<LoginDto> loginValidator,
+        IValidator<ChangeRoleDto> changeRoleValidator,
         UserManager<User> userManager)
         {
             _userService = userService;
             _uriService = uriService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
+            _changeRoleValidator = changeRoleValidator;
             _userManager = userManager;
         }
 
@@ -97,6 +100,27 @@ namespace BookManagementSystem.Api.Controllers
         public async Task<IActionResult> GetUserByAccessToken(string accessToken)
         {
             var userDto = await _userService.GetUserByAccessToken(accessToken);
+            return Ok(new Response<UserDto>(userDto));
+        }
+
+        [HttpPost("change-role/{userId}")]
+        [Authorize(Roles="Manager")]
+        public async Task<IActionResult> ChangeUserRole([FromRoute] string userId, ChangeRoleDto changeRoleDto)
+        {
+            var validateResult = await _changeRoleValidator.ValidateAsync(changeRoleDto);
+
+            if (!validateResult.IsValid) return BadRequest(Results.ValidationProblem(validateResult.ToDictionary()));
+
+            var userDto = await _userService.ChangeUserRole(userId, changeRoleDto);
+            return Ok(new Response<UserDto>(userDto));
+        }
+
+        [HttpDelete("{userId}")]
+        [Authorize(Roles="Manager")]
+        public async Task<IActionResult> DeletUserById([FromRoute] string userId)
+        {
+            var userDto = await _userService.DeleteUserById(userId);
+
             return Ok(new Response<UserDto>(userDto));
         }
     }

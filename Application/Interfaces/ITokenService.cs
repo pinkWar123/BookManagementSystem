@@ -10,5 +10,6 @@ namespace BookManagementSystem.Application.Interfaces
     {
         string? GetUserIdFromToken(string token);
         Task<string> GenerateJwtToken(User appUser);
+        bool ValidateToken(string token);
     }
 }

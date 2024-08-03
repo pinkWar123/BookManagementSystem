@@ -158,7 +158,7 @@ namespace BookManagementSystem.Migrations
                     b.Property<int>("FinalDebt")
                         .HasColumnType("int");
 
-                    b.Property<int>("InitalDebt")
+                    b.Property<int>("InitialDebt")
                         .HasColumnType("int");
 
                     b.HasKey("ReportID", "CustomerID");

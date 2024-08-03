@@ -69,5 +69,37 @@ namespace BookManagementSystem.Application.Services
             var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
             return userIdClaim?.Value;
         }
+
+        public bool ValidateToken(string token)
+        {
+            // Token validation logic here
+            // For example, decode the token and check its expiration time
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = GetValidationParameters(); // Method to get token validation parameters
+
+            try
+            {
+                tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                return true;
+            }
+            catch (SecurityTokenException)
+            {
+                return false;
+            }
+        }
+
+        private TokenValidationParameters GetValidationParameters()
+        {
+            return new TokenValidationParameters
+            {
+                // Set your token validation parameters here
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                // Other parameters like Issuer, Audience, SigningKey, etc.
+            };
+        }
+
     }
 }

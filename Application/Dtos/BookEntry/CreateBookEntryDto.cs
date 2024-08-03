@@ -4,8 +4,5 @@ namespace BookManagementSystem.Application.Dtos.BookEntry
     {
         public string? EntryDate { get; set; }
     }
-    
-
-
 
 }
