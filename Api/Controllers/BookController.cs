@@ -10,6 +10,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using BookManagementSystem.Application.Wrappers;
 using Microsoft.AspNetCore.Authorization;
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -21,15 +24,19 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IBookService _bookService;
         private readonly IValidator<CreateBookDto> _createvalidator;
         private readonly IValidator<UpdateBookDto> _updatevalidator;
+        private readonly IUriService _uriService;
+
         public BookController(
             IBookService bookService,
             IValidator<CreateBookDto> _createbookvalidator,
-            IValidator<UpdateBookDto> _updatebookvalidator
+            IValidator<UpdateBookDto> _updatebookvalidator,
+            IUriService _uriService
             )
         {
             this._createvalidator = _createbookvalidator;
             this._updatevalidator = _updatebookvalidator;
             _bookService = bookService;
+            this._uriService = _uriService;
         }
 
         [HttpPost]
@@ -47,6 +54,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Manager,StoreKeeper")]
         public async Task<IActionResult> UpdateBook([FromRoute] int id, UpdateBookDto updateBookDto)
         {
             var validateResult = await _updatevalidator.ValidateAsync(updateBookDto);
@@ -66,6 +74,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetBookById([FromRoute] int id)
         {
             var book = await _bookService.GetBookById(id);
@@ -76,6 +85,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Manager,StoreKeeper")]
         public async Task<IActionResult> DeleteBook([FromRoute] int id)
         {
             var result = await _bookService.DeleteBook(id);
@@ -83,6 +93,18 @@ namespace BookManagementSystem.Api.Controllers
             if (!result) return NotFound();
 
             return Ok("delete Successfully");
+        }
+
+        [HttpGet("AllBooks")]
+        [Authorize(Roles = "Manager, Cashier")]
+        public async Task<IActionResult> GetAllBooks([FromQuery] BookQuery bookQuery)
+        {
+            var books = await _bookService.GetallBook(bookQuery);
+            var totalRecords = books != null ? books.Count() : 0;
+            var validFilter = new PaginationFilter(bookQuery.PageNumber, bookQuery.PageSize);
+            var pagedbooks = books.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedbooks, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
         }
     }
 }

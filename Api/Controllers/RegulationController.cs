@@ -10,6 +10,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using BookManagementSystem.Application.Wrappers;
 using Microsoft.AspNetCore.Authorization;
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -21,15 +24,18 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IRegulationService _regulationService;
         private readonly IValidator<CreateRegulationDto> _createvalidator;
         private readonly IValidator<UpdateRegulationDto> _updatevalidator;
+        private readonly IUriService _uriService;
         public RegulationController(
              IRegulationService _regulationService,
             IValidator<CreateRegulationDto> _createvalidator,
-            IValidator<UpdateRegulationDto> _updatevalidator
+            IValidator<UpdateRegulationDto> _updatevalidator,
+            IUriService _uriService
         )
         {
             this._createvalidator = _createvalidator;
             this._updatevalidator = _updatevalidator;
             this._regulationService = _regulationService;
+            this._uriService = _uriService;
         }
 
         [HttpPost]
@@ -85,6 +91,18 @@ namespace BookManagementSystem.Api.Controllers
             if (!result) return NotFound();
 
             return Ok("delete Successfully");
+        }
+
+        [HttpGet("AllBooks")]
+        [Authorize(Roles = "Manager, Cashier")]
+        public async Task<IActionResult> GetAllRegulations([FromQuery] RegulationQuery regulationQuery)
+        {
+            var books = await _regulationService.GetallBook(regulationQuery);
+            var totalRecords = books != null ? books.Count() : 0;
+            var validFilter = new PaginationFilter(regulationQuery.PageNumber, regulationQuery.PageSize);
+            var pagedregulations = books.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedregulations, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
         }
     }
 }
