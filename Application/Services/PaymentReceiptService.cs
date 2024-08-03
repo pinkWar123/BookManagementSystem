@@ -8,6 +8,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using System.Net;
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -15,29 +17,17 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IPaymentReceiptRepository _paymentReceiptRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreatePaymentReceiptDto> _createValidator;
-        private readonly IValidator<UpdatePaymentReceiptDto> _updateValidator;
 
         public PaymentReceiptService(
             IPaymentReceiptRepository paymentReceiptRepository,
-            IMapper mapper,
-            IValidator<CreatePaymentReceiptDto> createValidator,
-            IValidator<UpdatePaymentReceiptDto> updateValidator)
+            IMapper mapper)
         {
             _paymentReceiptRepository = paymentReceiptRepository ?? throw new ArgumentNullException(nameof(paymentReceiptRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
         }
 
         public async Task<PaymentReceiptDto> CreateNewPaymentReceipt(CreatePaymentReceiptDto createPaymentReceiptDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createPaymentReceiptDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
             await _paymentReceiptRepository.AddAsync(paymentReceipt);
             await _paymentReceiptRepository.SaveChangesAsync();
@@ -46,20 +36,20 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<PaymentReceiptDto> UpdatePaymentReceipt(int receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updatePaymentReceiptDto);
-            if (!validationResult.IsValid)
+            var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
+            if (paymentReceipt == null)
             {
-                throw new ValidationException(validationResult.Errors);
+                throw new KeyNotFoundException("PaymentReceipt not found");
             }
 
-            var updatedReceipt = await _paymentReceiptRepository.UpdateAsync(receiptId, updatePaymentReceiptDto);
-            if (updatedReceipt == null)
-            {
-                throw new PaymentReceiptException($"Không tìm thấy hóa đơn với ID {receiptId}.", HttpStatusCode.NotFound);
-            }
+            _mapper.Map(updatePaymentReceiptDto, paymentReceipt);
+
+            await _paymentReceiptRepository.UpdateAsync(receiptId, paymentReceipt);
             await _paymentReceiptRepository.SaveChangesAsync();
-            return _mapper.Map<PaymentReceiptDto>(updatedReceipt);
+
+            return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
+
 
         public async Task<PaymentReceiptDto> GetPaymentReceiptById(int receiptId)
         {
@@ -71,11 +61,18 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
 
-        // public async Task<IEnumerable<PaymentReceiptDto>> GetAllPaymentReceipts()
-        // {
-        //     var paymentReceipts = await _paymentReceiptRepository.GetAllAsync();
-        //     return _mapper.Map<IEnumerable<PaymentReceiptDto>>(paymentReceipts);
-        // }
+        public async Task<IEnumerable<PaymentReceiptDto>> GetAllPaymentReceipts(PaymentReceiptQuery paymentReceiptQuery)
+        {
+            var query = _paymentReceiptRepository.GetValuesByQuery(paymentReceiptQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<PaymentReceiptDto>();
+            }
+            
+            var paymentReceipt = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<PaymentReceiptDto>>(paymentReceipt);
+        }
 
         public async Task<bool> DeletePaymentReceipt(int receiptId)
         {

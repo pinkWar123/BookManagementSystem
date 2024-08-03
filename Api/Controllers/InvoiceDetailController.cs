@@ -4,7 +4,9 @@ using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -16,15 +18,17 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IInvoiceDetailService _invoiceDetailService;
         private readonly IValidator<CreateInvoiceDetailDto> _createInvoiceDetailValidator;
         private readonly IValidator<UpdateInvoiceDetailDto> _updateInvoiceDetailValidator;
-
+        private readonly IUriService _uriService;
         public InvoiceDetailController(
             IInvoiceDetailService invoiceDetailService,
             IValidator<CreateInvoiceDetailDto> createInvoiceDetailValidator,
-            IValidator<UpdateInvoiceDetailDto> updateInvoiceDetailValidator)
+            IValidator<UpdateInvoiceDetailDto> updateInvoiceDetailValidator,
+            IUriService uriService)
         {
             _invoiceDetailService = invoiceDetailService;
             _createInvoiceDetailValidator = createInvoiceDetailValidator;
             _updateInvoiceDetailValidator = updateInvoiceDetailValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -80,6 +84,20 @@ namespace BookManagementSystem.Api.Controllers
 
             return Ok(new Response<InvoiceDetailDto>(invoiceDetail));
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllInvoiceDetailsAsync([FromQuery] InvoiceDetailQuery query)
+        {
+            var invoiceDetails = await _invoiceDetailService.GetAllInvoiceDetail(query);
+            var totalRecords = invoiceDetails != null ? invoiceDetails.Count() : 0;
+            
+            var validFilter = new PaginationFilter(query.PageNumber, query.PageSize);
+            var pagedInvoiceDetails = invoiceDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInvoiceDetails, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse); 
+        }
+
 
         [HttpDelete("{entryID}/{bookID}")]
         [Authorize(Roles = "Manager")]

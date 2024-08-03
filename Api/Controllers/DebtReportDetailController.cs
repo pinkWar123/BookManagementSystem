@@ -4,6 +4,9 @@ using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -15,15 +18,19 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IDebtReportDetailService _debtReportDetailService;
         private readonly IValidator<CreateDebtReportDetailDto> _createDebtReportDetailValidator;
         private readonly IValidator<UpdateDebtReportDetailDto> _updateDebtReportDetailValidator;
+        private readonly IUriService _uriService;
+
         public DebtReportDetailDetailController(
             IDebtReportDetailService debtReportDetailService,
             IValidator<CreateDebtReportDetailDto> createDebtReportDetailValidator,
-            IValidator<UpdateDebtReportDetailDto> updateDebtReportDetailValidator    
+            IValidator<UpdateDebtReportDetailDto> updateDebtReportDetailValidator,
+            IUriService uriService
         )
         {
             _debtReportDetailService = debtReportDetailService;
             _createDebtReportDetailValidator = createDebtReportDetailValidator;
             _updateDebtReportDetailValidator = updateDebtReportDetailValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -42,7 +49,7 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Response<DebtReportDetailDto>(createdDebtReportDetail));
         }
 
-        [HttpPut("{reportId, customerId}")]
+        [HttpPut("{reportId}/{customerId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateDebtReportDetail([FromRoute] int reportId, [FromRoute] int customerId, UpdateDebtReportDetailDto updateDebtReportDetailDto)
         {
@@ -70,17 +77,17 @@ namespace BookManagementSystem.Api.Controllers
             }
         }
 
-        // [HttpGet]
-        // [Authorize(Roles = "Manager")]
-        // public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] DebtReportDetailQuery debtReportDetailQuery)
-        // {
-        //     var debtReportDetails = await _debtReportDetailService.GetAllDebtReportDetails(debtReportDetailQuery);
-        //     var totalRecords = debtReportDetails?.Count ?? 0;
-        //     var validFilter = new PaginationFilter(debtReportDetailQuery.PageNumber, debtReportDetailQuery.PageSize);
-        //     var pagedDebtReportDetails = debtReportDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
-        //     var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReportDetails, validFilter, totalRecords, _uriService, Request.Path.Value);
-        //     return Ok(pagedResponse);
-        // }
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] DebtReportDetailQuery debtReportDetailQuery)
+        {
+            var debtReportDetails = await _debtReportDetailService.GetAllDebtReportDetails(debtReportDetailQuery);
+            var totalRecords = debtReportDetails != null ? debtReportDetails.Count() : 0;
+            var validFilter = new PaginationFilter(debtReportDetailQuery.PageNumber, debtReportDetailQuery.PageSize);
+            var pagedDebtReportDetails = debtReportDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReportDetails, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
+        }
 
         [HttpGet("{reportId}/{customerId}")]
         [Authorize(Roles = "Manager")]
@@ -93,7 +100,7 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Response<DebtReportDetailDto>(debtReportDetail));
         }
 
-        [HttpDelete("{reportId, customerId}")]
+        [HttpDelete("{reportId}/{customerId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteDebtReportDetail([FromRoute] int reportId, [FromRoute] int customerId)
         {

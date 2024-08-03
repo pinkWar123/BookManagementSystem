@@ -11,37 +11,37 @@ using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using System.Net;
- 
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
+
 namespace BookManagementSystem.Application.Services
 {
     public class DebtReportDetailService : IDebtReportDetailService
     {
         private readonly IDebtReportDetailRepository _debtReportDetailRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateDebtReportDetailDto> _createValidator;
-        private readonly IValidator<UpdateDebtReportDetailDto> _updateValidator;
 
         public DebtReportDetailService(
             IDebtReportDetailRepository debtReportDetailRepository,
-            IMapper mapper,
-            IValidator<CreateDebtReportDetailDto> createValidator,
-            IValidator<UpdateDebtReportDetailDto> updateValidator)
+            IMapper mapper)
         {
             _debtReportDetailRepository = debtReportDetailRepository ?? throw new ArgumentNullException(nameof(debtReportDetailRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
         }
 
         public async Task<DebtReportDetailDto> CreateNewDebtReportDetail(CreateDebtReportDetailDto createDebtReportDetailDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createDebtReportDetailDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var debtReportDetail = _mapper.Map<DebtReportDetail>(createDebtReportDetailDto);
+            
+            if (createDebtReportDetailDto.InitialDebt.HasValue && createDebtReportDetailDto.FinalDebt.HasValue)
+            {
+                debtReportDetail.AdditionalDebt = createDebtReportDetailDto.FinalDebt.Value - createDebtReportDetailDto.InitialDebt.Value;
+            }
+            else
+            {
+                debtReportDetail.AdditionalDebt = 0;
+            }
+            
             await _debtReportDetailRepository.AddAsync(debtReportDetail);
             await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
@@ -49,22 +49,16 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<DebtReportDetailDto> UpdateDebtReportDetail(int reportId, int customerId, UpdateDebtReportDetailDto updateDebtReportDetailDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updateDebtReportDetailDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
-            // write again GetByIdAsync
             var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-
             if (existingDetail == null)
             {
                 throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(updateDebtReportDetailDto, existingDetail);
-
+            
+            existingDetail.AdditionalDebt = updateDebtReportDetailDto.FinalDebt.Value - existingDetail.InitialDebt;
+            
             var updatedDetail = await _debtReportDetailRepository.UpdateAsync(reportId, customerId, existingDetail);
             await _debtReportDetailRepository.SaveChangesAsync();
             return _mapper.Map<DebtReportDetailDto>(updatedDetail);
@@ -80,11 +74,17 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
         }
 
-        // public async Task<IEnumerable<DebtReportDetailDto>> GetAllDebtReportDetails()
-        // {
-        //     var debtReportDetails = await _debtReportDetailRepository.GetAllAsync();
-        //     return _mapper.Map<IEnumerable<DebtReportDetailDto>>(debtReportDetails);
-        // }
+        public async Task<IEnumerable<DebtReportDetailDto>> GetAllDebtReportDetails(DebtReportDetailQuery debtReportDetailQuery)
+        {
+            var query = _debtReportDetailRepository.GetValuesByQuery(debtReportDetailQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<DebtReportDetailDto>();
+            }
+            var debtReports = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<DebtReportDetailDto>>(debtReports);
+        }
 
         public async Task<bool> DeleteDebtReportDetail(int reportId, int customerId)
         {

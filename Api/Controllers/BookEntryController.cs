@@ -5,6 +5,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -16,19 +19,21 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IBookEntryService _bookEntryService;
         private readonly IValidator<CreateBookEntryDto> _createBookEntryValidator;
         private readonly IValidator<UpdateBookEntryDto> _updateBookEntryValidator;
-
+        private readonly IUriService _uriService;
         public BookEntryController(
             IBookEntryService bookEntryService,
             IValidator<CreateBookEntryDto> createBookEntryValidator,
-            IValidator<UpdateBookEntryDto> updateBookEntryValidator)
+            IValidator<UpdateBookEntryDto> updateBookEntryValidator,
+            IUriService uriService)
         {
             _bookEntryService = bookEntryService;
             _createBookEntryValidator = createBookEntryValidator;
             _updateBookEntryValidator = updateBookEntryValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> CreateNewBookEntryAsync(CreateBookEntryDto createBookEntryDto)
         {
             var validateResult = await _createBookEntryValidator.ValidateAsync(createBookEntryDto);
@@ -91,6 +96,18 @@ namespace BookManagementSystem.Api.Controllers
             if (!result) return NotFound();
 
             return NoContent();
+        }
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllBookEntriesAsync([FromQuery] BookEntryQuery query)
+        {
+            var bookEntries = await _bookEntryService.GetAllBookEntries(query);
+            var totalRecords = bookEntries != null ? bookEntries.Count() : 0;
+            
+            var validFilter = new PaginationFilter(query.PageNumber, query.PageSize);
+            var pagedBookEntry = bookEntries.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedBookEntry, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse); 
         }
     }
 }

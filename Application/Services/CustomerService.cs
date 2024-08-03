@@ -11,6 +11,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using System.Net;
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -18,29 +20,17 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateCustomerDto> _createValidator;
-        private readonly IValidator<UpdateCustomerDto> _updateValidator;
 
         public CustomerService(
             ICustomerRepository customerRepository,
-            IMapper mapper,
-            IValidator<CreateCustomerDto> createValidator,
-            IValidator<UpdateCustomerDto> updateValidator)
+            IMapper mapper)
         {
             _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
         }
 
         public async Task<CustomerDto> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createCustomerDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var customer = _mapper.Map<Customer>(createCustomerDto);
             await _customerRepository.AddAsync(customer);
             await _customerRepository.SaveChangesAsync();
@@ -49,12 +39,6 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<CustomerDto> UpdateCustomer(int customerId, UpdateCustomerDto updateCustomerDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updateCustomerDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var existingCustomer = await _customerRepository.GetByIdAsync(customerId);
             if (existingCustomer == null)
             {
@@ -77,11 +61,18 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<CustomerDto>(customer);
         }
 
-        // public async Task<IEnumerable<CustomerDto>> GetAllCustomers()
-        // {
-        //     var customers = await _customerRepository.GetAllAsync();
-        //     return _mapper.Map<IEnumerable<CustomerDto>>(customers);
-        // }
+        public async Task<IEnumerable<CustomerDto>> GetAllCustomers(CustomerQuery customerQuery)
+        {
+            var query = _customerRepository.GetValuesByQuery(customerQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<CustomerDto>();
+            }
+            
+            var customers = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<CustomerDto>>(customers);
+        }
 
         public async Task<bool> DeleteCustomer(int customerId)
         {

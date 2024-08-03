@@ -20,7 +20,7 @@ namespace BookManagementSystem.Application.Validators
 
             RuleFor(x => x.PhoneNumber)
                 .NotEmpty().WithMessage("Số điện thoại là bắt buộc.")
-                .MaximumLength(10).WithMessage("Số điện thoại không được vượt quá 10 kí tự.")
+                .Length(10).WithMessage("Số điện thoại phải có đúng 10 kí tự.")
                 .Matches(@"^\d+$").WithMessage("Số điện thoại chỉ được chứa chữ số.");
 
             RuleFor(x => x.Email)

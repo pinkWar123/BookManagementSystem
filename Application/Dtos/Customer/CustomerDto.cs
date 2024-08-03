@@ -2,6 +2,7 @@ namespace BookManagementSystem.Application.Dtos.Customer
 {
     public class CustomerDto
     {
+        public int Id { get; set; }
         public required string CustomerName { get; set; }
         public int TotalDebt { get; set; }
         public required string Address { get; set; }

@@ -17,8 +17,8 @@ namespace BookManagementSystem.Application.Validators
             RuleFor(x => x.CustomerID).NotEmpty().WithMessage("CustomerID không được để trống");
             RuleFor(x => x.InvoiceDate)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("")
-                .Must(BeAValidDate).WithMessage("EntryDate phải là giá trị ngày tháng năm hợp lệ.");
+                .NotEmpty().WithMessage("Date không được để trống.")
+                .Must(BeAValidDate).WithMessage("InvoiceDate phải là giá trị ngày tháng năm hợp lệ.");
         }
     }
 }

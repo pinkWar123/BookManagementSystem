@@ -11,6 +11,8 @@ using BookManagementSystem.Application.Validators;
 using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
+using BookManagementSystem.Application.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -19,9 +21,6 @@ namespace BookManagementSystem.Application.Services
     {
          private readonly IInvoiceRepository _invoiceRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateInvoiceDto> _createValidator;
-        private readonly IValidator<UpdateInvoiceDto> _updateValidator;
-
         public InvoiceService(
             IInvoiceRepository invoiceRepository, 
             IMapper mapper, 
@@ -30,18 +29,10 @@ namespace BookManagementSystem.Application.Services
         {
             _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
         }
 
         public async Task<InvoiceDto> CreateNewInvoice(CreateInvoiceDto createInvoiceDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(createInvoiceDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var invoice = _mapper.Map<Domain.Entities.Invoice>(createInvoiceDto);
             await _invoiceRepository.AddAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
@@ -51,11 +42,6 @@ namespace BookManagementSystem.Application.Services
         public async Task<InvoiceDto> UpdateInvoice(int  InvoiceID, UpdateInvoiceDto updateInvoiceDto)
         {   
             
-            var validationResult = await _updateValidator.ValidateAsync(updateInvoiceDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
             var existingEntry = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (existingEntry == null)
             {
@@ -79,7 +65,18 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
-       
+        public async Task<IEnumerable<InvoiceDto>> GetAllInvoice(InvoiceQuery invoiceQuery)
+        {
+            var query = _invoiceRepository.GetValuesByQuery(invoiceQuery);
+            if (query == null)
+            {
+                return Enumerable.Empty<InvoiceDto>();
+            }
+
+            var invoices = await query.ToListAsync();
+
+            return _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+        }
 
         public async Task<bool> DeleteInvoice(int InvoiceID)
         {

@@ -4,6 +4,9 @@ using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -15,15 +18,18 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IDebtReportService _debtReportService;
         private readonly IValidator<CreateDebtReportDto> _createDebtReportValidator;
         private readonly IValidator<UpdateDebtReportDto> _updateDebtReportValidator;
+        private readonly IUriService _uriService;
         public DebtReportController(
             IDebtReportService debtReportService,
             IValidator<CreateDebtReportDto> createDebtReportValidator,
-            IValidator<UpdateDebtReportDto> updateDebtReportValidator    
+            IValidator<UpdateDebtReportDto> updateDebtReportValidator,
+            IUriService uriService
         )
         {
             _debtReportService = debtReportService;
             _createDebtReportValidator = createDebtReportValidator;
             _updateDebtReportValidator = updateDebtReportValidator;
+            _uriService = uriService;
         }
 
         [HttpPost]
@@ -70,17 +76,17 @@ namespace BookManagementSystem.Api.Controllers
             }
         }
 
-        // [HttpGet]
-        // [Authorize(Roles = "Manager")]
-        // public async Task<IActionResult> GetAllDebtReports([FromQuery] DebtReportQuery debtReportQuery)
-        // {
-        //     var debtReports = await _debtReportService.GetAllDebtReports(debtReportQuery);
-        //     var totalRecords = debtReports?.Count ?? 0;
-        //     var validFilter = new PaginationFilter(debtReportQuery.PageNumber, debtReportQuery.PageSize);
-        //     var pagedDebtReports = debtReports.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
-        //     var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReports, validFilter, totalRecords, _uriService, Request.Path.Value);
-        //     return Ok(pagedResponse);
-        // }
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllDebtReports([FromQuery] DebtReportQuery debtReportQuery)
+        {
+            var debtReports = await _debtReportService.GetAllDebtReports(debtReportQuery);
+            var totalRecords = debtReports != null ? debtReports.Count() : 0;
+            var validFilter = new PaginationFilter(debtReportQuery.PageNumber, debtReportQuery.PageSize);
+            var pagedDebtReports = debtReports.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReports, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
+        }
 
         [HttpGet("{reportId}")]
         [Authorize(Roles = "Manager")]
