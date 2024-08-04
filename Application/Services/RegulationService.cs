@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.Regulation;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Regulation;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -58,6 +60,18 @@ namespace BookManagementSystem.Application.Services
             _RegulationRepository.Remove(book);
             await _RegulationRepository.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<RegulationDto>> GetallBook(RegulationQuery regulationQuery) 
+        {
+            var regulations =  _RegulationRepository.GetValuesByQuery(regulationQuery);
+
+            if(regulations == null)
+            {
+                return Enumerable.Empty<RegulationDto>();
+            }
+            var temp = await regulations.ToListAsync();
+            return _mapper.Map<IEnumerable<RegulationDto>>(temp);
         }
 
         public async Task<RegulationDto> GetRegulationById(int RegulationId)

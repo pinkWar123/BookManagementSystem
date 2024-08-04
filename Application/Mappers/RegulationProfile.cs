@@ -10,7 +10,8 @@ namespace BookManagementSystem.Application.Mappers
         {
             CreateMap<CreateRegulationDto, Regulation>();
             CreateMap<CreateRegulationDto, RegulationDto>();
-            CreateMap<Regulation, RegulationDto>();
+            CreateMap<Regulation, RegulationDto>()
+                .ForMember(dest => dest.RegulationId, opt => opt.MapFrom(src => src.Id));
             CreateMap<UpdateRegulationDto, Regulation>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Regulation, UpdateRegulationDto>();

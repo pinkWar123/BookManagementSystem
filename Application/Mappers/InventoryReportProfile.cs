@@ -16,10 +16,11 @@ namespace BookManagementSystem.Application.Mappers
             CreateMap<CreateInventoryReportDto, InventoryReport>();
 
             // Map from InventoryReport entity to InventoryReportDto
-            CreateMap<InventoryReport, InventoryReportDto>();
+            CreateMap<InventoryReport, InventoryReportDto>()
+                .ForMember(dest => dest.ReportID, opt => opt.MapFrom(src => src.Id));
 
             // Map from UpdateInventoryReportDto to InventoryReport entity
-            CreateMap<UpdateInventoryReportDto, DebtReport>()
+            CreateMap<UpdateInventoryReportDto, InventoryReport>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

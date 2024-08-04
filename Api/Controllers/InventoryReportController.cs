@@ -10,6 +10,10 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using BookManagementSystem.Application.Wrappers;
 using Microsoft.AspNetCore.Authorization;
+using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -22,15 +26,18 @@ namespace BookManagementSystem.Api.Controllers
         private readonly IInventoryReportService _inventoryreportservice;
         private readonly IValidator<CreateInventoryReportDto> _createvalidator;
         private readonly IValidator<UpdateInventoryReportDto> _updatevalidator;
+        private readonly IUriService _uriService;
         public InventoryReportController(
             IInventoryReportService bookService,
             IValidator<CreateInventoryReportDto> _createbookvalidator,
-            IValidator<UpdateInventoryReportDto> _updatebookvalidator
+            IValidator<UpdateInventoryReportDto> _updatebookvalidator,
+            IUriService uriService
             )
         {
             this._createvalidator = _createbookvalidator;
             this._updatevalidator = _updatebookvalidator;
             _inventoryreportservice = bookService;
+             _uriService = uriService;
         }
 
         [HttpPost]
@@ -84,9 +91,26 @@ namespace BookManagementSystem.Api.Controllers
         {
             var result = await _inventoryreportservice.DeleteInventoryReport(id);
 
-            if (!result) return NotFound();
+            if (!result)
+            {
+                //Console.WriteLine("=============================================");
+                return NotFound();
+            }
 
             return Ok("delete Successfully");
+        }
+
+
+        [HttpGet("All")]
+        [Authorize(Roles = "Manager,StoreKeeper,Cashier")]
+        public async Task<IActionResult> GetAllDebtReports([FromQuery] InventoryReportQuery InventoryReportQuery)
+        {
+            var inventoryReports = await _inventoryreportservice.GetAllDebtReports(InventoryReportQuery);
+            var totalRecords = inventoryReports != null ? inventoryReports.Count() : 0;
+            var validFilter = new PaginationFilter(InventoryReportQuery.PageNumber, InventoryReportQuery.PageSize);
+            var pagedInventoryReports = inventoryReports.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInventoryReports, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
         }
     }
 }
