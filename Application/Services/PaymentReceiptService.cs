@@ -52,7 +52,7 @@ namespace BookManagementSystem.Application.Services
                     var customer = await _customerService.GetCustomerById(paymentReceipt.CustomerID);
                     if (customer == null)
                     {
-                        throw new CustomerException($"Không tìm thấy khách hàng với ID {paymentReceipt.CustomerID}.", HttpStatusCode.NotFound);
+                        throw new CustomerNotFound(paymentReceipt.CustomerID);
                     }
 
                     // fix later when has GetRegulationByCode
@@ -60,7 +60,7 @@ namespace BookManagementSystem.Application.Services
 
                     if (regulation.Status && createPaymentReceiptDto.Amount > customer.TotalDebt)
                     {
-                        throw new PaymentReceiptException("Số tiền thu không vƣợt quá số tiền khách hàng đang nợ.", HttpStatusCode.BadRequest);
+                        throw new PaymentReceiptConflictRegulation();
                     }
 
                     var updateCustomerDto = new UpdateCustomerDto
@@ -89,7 +89,7 @@ namespace BookManagementSystem.Application.Services
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)
             {
-                throw new PaymentReceiptException($"Không tìm thấy phiếu thu tiền với ID là {receiptId}", HttpStatusCode.NotFound);
+                throw new PaymentReceiptNotFound(receiptId);
             }
 
             _mapper.Map(updatePaymentReceiptDto, paymentReceipt);
@@ -106,7 +106,7 @@ namespace BookManagementSystem.Application.Services
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)
             {
-                throw new PaymentReceiptException($"Không tìm thấy hóa đơn với ID {receiptId}.", HttpStatusCode.NotFound);
+                throw new PaymentReceiptNotFound(receiptId);
             }
             return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
