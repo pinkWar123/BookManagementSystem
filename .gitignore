@@ -10,5 +10,6 @@ obj/
 .vs/
 *.sln
 appsettings.json
+appsettings.Development.json
 /Migrations
 .fake

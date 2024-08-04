@@ -194,7 +194,11 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<UserDto> GetUserByAccessToken(string accessToken)
         {
-
+            var isTokenValid = _tokenService.ValidateToken(accessToken);
+            if(!isTokenValid)
+            {
+                throw new InvalidTokenException(accessToken);
+            }
             var userId = _tokenService.GetUserIdFromToken(accessToken);
 
             if (userId == null) throw new BaseException("Access token không tồn tại", System.Net.HttpStatusCode.BadRequest);

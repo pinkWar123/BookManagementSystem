@@ -12,4 +12,12 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+
+    public class InvalidTokenException : BaseException
+    {
+        public InvalidTokenException(string token) : base($"Token ${token} is not valid", HttpStatusCode.Unauthorized)
+        {
+        }
+
+    }
 }
