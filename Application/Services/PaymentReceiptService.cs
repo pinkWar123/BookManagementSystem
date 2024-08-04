@@ -89,7 +89,7 @@ namespace BookManagementSystem.Application.Services
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)
             {
-                throw new KeyNotFoundException("PaymentReceipt not found");
+                throw new PaymentReceiptException($"Không tìm thấy phiếu thu tiền với ID là {receiptId}", HttpStatusCode.NotFound);
             }
 
             _mapper.Map(updatePaymentReceiptDto, paymentReceipt);
