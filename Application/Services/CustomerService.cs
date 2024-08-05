@@ -85,5 +85,10 @@ namespace BookManagementSystem.Application.Services
             await _customerRepository.SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<int>> GetAllCustomerId()
+        {
+            return await _customerRepository.GetAllCustomerIdAsync();
+        }
     }
 }
