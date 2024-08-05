@@ -13,6 +13,7 @@ using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Data;
 using BookManagementSystem.Application.Dtos.Customer;
+using BookManagementSystem.Application.Dtos.DebtReportDetail;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -23,12 +24,17 @@ namespace BookManagementSystem.Application.Services
         private readonly ApplicationDBContext _context;
         private readonly ICustomerService _customerService;
         private readonly IRegulationService _regulationService;
+        private readonly IDebtReportService _debtReportService;
+
+        private readonly IDebtReportDetailService _debtReportDetailService;
         public PaymentReceiptService(
             IPaymentReceiptRepository paymentReceiptRepository,
             IMapper mapper,
             ApplicationDBContext context,
             ICustomerService customerService,
-            IRegulationService regulationService
+            IRegulationService regulationService,
+            IDebtReportDetailService debtReportDetailService,
+            IDebtReportService debtReportService
         )
         {
             _paymentReceiptRepository = paymentReceiptRepository ?? throw new ArgumentNullException(nameof(paymentReceiptRepository));
@@ -36,6 +42,8 @@ namespace BookManagementSystem.Application.Services
             _context = context;
             _customerService = customerService;
             _regulationService = regulationService;
+            _debtReportDetailService = debtReportDetailService;
+            _debtReportService = debtReportService;
         }
 
         public async Task<PaymentReceiptDto> CreateNewPaymentReceipt(CreatePaymentReceiptDto createPaymentReceiptDto)
@@ -55,6 +63,7 @@ namespace BookManagementSystem.Application.Services
                         throw new CustomerNotFound(paymentReceipt.CustomerID);
                     }
 
+                    // Update TotalDebt of Customer
                     // fix later when has GetRegulationByCode
                     var regulation = await _regulationService.GetRegulationById(1);
 
@@ -68,12 +77,26 @@ namespace BookManagementSystem.Application.Services
                         TotalDebt = customer.TotalDebt - createPaymentReceiptDto.Amount
                     };
 
-                    // Update TotalDebt of Customer
                     await _customerService.UpdateCustomer(paymentReceipt.CustomerID, updateCustomerDto);
+
+                    // Update FinalDebt of DebtReportDetail
+                    var paymentReceiptDto = _mapper.Map<PaymentReceiptDto>(paymentReceipt);
+                    int reportId = await _debtReportService.GetReportIdByMonthYear(paymentReceiptDto.ReceiptDate.Month, paymentReceiptDto.ReceiptDate.Year);
+
+                    var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,paymentReceipt.CustomerID);
+                    if (debtReportDetail == null)
+                    {
+                        throw new DebtReportDetailNotFound(reportId, paymentReceipt.CustomerID);
+                    }
+                    var updateDebtReportDetailDto = new UpdateDebtReportDetailDto
+                    {
+                        FinalDebt = debtReportDetail.FinalDebt - createPaymentReceiptDto.Amount
+                    };
+
+                    await _debtReportDetailService.UpdateDebtReportDetail(reportId, paymentReceipt.CustomerID, updateDebtReportDetailDto);
 
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
-
                     return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
                 }
                 catch

@@ -13,7 +13,7 @@ namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
         public DebtReportRepository(ApplicationDBContext applicationDbContext) : base(applicationDbContext)
         {
         }
-        public async Task<int > GetReportIdByMonthYearAsync(int month, int year)
+        public async Task<int> GetReportIdByMonthYearAsync(int month, int year)
         {
             return await _context.DebtReports
                 .Where(dr => dr.ReportMonth == month && dr.ReportYear == year)
