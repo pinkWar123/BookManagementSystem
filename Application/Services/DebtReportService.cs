@@ -84,5 +84,9 @@ namespace BookManagementSystem.Application.Services
             await _debtReportRepository.SaveChangesAsync();
             return true;
         }
+        public async Task<int> GetReportIdByMonthYear(int month, int year)
+        {
+            return await _debtReportRepository.GetReportIdByMonthYearAsync(month, year);
+        }
     }
 }
