@@ -3,13 +3,15 @@ using BookManagementSystem.Application.Dtos.Invoice;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Invoice;
+using BookManagementSystem.Infrastructure.Repositories.InvoiceDetail;
 using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Application.Dtos.Customer;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
-using BookManagementSystem.Data;
-using BookManagementSystem.Application.Dtos.Book;
+
+
+
 
 namespace BookManagementSystem.Application.Services
 {
@@ -17,6 +19,7 @@ namespace BookManagementSystem.Application.Services
     public class InvoiceService : IInvoiceService
     {
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IInvoiceDetailRepository _invoiceDetailRepository;
         private readonly ICustomerService _customerService;
         private readonly IRegulationService _regulationService;
         private readonly IBookService _bookService;
@@ -25,6 +28,7 @@ namespace BookManagementSystem.Application.Services
         private readonly IMapper _mapper;
         public InvoiceService(
             IInvoiceRepository invoiceRepository, 
+            IInvoiceDetailRepository invoiceDetailRepository,
             ICustomerService customerService,
             IRegulationService regulationService,
             IBookService bookService,
@@ -35,6 +39,7 @@ namespace BookManagementSystem.Application.Services
         {
             _customerService = customerService;
             _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
+            _invoiceDetailRepository = invoiceDetailRepository ?? throw new ArgumentNullException(nameof(invoiceDetailRepository));
             _regulationService = regulationService;
             _bookService = bookService;
             _debtReportService = debtReportService;
@@ -89,7 +94,7 @@ namespace BookManagementSystem.Application.Services
 
 
 
-
+            
             await _invoiceRepository.AddAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
             if (createInvoiceDto.InvoiceDetails == null)
@@ -135,6 +140,31 @@ namespace BookManagementSystem.Application.Services
             var invoices = await query.ToListAsync();
 
             return _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+        }
+        public async Task<List<int>> getInvoiceByMonth(int month, int year)
+        {
+            return await _invoiceRepository.GetInvoiceIdByMonthYearAsync(month, year);
+        }
+        public async Task<int> getPriceByMonth(int month, int year)
+        {
+            var invoiceIds = await _invoiceRepository.GetInvoiceIdByMonthYearAsync(month, year);
+            var totalPrices = 0;
+            foreach (int invoiceId in invoiceIds)
+            {
+                var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
+                if (invoice == null)
+                    throw new InvoiceException($"Không tìm thấy hóa đơn với ID {invoiceId}");
+                var invoiceDetail = await _invoiceDetailRepository.FindInvoiceDetailsByInvoiceIdAsync(invoiceId);
+                if (invoiceDetail == null)
+                    throw new InvoiceException($"Không tìm thấy chi tiết hóa đơn với ID {invoiceId}");
+                foreach (var detail in invoiceDetail)
+                {
+                    int bookID = detail.BookID;
+                    var book = await _bookService.GetBookById(bookID);
+                    totalPrices += detail.Quantity * book.Price;
+                }
+            }
+            return totalPrices;
         }
 
         public async Task<bool> DeleteInvoice(int InvoiceID)

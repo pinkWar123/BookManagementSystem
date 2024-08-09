@@ -10,6 +10,8 @@ namespace BookManagementSystem.Application.Interfaces
         Task<InvoiceDto> UpdateInvoice(int InvoiceID, UpdateInvoiceDto updateInvoiceDto);
         Task<InvoiceDto> GetInvoiceById(int InvoiceID);
         Task<IEnumerable<InvoiceDto>> GetAllInvoice(InvoiceQuery query);
+        Task<List<int>> getInvoiceByMonth(int month, int year);
+        Task<int> getPriceByMonth(int month, int year);
         Task<bool> DeleteInvoice(int InvoiceID);
     }
 }

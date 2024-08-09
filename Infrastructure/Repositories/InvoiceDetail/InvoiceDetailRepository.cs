@@ -27,11 +27,14 @@ namespace BookManagementSystem.Infrastructure.Repositories.InvoiceDetail
             var entity = await _context.Set<Domain.Entities.InvoiceDetail>().FindAsync(InvoiceID, BookID);
             if (entity == null)
             {
-                Console.WriteLine("deo tim ra gi ca");
                 return null;
             }
-            Console.WriteLine("ghost ghost ghost ghost");
             return await _context.Set<Domain.Entities.InvoiceDetail>().FindAsync(InvoiceID, BookID);
+        }
+
+        public async Task<List<Domain.Entities.InvoiceDetail>?> FindInvoiceDetailsByInvoiceIdAsync(int InvoiceID)
+        {
+            return await _context.Set<Domain.Entities.InvoiceDetail>().Where(x => x.InvoiceID == InvoiceID).ToListAsync();
         }
 
         public async Task<Domain.Entities.InvoiceDetail?> UpdateAsync<TUpdateDto>(int InvoiceID, int BookID, TUpdateDto entity) where TUpdateDto : class
