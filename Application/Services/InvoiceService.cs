@@ -13,29 +13,47 @@ using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
+using BookManagementSystem.Infrastructure.Repositories.Customer;
+using BookManagementSystem.Infrastructure.Repositories.InvoiceDetail;
+using System.Runtime.InteropServices;
 
 namespace BookManagementSystem.Application.Services
 {
 
     public class InvoiceService : IInvoiceService
     {
-         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IInvoiceDetailRepository _invoiceDetailRepository;
         private readonly IMapper _mapper;
         public InvoiceService(
             IInvoiceRepository invoiceRepository, 
+            ICustomerRepository customerRepository,
+            IInvoiceDetailRepository invoiceDetailRepository,
             IMapper mapper, 
             IValidator<CreateInvoiceDto> createValidator,
             IValidator<UpdateInvoiceDto> updateValidator)
         {
+            _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
+            _invoiceDetailRepository = invoiceDetailRepository ?? throw new ArgumentNullException(nameof(invoiceDetailRepository));
             _mapper = mapper;
         }
 
         public async Task<InvoiceDto> CreateNewInvoice(CreateInvoiceDto createInvoiceDto)
         {
-            var invoice = _mapper.Map<Domain.Entities.Invoice>(createInvoiceDto);
+            if (createInvoiceDto == null)
+                throw new ArgumentNullException(nameof(createInvoiceDto));
+            var invoice = _mapper.Map<Invoice>(createInvoiceDto);
+            Console.WriteLine("InvoiceID: " + invoice.Id);
+            var customer = await _customerRepository.GetByIdAsync(invoice.CustomerID);
+            if (customer == null)
+                throw new CustomerException($"Customer not found with ID {invoice.CustomerID}");
             await _invoiceRepository.AddAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
+            if (createInvoiceDto.InvoiceDetails == null)
+                throw new InvoiceException("InvoiceDetails is required");
+            
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
