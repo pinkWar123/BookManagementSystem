@@ -1,8 +1,5 @@
-using System;
-using System.Data;
 using System.Globalization;
 using BookManagementSystem.Application.Dtos.Invoice;
-using BookManagementSystem.Application.Dtos.InvoiceDetail;
 using FluentValidation;
 
 namespace BookManagementSystem.Application.Validators

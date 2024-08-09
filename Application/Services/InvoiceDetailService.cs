@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.InvoiceDetail;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.InvoiceDetail;
 using BookManagementSystem.Infrastructure.Repositories.Book;
-using FluentValidation;
 using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;

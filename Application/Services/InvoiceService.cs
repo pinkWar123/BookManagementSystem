@@ -24,19 +24,16 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly ICustomerRepository _customerRepository;
-        private readonly IInvoiceDetailRepository _invoiceDetailRepository;
         private readonly IMapper _mapper;
         public InvoiceService(
             IInvoiceRepository invoiceRepository, 
             ICustomerRepository customerRepository,
             IInvoiceDetailRepository invoiceDetailRepository,
-            IMapper mapper, 
-            IValidator<CreateInvoiceDto> createValidator,
-            IValidator<UpdateInvoiceDto> updateValidator)
+            IMapper mapper
+  )
         {
             _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
-            _invoiceDetailRepository = invoiceDetailRepository ?? throw new ArgumentNullException(nameof(invoiceDetailRepository));
             _mapper = mapper;
         }
 

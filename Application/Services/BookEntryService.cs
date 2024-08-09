@@ -2,7 +2,6 @@ using AutoMapper;
 using BookManagementSystem.Application.Dtos.BookEntry;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Infrastructure.Repositories.BookEntry;
-using FluentValidation;
 using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;

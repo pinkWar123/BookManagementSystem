@@ -1,5 +1,3 @@
-using System;
-using System.Globalization;
 using BookManagementSystem.Application.Dtos.InvoiceDetail;
 using FluentValidation;
 
