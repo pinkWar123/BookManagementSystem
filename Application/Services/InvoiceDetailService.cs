@@ -98,7 +98,7 @@ namespace BookManagementSystem.Application.Services
         {
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             if (invoiceDetail == null)
-                return false;
+                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với InvoiceID {InvoiceID} và BookID {BookID}");
         
             _invoiceDetailRepository.Remove(invoiceDetail);
             await _invoiceDetailRepository.SaveChangesAsync();

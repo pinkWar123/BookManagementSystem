@@ -79,7 +79,7 @@ namespace BookManagementSystem.Application.Services
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
             {
-                return false;
+                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}");
             }
             _bookEntryRepository.Remove(bookEntry);
             await _bookEntryRepository.SaveChangesAsync();

@@ -83,7 +83,7 @@ namespace BookManagementSystem.Application.Services
             var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
-                return false;
+                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
             }
             _invoiceRepository.Remove(invoice);
             await _invoiceRepository.SaveChangesAsync();
