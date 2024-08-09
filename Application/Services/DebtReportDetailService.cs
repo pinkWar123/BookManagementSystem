@@ -52,7 +52,7 @@ namespace BookManagementSystem.Application.Services
             var existingDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             if (existingDetail == null)
             {
-                throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
+                throw new DebtReportDetailNotFound(reportId, customerId);
             }
 
             _mapper.Map(updateDebtReportDetailDto, existingDetail);
@@ -69,7 +69,7 @@ namespace BookManagementSystem.Application.Services
             var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
             if (debtReportDetail == null)
             {
-                throw new DebtReportDetailException($"Không tìm thấy báo cáo với ID báo cáo là {reportId} và ID khách hàng là {customerId}.", HttpStatusCode.NotFound);
+                throw new DebtReportDetailNotFound(reportId, customerId);
             }
             return _mapper.Map<DebtReportDetailDto>(debtReportDetail);
         }
