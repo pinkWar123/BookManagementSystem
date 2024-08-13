@@ -106,5 +106,37 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<RegulationDto>(regulation);
 
         }
+
+        public async Task<RegulationDto?> GetMinimumBookEntry()
+        {
+            var regulation = await _RegulationRepository.FindAllAsync(x => x.Code == "QD1.1");
+            if(regulation == null || regulation.Count == 0) return null;
+            return _mapper.Map<RegulationDto>(regulation[0]);
+        }
+        public async Task<RegulationDto?> GetMaximumInventory()
+        {
+            var regulation = await _RegulationRepository.FindAllAsync(x => x.Code == "QD1.2");
+            if(regulation == null || regulation.Count == 0) return null;
+            return _mapper.Map<RegulationDto>(regulation[0]);
+        }
+        public async Task<RegulationDto?> GetMaximumCustomerDebt()
+        {
+            var regulation = await _RegulationRepository.FindAllAsync(x => x.Code == "QD2.1");
+            if(regulation == null || regulation.Count == 0) return null;
+            return _mapper.Map<RegulationDto>(regulation[0]);
+        }
+        public async Task<RegulationDto?> GetMinimumInventoryAfterSelling()
+        {
+            var regulation = await _RegulationRepository.FindAllAsync(x => x.Code == "QD2.2");
+            if(regulation == null || regulation.Count == 0) return null;
+            return _mapper.Map<RegulationDto>(regulation[0]);
+        }
+        public async Task<RegulationDto?> GetPaymentNotExceedDebt()
+        {
+            var regulation = await _RegulationRepository.FindAllAsync(x => x.Code == "QD4.0");
+            if(regulation == null || regulation.Count == 0) return null;
+            return _mapper.Map<RegulationDto>(regulation[0]);
+        }
+
     }
 }

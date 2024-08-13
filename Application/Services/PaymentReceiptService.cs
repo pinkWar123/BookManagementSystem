@@ -55,8 +55,6 @@ namespace BookManagementSystem.Application.Services
                     // Map DTO to PaymentReceipt
                     var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
                     await _paymentReceiptRepository.AddAsync(paymentReceipt);
-                    await _paymentReceiptRepository.SaveChangesAsync();
-           
                     var customer = await _customerService.GetCustomerById(paymentReceipt.CustomerID);
                     if (customer == null)
                     {
@@ -65,9 +63,9 @@ namespace BookManagementSystem.Application.Services
 
                     // Update TotalDebt of Customer
                     // fix later when has GetRegulationByCode
-                    var regulation = await _regulationService.GetRegulationById(1);
+                    var regulation = await _regulationService.GetPaymentNotExceedDebt();
 
-                    if (regulation.Status && createPaymentReceiptDto.Amount > customer.TotalDebt)
+                    if (regulation?.Status == true && createPaymentReceiptDto.Amount > customer.TotalDebt)
                     {
                         throw new PaymentReceiptConflictRegulation();
                     }

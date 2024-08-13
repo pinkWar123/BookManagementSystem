@@ -2,7 +2,6 @@ using AutoMapper;
 using BookManagementSystem.Application.Dtos.BookEntry;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Infrastructure.Repositories.BookEntry;
-using FluentValidation;
 using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +50,6 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookEntryDto> GetBookEntryById(int EntryID)
         {
-            
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
             {
@@ -77,10 +75,12 @@ namespace BookManagementSystem.Application.Services
         public async Task<bool> DeleteBookEntry(int EntryID)
         {
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
+
             if (bookEntry == null)
             {
-                return false;
+                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}");
             }
+            
             _bookEntryRepository.Remove(bookEntry);
             await _bookEntryRepository.SaveChangesAsync();
             

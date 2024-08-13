@@ -22,5 +22,3 @@ namespace BookManagementSystem.Domain.Entities
 
     }
 }
-
-
