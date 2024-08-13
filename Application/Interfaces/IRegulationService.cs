@@ -13,8 +13,13 @@ namespace BookManagementSystem.Application.Interfaces
         Task<RegulationDto> UpdateRegulation(int RegulationId, UpdateRegulationDto updateRegulationDto);
         Task<RegulationDto> GetRegulationById(int RegulationId);
         Task<bool> DeleteRegulation(int RegulationId);
-
         Task<IEnumerable<RegulationDto>> GetallBook(RegulationQuery regulationQuery);
+        Task<RegulationDto?> GetMinimumBookEntry();
+        Task<RegulationDto?> GetMaximumInventory();
+        Task<RegulationDto?> GetMinimumInventoryAfterSelling();
+        Task<RegulationDto?> GetMaximumCustomerDebt();
+        Task<RegulationDto?> GetPaymentNotExceedDebt();
+
 
     }
 }

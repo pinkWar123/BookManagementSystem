@@ -9,6 +9,7 @@ using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Application.Dtos.Customer;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
+using BookManagementSystem.Application.Dtos.Book;
 
 
 
@@ -51,23 +52,53 @@ namespace BookManagementSystem.Application.Services
         {
             if (createInvoiceDto == null)
                 throw new InvoiceException("CreateInvoiceDto is required");
+
             var invoiceDetails = createInvoiceDto.InvoiceDetails;
             if (invoiceDetails == null)
                 throw new InvoiceException("InvoiceDetails is required");
+
             var invoice = _mapper.Map<Invoice>(createInvoiceDto);
             var customer = await _customerService.GetCustomerById(invoice.CustomerID);
+
             if (customer == null)
                 throw new CustomerException($"Customer not found with ID {invoice.CustomerID}");
-            // Check if Customer is blocked
-            var regulation = await _regulationService.GetRegulationById(1);
 
+            // Check if Customer is blocked
+            var regulation = await _regulationService.GetMaximumCustomerDebt();
+            if(customer.TotalDebt > regulation?.Value)
+            {
+                throw new DebtExceedException();
+            }
+            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
+            int reportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
+            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,invoice.CustomerID);
+            if (debtReportDetail == null)
+            {
+                throw new DebtReportDetailNotFound(reportId, invoice.CustomerID);
+            }
             // Update TotalDebt of Customer
             var totalDebt = 0;
+            var inventoryRegulation = await _regulationService.GetMinimumInventoryAfterSelling();
+            var books = new List<BookDto>();
             foreach (var detail in invoiceDetails)
             {
                 int bookID = detail.BookID;
                 var book = await _bookService.GetBookById(bookID);
+                if(book.StockQuantity - detail.Quantity < inventoryRegulation?.Value)
+                    throw new ExceedMinimumInventoryAfterSelling();
                 totalDebt += detail.Quantity * book.Price;
+                book.StockQuantity -= detail.Quantity;
+                books.Add(book);
+            }
+            foreach(var book in books)
+            {
+                // var bookEntity = _mapper.Map<UpdateBookDto>(book);
+                var updateBookDto =  new UpdateBookDto
+                {
+                    StockQuantity = book.StockQuantity
+                };
+                await _bookService.UpdateBook(book.BookId, updateBookDto);
+                // await _invoiceRepository.SaveChangesAsync();
             }
             var updateCustomerDto = new UpdateCustomerDto
             {
@@ -76,25 +107,12 @@ namespace BookManagementSystem.Application.Services
             await _customerService.UpdateCustomer(invoice.CustomerID, updateCustomerDto);
 
             /// Update FinalDebt of DebtReportDetail
-            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
-            int reportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
-
-            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,invoice.CustomerID);
-            if (debtReportDetail == null)
-            {
-                throw new DebtReportDetailNotFound(reportId, invoice.CustomerID);
-            }
+            
             var updateDebtReportDetailDto = new UpdateDebtReportDetailDto
             {
                 FinalDebt = debtReportDetail.FinalDebt + totalDebt
             };
-            await _debtReportDetailService.UpdateDebtReportDetail(reportId, invoice.CustomerID, updateDebtReportDetailDto);
-
-
-
-
-
-            
+            await _debtReportDetailService.UpdateDebtReportDetail(reportId, invoice.CustomerID, updateDebtReportDetailDto);        
             await _invoiceRepository.AddAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
             if (createInvoiceDto.InvoiceDetails == null)
