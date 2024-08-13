@@ -72,7 +72,7 @@ namespace BookManagementSystem.Application.Services
 
                     var updateCustomerDto = new UpdateCustomerDto
                     {
-                        TotalDebt = customer.TotalDebt - createPaymentReceiptDto.Amount
+                        TotalDebt = Math.Max(customer.TotalDebt - createPaymentReceiptDto.Amount, 0)
                     };
 
                     await _customerService.UpdateCustomer(paymentReceipt.CustomerID, updateCustomerDto);
