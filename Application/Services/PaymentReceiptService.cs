@@ -62,17 +62,16 @@ namespace BookManagementSystem.Application.Services
                     }
 
                     // Update TotalDebt of Customer
-                    // fix later when has GetRegulationByCode
                     var regulation = await _regulationService.GetPaymentNotExceedDebt();
 
                     if (regulation?.Status == true && createPaymentReceiptDto.Amount > customer.TotalDebt)
                     {
                         throw new PaymentReceiptConflictRegulation();
                     }
-
+                    
                     var updateCustomerDto = new UpdateCustomerDto
                     {
-                        TotalDebt = Math.Max(customer.TotalDebt - createPaymentReceiptDto.Amount, 0)
+                        TotalDebt = Math.Max(customer.TotalDebt - (createPaymentReceiptDto.Amount ?? 0), 0)
                     };
 
                     await _customerService.UpdateCustomer(paymentReceipt.CustomerID, updateCustomerDto);
