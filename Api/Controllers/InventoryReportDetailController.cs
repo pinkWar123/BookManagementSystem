@@ -10,6 +10,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using BookManagementSystem.Application.Wrappers;
 using Microsoft.AspNetCore.Authorization;
+using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Application.Filter;
+using BookManagementSystem.Helpers;
 namespace BookManagementSystem.Api.Controllers
 {
     [Authorize]
@@ -18,29 +21,21 @@ namespace BookManagementSystem.Api.Controllers
     public class InventoryReportDetailController : ControllerBase
     {
         private readonly IInventoryReportDetailService _inventoryReportDetailService;
-        private readonly IValidator<CreateInventoryReportDetailDto> _createinventoryReportDetailValidator;
-        private readonly IValidator<UpdateInventoryReportDetailDto> _updateinventoryReportDetailValidator;
+        private readonly IUriService _uriService;
         public InventoryReportDetailController(
             IInventoryReportDetailService _inventoryReportDetailService,
-            IValidator<CreateInventoryReportDetailDto> _createinventoryReportDetailValidator,
-            IValidator<UpdateInventoryReportDetailDto> _updateinventoryReportDetailValidator    
+            IUriService _uriService
         )
         {
             this._inventoryReportDetailService = _inventoryReportDetailService;
-            this._createinventoryReportDetailValidator = _createinventoryReportDetailValidator;
-            this._updateinventoryReportDetailValidator = _updateinventoryReportDetailValidator;
+            this._uriService = _uriService;
         }
 
         [HttpPost]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateNewDebtReportDetail(CreateInventoryReportDetailDto createinventoryReportDetailDto)
         {
-            var validateResult = await _createinventoryReportDetailValidator.ValidateAsync(createinventoryReportDetailDto);
 
-            if (!validateResult.IsValid)
-            {
-                return BadRequest(Results.ValidationProblem(validateResult.ToDictionary()));
-            }
 
             var createdinventoryReportDetail = await _inventoryReportDetailService.CreateInventoryReportDetail(createinventoryReportDetailDto);
 
@@ -51,12 +46,7 @@ namespace BookManagementSystem.Api.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateinventoryReportDetail([FromRoute] int reportId, [FromRoute] int bookId, UpdateInventoryReportDetailDto updateinventoryReportDetailDto)
         {
-            var validateResult = await _updateinventoryReportDetailValidator.ValidateAsync(updateinventoryReportDetailDto);
 
-            if (!validateResult.IsValid)
-            {
-                return BadRequest(Results.ValidationProblem(validateResult.ToDictionary()));
-            }
 
             var existingInventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(reportId, bookId);
             if (existingInventoryReportDetail == null)
@@ -69,18 +59,18 @@ namespace BookManagementSystem.Api.Controllers
                 var updatedDebtReportDetail = await _inventoryReportDetailService.UpdateInventoryReportDetail(reportId, bookId, updateinventoryReportDetailDto);
                 return Ok(new Application.Wrappers.Response<InventoryReportDetailDto>(updatedDebtReportDetail));
             }
-            
+
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while updating the debt report detail: {ex.Message}");
             }
         }
 
-        [HttpGet("{reportId, customerId}")]
+        [HttpGet("{reportId}/{BookId}")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetinventoryReportDetailById([FromRoute] int reportId, [FromRoute] int bookId)
+        public async Task<IActionResult> GetinventoryReportDetailById([FromRoute] int reportId, [FromRoute] int BookId)
         {
-            var inventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(reportId, bookId);
+            var inventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(reportId, BookId);
 
             if (inventoryReportDetail == null) return NotFound();
 
@@ -89,13 +79,25 @@ namespace BookManagementSystem.Api.Controllers
 
         [HttpDelete("{reportId, customerId}")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> DeleteinventoryReportDetail([FromRoute] int reportId, [FromRoute] int customerId)
+        public async Task<IActionResult> DeleteinventoryReportDetail([FromRoute] int reportId, [FromRoute] int BookId)
         {
-            var result = await _inventoryReportDetailService.DeleteInventoryReportDetail(reportId, customerId);
+            var result = await _inventoryReportDetailService.DeleteInventoryReportDetail(reportId, BookId);
 
             if (!result) return NotFound();
 
             return Ok("delete Successfully");
+        }
+
+        [HttpGet("All")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] InventoryReportDetailQuery InventoryReportDetailQuery)
+        {
+            var InventoryReportDetails = await _inventoryReportDetailService.GetAllInventoryReportDetails(InventoryReportDetailQuery);
+            var totalRecords = InventoryReportDetails != null ? InventoryReportDetails.Count() : 0;
+            var validFilter = new PaginationFilter(InventoryReportDetailQuery.PageNumber, InventoryReportDetailQuery.PageSize);
+            var pagedInventoryReportDetails = InventoryReportDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInventoryReportDetails, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
         }
     }
 }

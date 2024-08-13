@@ -15,7 +15,6 @@ namespace BookManagementSystem.Infrastructure.Data.Seed
             new User {UserName = "pnk22", FullName = "Phạm Nguyên Khánh", Email = "pnk22@gmail.com"},
             new User {UserName = "tghuy22", FullName = "Triệu Gia Huy", Email = "tghuy22@gmail.com"}
         };
-
         public static string DefaultPassword = "Admin@123456";
     }
 }

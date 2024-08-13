@@ -12,22 +12,22 @@ namespace BookManagementSystem.Application.Validators
         public CreateBookValidator()
         {
             RuleFor(book => book.Title)
-            .NotEmpty().WithMessage("Title is required.")
-            .MaximumLength(100).WithMessage("Title must not exceed 100 characters.");
+            .NotEmpty().WithMessage("Tên sách là bắt buộc.")
+            .MaximumLength(100).WithMessage("Tên sách không được vượt quá 100 ký tự");
 
             RuleFor(book => book.Genre)
-                .NotEmpty().WithMessage("Genre is required.")
-                .MaximumLength(100).WithMessage("Genre must not exceed 100 characters.");
+                .NotEmpty().WithMessage("Thể loại là bắt buộc.")
+                .MaximumLength(100).WithMessage("Thể loại không được vượt quá 100 ký tự");
 
             RuleFor(book => book.Author)
-                .NotEmpty().WithMessage("Author is required.")
-                .MaximumLength(100).WithMessage("Author must not exceed 100 characters.");
+                .NotEmpty().WithMessage("Tác giả là bắt buộc.")
+                .MaximumLength(100).WithMessage("Thể loại không được vượt quá 100 ký tự");
 
             RuleFor(book => book.Quantity)
-                .GreaterThan(0).WithMessage("Quantity must be a non-negative integer.");
+                .GreaterThan(0).WithMessage("Số lượng sách phải là một số dương");
 
             RuleFor(book => book.Price)
-                .GreaterThan(0).WithMessage("Price must be a non-negative integer.");
+                .GreaterThan(0).WithMessage("Giá của sách phải là một số dương");
         }
     }
 }

@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.Book;
 using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.Book;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -16,20 +18,15 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateBookDto> _createValidator;
-        private readonly IValidator<UpdateBookDto> _updateValidator;
 
 
         public BookService(
             IBookRepository bookRepository,
-            IMapper mapper,
-            IValidator<CreateBookDto> createValidator,
-            IValidator<UpdateBookDto> updateValidator)
+            IMapper mapper
+)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
         }
 
         public async Task<bool> CheckBookExists(int bookId)
@@ -60,6 +57,19 @@ namespace BookManagementSystem.Application.Services
             return true;
         }
 
+        public async Task<IEnumerable<BookDto>> GetallBook(BookQuery bookQuery) 
+        {
+            var books = _bookRepository.GetValuesByQuery(bookQuery);
+
+            if(books == null)
+            {
+                return Enumerable.Empty<BookDto>();
+            }
+
+            var temp = await books.ToListAsync();
+            return _mapper.Map<IEnumerable<BookDto>>(temp);
+        }
+
         public async Task<BookDto> GetBookById(int BookId)
         {
             var book = await _bookRepository.GetByIdAsync(BookId);
@@ -74,14 +84,7 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookDto> UpdateBook(int BookId, UpdateBookDto updateBookDto)
         {
-            var validationResult = await _updateValidator.ValidateAsync(updateBookDto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             var book = await _bookRepository.GetByIdAsync(BookId);
-
             if(book == null)
             {
                  throw new KeyNotFoundException($"Không tìm thấy BookId, không thể cập nhật");
@@ -92,5 +95,7 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<BookDto>(book);
 
         }
+
+        
     }
 }

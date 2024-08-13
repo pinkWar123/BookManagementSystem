@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookManagementSystem.Application.Dtos.Regulation;
+using BookManagementSystem.Application.Queries;
 
 namespace BookManagementSystem.Application.Interfaces
 {
@@ -12,6 +13,8 @@ namespace BookManagementSystem.Application.Interfaces
         Task<RegulationDto> UpdateRegulation(int RegulationId, UpdateRegulationDto updateRegulationDto);
         Task<RegulationDto> GetRegulationById(int RegulationId);
         Task<bool> DeleteRegulation(int RegulationId);
+
+        Task<IEnumerable<RegulationDto>> GetallBook(RegulationQuery regulationQuery);
 
     }
 }

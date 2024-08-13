@@ -12,23 +12,23 @@ namespace BookManagementSystem.Application.Validators
         public UpdateBookValidator()
         {
             RuleFor(book => book.Title)
-           .MaximumLength(100).WithMessage("Title must be less than or equal to 100 characters.")
+           .MaximumLength(100).WithMessage("Tên sách không được vượt quá 100 ký tự")
            .When(book => book.Title != null);
 
             RuleFor(book => book.Genre)
-                .MaximumLength(100).WithMessage("Genre must be less than or equal to 100 characters.")
+                .MaximumLength(100).WithMessage("Thể loại không được vượt quá 100 ký tự")
                 .When(book => book.Genre != null);
 
             RuleFor(book => book.Author)
-                .MaximumLength(100).WithMessage("Author must be less than or equal to 100 characters.")
+                .MaximumLength(100).WithMessage("Tác giả không được vượt quá 100 ký tự")
                 .When(book => book.Author != null);
 
             RuleFor(book => book.StockQuantity)
-                .GreaterThanOrEqualTo(0).WithMessage("StockQuantity must be greater than or equal to 0.")
+                .GreaterThanOrEqualTo(0).WithMessage("Số lượng sách phải là một số dương")
                 .When(book => book.StockQuantity.HasValue);
 
             RuleFor(book => book.Price)
-                .GreaterThanOrEqualTo(0).WithMessage("Price must be greater than or equal to 0.")
+                .GreaterThanOrEqualTo(0).WithMessage("Giá của sách phải là một số dương")
                 .When(book => book.Price.HasValue);
         }
     }
