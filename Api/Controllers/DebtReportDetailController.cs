@@ -13,14 +13,14 @@ namespace BookManagementSystem.Api.Controllers
     [Authorize]
     [Route("api/debt-report-detail")]
     [ApiController]
-    public class DebtReportDetailDetailController : ControllerBase
+    public class DebtReportDetailController : ControllerBase
     {
         private readonly IDebtReportDetailService _debtReportDetailService;
         private readonly IValidator<CreateDebtReportDetailDto> _createDebtReportDetailValidator;
         private readonly IValidator<UpdateDebtReportDetailDto> _updateDebtReportDetailValidator;
         private readonly IUriService _uriService;
 
-        public DebtReportDetailDetailController(
+        public DebtReportDetailController(
             IDebtReportDetailService debtReportDetailService,
             IValidator<CreateDebtReportDetailDto> createDebtReportDetailValidator,
             IValidator<UpdateDebtReportDetailDto> updateDebtReportDetailValidator,
