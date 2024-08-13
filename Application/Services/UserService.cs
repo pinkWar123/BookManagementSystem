@@ -194,16 +194,16 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<UserDto> GetUserByAccessToken(string accessToken)
         {
-            var isTokenValid = _tokenService.ValidateToken(accessToken);
-            if(!isTokenValid)
-            {
-                throw new InvalidTokenException(accessToken);
-            }
-            var userId = _tokenService.GetUserIdFromToken(accessToken);
+            
+            // var isTokenValid = _tokenService.ValidateToken(accessToken);
+            // if(!isTokenValid)
+            // {
+            //     throw new InvalidTokenException(accessToken);
+            // }
 
-            if (userId == null) throw new BaseException("Access token không tồn tại", System.Net.HttpStatusCode.BadRequest);
-
-            var user = await _userManager.FindByIdAsync(userId);
+            var currentUserName = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (currentUserName == null) return null;
+            var user = await _userManager.FindByNameAsync(currentUserName);
 
             if (user == null) throw new BaseException("User không tồn tại", System.Net.HttpStatusCode.NotFound);
 
@@ -215,7 +215,6 @@ namespace BookManagementSystem.Application.Services
                 IsAuthenticated = false,
                 Username = user.UserName,
                 Email = user.Email ?? null,
-                Token = accessToken,
                 Roles = roles as List<string>
             };
 

@@ -51,7 +51,6 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookEntryDto> GetBookEntryById(int EntryID)
         {
-            
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
             {
@@ -77,10 +76,12 @@ namespace BookManagementSystem.Application.Services
         public async Task<bool> DeleteBookEntry(int EntryID)
         {
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
+
             if (bookEntry == null)
             {
                 return false;
             }
+            
             _bookEntryRepository.Remove(bookEntry);
             await _bookEntryRepository.SaveChangesAsync();
             
