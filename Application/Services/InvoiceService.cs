@@ -163,7 +163,7 @@ namespace BookManagementSystem.Application.Services
         {
             return await _invoiceRepository.GetInvoiceIdByMonthYearAsync(month, year);
         }
-        public async Task<int> getPriceByMonth(int month, int year)
+        public async Task<IncomeViewDto?> getPriceByMonth(int month, int year)
         {
             var invoiceIds = await _invoiceRepository.GetInvoiceIdByMonthYearAsync(month, year);
             var totalPrices = 0;
@@ -182,7 +182,13 @@ namespace BookManagementSystem.Application.Services
                     totalPrices += detail.Quantity * book.Price;
                 }
             }
-            return totalPrices;
+            var incomeViewDto = new IncomeViewDto
+            {
+                Month = month,
+                Year = year,
+                Income = totalPrices
+            };
+            return incomeViewDto;
         }
 
         public async Task<bool> DeleteInvoice(int InvoiceID)

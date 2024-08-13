@@ -15,7 +15,7 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IBookEntryDetailRepository _bookEntryDetailRepository;
         private readonly IMapper _mapper;
-
+        
 
         public BookEntryDetailService(
             IBookEntryDetailRepository bookEntryDetailRepository, 
