@@ -77,7 +77,7 @@ namespace BookManagementSystem.Application.Services
         {
             var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             if (bookEntryDetail == null)
-                return false;
+                throw new BookEntryDetailException($"Không tìm thấy BookEntryDetail với EntryID {EntryID} và BookID {BookID}");
         
             _bookEntryDetailRepository.Remove(bookEntryDetail);
             await _bookEntryDetailRepository.SaveChangesAsync();

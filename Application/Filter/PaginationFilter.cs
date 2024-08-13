@@ -10,7 +10,7 @@ namespace BookManagementSystem.Application.Filter
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
-        public static int MaxPageSize = 4;
+        public static int MaxPageSize = 10;
         public PaginationFilter()
         {
             PageNumber = 1;

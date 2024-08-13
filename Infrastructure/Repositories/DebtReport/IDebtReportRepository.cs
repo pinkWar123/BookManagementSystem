@@ -8,6 +8,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
 {
     public interface IDebtReportRepository : IGenericRepository<Domain.Entities.DebtReport>
     {
-
+        Task<int> GetReportIdByMonthYearAsync(int month, int year);
     }
 }

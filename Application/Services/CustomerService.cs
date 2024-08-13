@@ -42,7 +42,7 @@ namespace BookManagementSystem.Application.Services
             var existingCustomer = await _customerRepository.GetByIdAsync(customerId);
             if (existingCustomer == null)
             {
-                throw new CustomerException($"Không tìm thấy khách hàng với ID {customerId}.", HttpStatusCode.NotFound);
+                throw new CustomerNotFound(customerId);
             }
 
             _mapper.Map(updateCustomerDto, existingCustomer);
@@ -56,7 +56,7 @@ namespace BookManagementSystem.Application.Services
             var customer = await _customerRepository.GetByIdAsync(customerId);
             if (customer == null)
             {
-                throw new CustomerException($"Không tìm thấy khách hàng với ID {customerId}.", HttpStatusCode.NotFound);
+                throw new CustomerNotFound(customerId);
             }
             return _mapper.Map<CustomerDto>(customer);
         }
@@ -84,6 +84,11 @@ namespace BookManagementSystem.Application.Services
             _customerRepository.Remove(customer);
             await _customerRepository.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<int>> GetAllCustomerId()
+        {
+            return await _customerRepository.GetAllCustomerIdAsync();
         }
     }
 }

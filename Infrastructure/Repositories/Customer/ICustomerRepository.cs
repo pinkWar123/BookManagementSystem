@@ -9,6 +9,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.Customer
 {
     public interface ICustomerRepository : IGenericRepository<Domain.Entities.Customer>
     {
-
+        Task<IEnumerable<int>> GetAllCustomerIdAsync();
     }
 }
