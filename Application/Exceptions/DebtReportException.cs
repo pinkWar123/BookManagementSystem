@@ -12,4 +12,10 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+    public class DebtReportNotFound : BaseException
+    {
+        public DebtReportNotFound(int id) : base($"Không tìm thấy báo cáo với ID {id}.", HttpStatusCode.NotFound)
+        {
+        }
+    }
 }

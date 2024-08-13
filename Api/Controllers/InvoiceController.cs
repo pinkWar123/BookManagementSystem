@@ -4,8 +4,6 @@ using BookManagementSystem.Application.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Helpers;
@@ -99,6 +97,14 @@ namespace BookManagementSystem.Api.Controllers.Invoice
             var pagedInvoices = invoices.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
             var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInvoices, validFilter, totalRecords, _uriService, Request.Path.Value);
             return Ok(pagedResponse); 
+        }
+        // write an api to get all invoices in a month
+        [HttpGet("getPriceByMonth")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllInvoicesInMonthAsync([FromQuery] int month, [FromQuery] int year)
+        {
+            int totalPrices = await _invoiceService.getPriceByMonth(month, year);
+            return Ok(totalPrices);
         }
 
         [HttpDelete("{invoiceId}")]

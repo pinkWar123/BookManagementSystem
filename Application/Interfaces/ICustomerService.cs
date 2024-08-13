@@ -12,5 +12,6 @@ namespace BookManagementSystem.Application.Interfaces
         Task<CustomerDto> GetCustomerById(int customerId);
         Task<IEnumerable<CustomerDto>> GetAllCustomers(CustomerQuery customerQuery);
         Task<bool> DeleteCustomer(int customerId);
+        Task<IEnumerable<int>> GetAllCustomerId();
     }
 }

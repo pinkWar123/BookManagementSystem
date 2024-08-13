@@ -4,12 +4,16 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.PaymentReceipt;
+using BookManagementSystem.Infrastructure.Repositories.Regulation;
 using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using System.Net;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
+using BookManagementSystem.Data;
+using BookManagementSystem.Application.Dtos.Customer;
+using BookManagementSystem.Application.Dtos.DebtReportDetail;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -17,21 +21,90 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IPaymentReceiptRepository _paymentReceiptRepository;
         private readonly IMapper _mapper;
+        private readonly ApplicationDBContext _context;
+        private readonly ICustomerService _customerService;
+        private readonly IRegulationService _regulationService;
+        private readonly IDebtReportService _debtReportService;
 
+        private readonly IDebtReportDetailService _debtReportDetailService;
         public PaymentReceiptService(
             IPaymentReceiptRepository paymentReceiptRepository,
-            IMapper mapper)
+            IMapper mapper,
+            ApplicationDBContext context,
+            ICustomerService customerService,
+            IRegulationService regulationService,
+            IDebtReportDetailService debtReportDetailService,
+            IDebtReportService debtReportService
+        )
         {
             _paymentReceiptRepository = paymentReceiptRepository ?? throw new ArgumentNullException(nameof(paymentReceiptRepository));
             _mapper = mapper;
+            _context = context;
+            _customerService = customerService;
+            _regulationService = regulationService;
+            _debtReportDetailService = debtReportDetailService;
+            _debtReportService = debtReportService;
         }
 
         public async Task<PaymentReceiptDto> CreateNewPaymentReceipt(CreatePaymentReceiptDto createPaymentReceiptDto)
         {
-            var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
-            await _paymentReceiptRepository.AddAsync(paymentReceipt);
-            await _paymentReceiptRepository.SaveChangesAsync();
-            return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Map DTO to PaymentReceipt
+                    var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
+                    await _paymentReceiptRepository.AddAsync(paymentReceipt);
+                    await _paymentReceiptRepository.SaveChangesAsync();
+           
+                    var customer = await _customerService.GetCustomerById(paymentReceipt.CustomerID);
+                    if (customer == null)
+                    {
+                        throw new CustomerNotFound(paymentReceipt.CustomerID);
+                    }
+
+                    // Update TotalDebt of Customer
+                    // fix later when has GetRegulationByCode
+                    var regulation = await _regulationService.GetRegulationById(1);
+
+                    if (regulation.Status && createPaymentReceiptDto.Amount > customer.TotalDebt)
+                    {
+                        throw new PaymentReceiptConflictRegulation();
+                    }
+
+                    var updateCustomerDto = new UpdateCustomerDto
+                    {
+                        TotalDebt = customer.TotalDebt - createPaymentReceiptDto.Amount
+                    };
+
+                    await _customerService.UpdateCustomer(paymentReceipt.CustomerID, updateCustomerDto);
+
+                    // Update FinalDebt of DebtReportDetail
+                    var paymentReceiptDto = _mapper.Map<PaymentReceiptDto>(paymentReceipt);
+                    int reportId = await _debtReportService.GetReportIdByMonthYear(paymentReceiptDto.ReceiptDate.Month, paymentReceiptDto.ReceiptDate.Year);
+
+                    var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,paymentReceipt.CustomerID);
+                    if (debtReportDetail == null)
+                    {
+                        throw new DebtReportDetailNotFound(reportId, paymentReceipt.CustomerID);
+                    }
+                    var updateDebtReportDetailDto = new UpdateDebtReportDetailDto
+                    {
+                        FinalDebt = debtReportDetail.FinalDebt - createPaymentReceiptDto.Amount
+                    };
+
+                    await _debtReportDetailService.UpdateDebtReportDetail(reportId, paymentReceipt.CustomerID, updateDebtReportDetailDto);
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
         public async Task<PaymentReceiptDto> UpdatePaymentReceipt(int receiptId, UpdatePaymentReceiptDto updatePaymentReceiptDto)
@@ -39,7 +112,7 @@ namespace BookManagementSystem.Application.Services
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)
             {
-                throw new KeyNotFoundException("PaymentReceipt not found");
+                throw new PaymentReceiptNotFound(receiptId);
             }
 
             _mapper.Map(updatePaymentReceiptDto, paymentReceipt);
@@ -56,7 +129,7 @@ namespace BookManagementSystem.Application.Services
             var paymentReceipt = await _paymentReceiptRepository.GetByIdAsync(receiptId);
             if (paymentReceipt == null)
             {
-                throw new PaymentReceiptException($"Không tìm thấy hóa đơn với ID {receiptId}.", HttpStatusCode.NotFound);
+                throw new PaymentReceiptNotFound(receiptId);
             }
             return _mapper.Map<PaymentReceiptDto>(paymentReceipt);
         }
