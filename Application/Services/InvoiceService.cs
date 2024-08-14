@@ -84,7 +84,7 @@ namespace BookManagementSystem.Application.Services
             {
                 int bookID = detail.BookID;
                 var book = await _bookService.GetBookById(bookID);
-                if(book.StockQuantity - detail.Quantity < inventoryRegulation?.Value)
+                if(inventoryRegulation?.Status == true && book.StockQuantity - detail.Quantity < inventoryRegulation?.Value)
                     throw new ExceedMinimumInventoryAfterSelling();
                 totalDebt += detail.Quantity * book.Price;
                 book.StockQuantity -= detail.Quantity;
@@ -95,7 +95,8 @@ namespace BookManagementSystem.Application.Services
                 // var bookEntity = _mapper.Map<UpdateBookDto>(book);
                 var updateBookDto =  new UpdateBookDto
                 {
-                    StockQuantity = book.StockQuantity
+                    StockQuantity = book.StockQuantity,
+                    Price = book.Price
                 };
                 await _bookService.UpdateBook(book.BookId, updateBookDto);
                 // await _invoiceRepository.SaveChangesAsync();
