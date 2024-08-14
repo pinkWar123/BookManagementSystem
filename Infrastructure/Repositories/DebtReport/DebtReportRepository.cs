@@ -20,6 +20,13 @@ namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
                 .Select(dr => dr.Id)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<bool> DebtReportExists(int month, int year)
+        {
+            return await _context.DebtReports
+                .AnyAsync(r => r.ReportMonth == month && r.ReportYear == year);
+        }
+
     }
 
 }
