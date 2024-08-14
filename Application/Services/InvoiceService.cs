@@ -84,6 +84,8 @@ namespace BookManagementSystem.Application.Services
             {
                 int bookID = detail.BookID;
                 var book = await _bookService.GetBookById(bookID);
+                if(book.StockQuantity < detail.Quantity) 
+                    throw new ExceedMinimumInventoryAfterSelling();
                 if(inventoryRegulation?.Status == true && book.StockQuantity - detail.Quantity < inventoryRegulation?.Value)
                     throw new ExceedMinimumInventoryAfterSelling();
                 totalDebt += detail.Quantity * book.Price;
