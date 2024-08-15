@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Dtos.Book;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
@@ -47,7 +48,7 @@ namespace BookManagementSystem.Application.Services
         {
             var book = await _bookRepository.GetByIdAsync(BookId);
 
-            if(book == null)
+            if (book == null)
             {
                 return false;
             }
@@ -57,11 +58,11 @@ namespace BookManagementSystem.Application.Services
             return true;
         }
 
-        public async Task<IEnumerable<BookDto>> GetallBook(BookQuery bookQuery) 
+        public async Task<IEnumerable<BookDto>> GetallBook(BookQuery bookQuery)
         {
             var books = _bookRepository.GetValuesByQuery(bookQuery);
 
-            if(books == null)
+            if (books == null)
             {
                 return Enumerable.Empty<BookDto>();
             }
@@ -74,9 +75,9 @@ namespace BookManagementSystem.Application.Services
         {
             var book = await _bookRepository.GetByIdAsync(BookId);
 
-            if(book == null)
+            if (book == null)
             {
-                 throw new KeyNotFoundException($"Không tìm thấy BookId");
+                throw new BookNotFound(BookId);
             }
 
             return _mapper.Map<BookDto>(book);
@@ -85,9 +86,9 @@ namespace BookManagementSystem.Application.Services
         public async Task<BookDto> UpdateBook(int BookId, UpdateBookDto updateBookDto)
         {
             var book = await _bookRepository.GetByIdAsync(BookId);
-            if(book == null)
+            if (book == null)
             {
-                 throw new KeyNotFoundException($"Không tìm thấy BookId, không thể cập nhật");
+                throw new BookNotFound(BookId);
             }
             _mapper.Map(updateBookDto, book);
             await _bookRepository.UpdateAsync(BookId, book);
@@ -96,6 +97,6 @@ namespace BookManagementSystem.Application.Services
 
         }
 
-        
+
     }
 }
