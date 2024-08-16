@@ -13,6 +13,8 @@ using BookManagementSystem.Application.Exceptions;
 using System.Net;
 using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
+using BookManagementSystem.Data;
+using BookManagementSystem.Application.Dtos.DebtReportDetail;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -20,21 +22,55 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
+        private readonly ApplicationDBContext _context;
+        private readonly IDebtReportService _debtReportService;
+        private readonly IDebtReportDetailService _debtReportDetailService;
 
         public CustomerService(
             ICustomerRepository customerRepository,
-            IMapper mapper)
+            IMapper mapper,
+            ApplicationDBContext context,
+            IDebtReportService debtReportService,
+            IDebtReportDetailService debtReportDetailService
+        )
         {
             _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _mapper = mapper;
+            _context = context;
+            _debtReportService = debtReportService;
+            _debtReportDetailService = debtReportDetailService;
         }
 
         public async Task<CustomerDto> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
-            var customer = _mapper.Map<Customer>(createCustomerDto);
-            await _customerRepository.AddAsync(customer);
-            await _customerRepository.SaveChangesAsync();
-            return _mapper.Map<CustomerDto>(customer);
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var customer = _mapper.Map<Customer>(createCustomerDto);
+                    await _customerRepository.AddAsync(customer);
+                    await _context.SaveChangesAsync();
+                    
+                    int reportId = await _debtReportService.GetReportIdByMonthYear(DateTime.Today.Month, DateTime.Today.Year);
+                    var createDebtReportDetailDto = new CreateDebtReportDetailDto
+                    {
+                        ReportID = reportId,
+                        CustomerID = customer.Id,
+                        InitialDebt = customer.TotalDebt,
+                        FinalDebt = customer.TotalDebt
+                    };
+                    
+                    await _debtReportDetailService.CreateNewDebtReportDetail(createDebtReportDetailDto);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return _mapper.Map<CustomerDto>(customer);
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            } 
         }
 
         public async Task<CustomerDto> UpdateCustomer(int customerId, UpdateCustomerDto updateCustomerDto)

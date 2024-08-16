@@ -32,6 +32,7 @@ using BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail;
 using BookManagementSystem.Infrastructure.Repositories.Regulation;
 using Microsoft.Extensions.Options;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -163,7 +164,11 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 
-
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+});
+builder.Services.AddHostedService<BookManagementSystem.Services.DebtReportBackgroundService>();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
