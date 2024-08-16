@@ -10,6 +10,8 @@ namespace BookManagementSystem.Application.Dtos.Book
         public required string Title { get; set; }
         public required string Genre { get; set; }
         public required string Author { get; set; }
+        public string? ImagePath { get; set; }
+
         public required int Quantity { get; set; }
         public required int Price { get; set; }
     }
