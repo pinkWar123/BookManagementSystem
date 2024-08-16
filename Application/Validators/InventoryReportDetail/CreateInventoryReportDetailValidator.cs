@@ -16,10 +16,9 @@ namespace BookManagementSystem.Application.Validators
                 .NotEmpty().WithMessage("Số lượng cuối không được để trống.")
                 .GreaterThanOrEqualTo(0).WithMessage("Số lượng cuối phải là số không âm.");
 
-            RuleFor(x => x.AdditionalStock)
-                .NotEmpty().WithMessage("Số lượng thay đổi không được để trống.")
-                .Must((dto, AdditionalStock) => dto.FinalStock - dto.InitialStock == AdditionalStock)
-                .WithMessage("Số lượng thay đổi phải bằng nợ cuối trừ nợ đầu.");
+            RuleFor(x => x.BookID)
+                .NotEmpty().WithMessage("ID sách cuối không được để trống.")
+                .GreaterThanOrEqualTo(0).WithMessage("Id sách phải là số dương");
         }
     }
 }
