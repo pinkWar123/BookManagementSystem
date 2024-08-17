@@ -9,6 +9,7 @@ using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Application.Dtos.Customer;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
+using BookManagementSystem.Application.Dtos.Book;
 
 
 
@@ -53,11 +54,44 @@ namespace BookManagementSystem.Application.Services
                 throw new InvoiceException("CreateInvoiceDto is required");
             var invoiceDetails = createInvoiceDto.InvoiceDetails;
             if (invoiceDetails == null)
-                throw new InvoiceException("InvoiceDetails is required");
+                throw new InvoiceException("Chi tiết hóa đơn không được để trống");
             var invoice = _mapper.Map<Invoice>(createInvoiceDto);
             var customer = await _customerService.GetCustomerById(invoice.CustomerID);
             if (customer == null)
                 throw new CustomerException($"Customer not found with ID {invoice.CustomerID}");
+            // check book is available
+            foreach (var detail in invoiceDetails)
+            {
+                int bookID = detail.BookID;
+                var book = await _bookService.GetBookById(bookID);
+                if (book == null)
+                    throw new BaseException($"Sách {book.Title} không tồn tại");
+                if (book.StockQuantity < detail.Quantity)
+                    throw new BaseException($"Sách {book.Title} không đủ số lượng");
+            }
+            // check two books are the same
+            for (int i = 0; i < invoiceDetails.Count; i++)
+            {
+                for (int j = i + 1; j < invoiceDetails.Count; j++)
+                {
+                    if (invoiceDetails[i].BookID == invoiceDetails[j].BookID)
+                        throw new BaseException($"Có 2 cuốn sách {invoiceDetails[i].BookID} trong hóa đơn");
+                }
+            }
+            // Update StockQuantity of Book
+            foreach (var detail in invoiceDetails)
+            {
+                int bookID = detail.BookID;
+                var book = await _bookService.GetBookById(bookID);
+                var updateBookDto = new UpdateBookDto
+                {
+                    StockQuantity = book.StockQuantity - detail.Quantity
+                };
+                await _bookService.UpdateBook(bookID, updateBookDto);
+            }
+            
+
+
             // Check if Customer is blocked
             var regulation = await _regulationService.GetRegulationById(1);
 
@@ -89,12 +123,8 @@ namespace BookManagementSystem.Application.Services
                 FinalDebt = debtReportDetail.FinalDebt + totalDebt
             };
             await _debtReportDetailService.UpdateDebtReportDetail(reportId, invoice.CustomerID, updateDebtReportDetailDto);
-
-
-
-
-
             
+
             await _invoiceRepository.AddAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
             if (createInvoiceDto.InvoiceDetails == null)
