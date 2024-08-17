@@ -55,8 +55,6 @@ namespace BookManagementSystem.Application.Services
                     // Map DTO to PaymentReceipt
                     var paymentReceipt = _mapper.Map<PaymentReceipt>(createPaymentReceiptDto);
                     await _paymentReceiptRepository.AddAsync(paymentReceipt);
-                    await _paymentReceiptRepository.SaveChangesAsync();
-           
                     var customer = await _customerService.GetCustomerById(paymentReceipt.CustomerID);
                     if (customer == null)
                     {
@@ -64,17 +62,16 @@ namespace BookManagementSystem.Application.Services
                     }
 
                     // Update TotalDebt of Customer
-                    // fix later when has GetRegulationByCode
-                    var regulation = await _regulationService.GetRegulationById(1);
+                    var regulation = await _regulationService.GetPaymentNotExceedDebt();
 
-                    if (regulation.Status && createPaymentReceiptDto.Amount > customer.TotalDebt)
+                    if (regulation?.Status == true && createPaymentReceiptDto.Amount > customer.TotalDebt)
                     {
                         throw new PaymentReceiptConflictRegulation();
                     }
-
+                    
                     var updateCustomerDto = new UpdateCustomerDto
                     {
-                        TotalDebt = customer.TotalDebt - createPaymentReceiptDto.Amount
+                        TotalDebt = Math.Max(customer.TotalDebt - (createPaymentReceiptDto.Amount ?? 0), 0)
                     };
 
                     await _customerService.UpdateCustomer(paymentReceipt.CustomerID, updateCustomerDto);
@@ -158,5 +155,42 @@ namespace BookManagementSystem.Application.Services
             await _paymentReceiptRepository.SaveChangesAsync();
             return true;
         }
+
+        public async Task<int> GetTotalAmountByMonthYear(int month, int year)
+        {
+            var paymentReceiptIds = await _paymentReceiptRepository.GetIdListByMonthYearAsync(month, year);
+
+            if (paymentReceiptIds == null || !paymentReceiptIds.Any()) // If no receipts were found, return 0
+            {
+                return 0;
+            }
+
+            int totalAmount = 0;
+            foreach (var id in paymentReceiptIds)
+            {
+                totalAmount += await _paymentReceiptRepository.GetTotalAmountByIdAsync(id);
+            }
+
+            return totalAmount;
+        }
+
+        public async Task<int> GetTotalAmountByOnlyYear(int year)
+        {
+            var paymentReceiptIds = await _paymentReceiptRepository.GetIdListByYearAsync(year);
+
+            if (paymentReceiptIds == null || !paymentReceiptIds.Any()) // If no receipts were found, return 0
+            {
+                return 0;
+            }
+
+            int totalAmount = 0;
+            foreach (var id in paymentReceiptIds)
+            {
+                totalAmount += await _paymentReceiptRepository.GetTotalAmountByIdAsync(id);
+            }
+
+            return totalAmount;
+        }
+
     }
 }

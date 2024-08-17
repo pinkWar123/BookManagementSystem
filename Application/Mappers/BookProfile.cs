@@ -20,7 +20,11 @@ namespace BookManagementSystem.Application.Mappers
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); 
 
             CreateMap<Book, BookDto>()
-                .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => src.Id));
+                .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap();
+
+            CreateMap<BookDto, UpdateBookDto>();
+
         }
     }
 }

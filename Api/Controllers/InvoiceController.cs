@@ -99,12 +99,12 @@ namespace BookManagementSystem.Api.Controllers.Invoice
             return Ok(pagedResponse); 
         }
         // write an api to get all invoices in a month
-        [HttpGet("getPriceByMonth")]
+        [HttpGet("get-income-by-month")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetAllInvoicesInMonthAsync([FromQuery] int month, [FromQuery] int year)
         {
-            int totalPrices = await _invoiceService.getPriceByMonth(month, year);
-            return Ok(totalPrices);
+            var totalPrices = await _invoiceService.getPriceByMonth(month, year);
+            return Ok(new Response<IncomeViewDto>(totalPrices));
         }
 
         [HttpDelete("{invoiceId}")]

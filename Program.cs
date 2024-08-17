@@ -31,6 +31,8 @@ using BookManagementSystem.Infrastructure.Repositories.InventoryReport;
 using BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail;
 using BookManagementSystem.Infrastructure.Repositories.Regulation;
 using Microsoft.Extensions.Options;
+using BookManagementSystem.Configuration.Settings;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +87,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<AzureConfig>(builder.Configuration.GetSection("AzureStorage"));
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -133,6 +136,7 @@ builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IInvoiceDetailRepository, InvoiceDetailRepository>();
 builder.Services.AddScoped<IBookEntryRepository, BookEntryRepository>();
 builder.Services.AddScoped<IBookEntryDetailRepository, BookEntryDetailRepository>();
+builder.Services.AddSingleton<AzureBlobService>();
 // Register services 
 builder.Services.AddSingleton<IUriService>(o =>
 {
@@ -163,7 +167,11 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 
-
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+});
+builder.Services.AddHostedService<BookManagementSystem.Services.DebtReportBackgroundService>();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())

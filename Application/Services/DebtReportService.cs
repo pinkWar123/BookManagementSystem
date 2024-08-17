@@ -88,5 +88,10 @@ namespace BookManagementSystem.Application.Services
         {
             return await _debtReportRepository.GetReportIdByMonthYearAsync(month, year);
         }
+
+        public async Task<bool> DebtReportExists(int month, int year)
+        {
+            return await _debtReportRepository.DebtReportExists(month, year);
+        }
     }
 }
