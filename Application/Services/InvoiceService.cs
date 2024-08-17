@@ -51,7 +51,7 @@ namespace BookManagementSystem.Application.Services
         public async Task<InvoiceDto> CreateNewInvoice(CreateInvoiceDto createInvoiceDto)
         {
             if (createInvoiceDto == null)
-                throw new InvoiceException("CreateInvoiceDto is required");
+                throw new InvoiceException("Không có thông tin hóa đơn");
             var invoiceDetails = createInvoiceDto.InvoiceDetails;
             if (invoiceDetails == null)
                 throw new InvoiceException("Chi tiết hóa đơn không được để trống");
