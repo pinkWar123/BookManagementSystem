@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Application.Dtos.Customer;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
 using BookManagementSystem.Application.Dtos.Book;
+using BookManagementSystem.Application.Dtos.InventoryReportDetail;
 
 
 
@@ -26,6 +27,8 @@ namespace BookManagementSystem.Application.Services
         private readonly IBookService _bookService;
         private readonly IDebtReportService _debtReportService;
         private readonly IDebtReportDetailService _debtReportDetailService;
+        private readonly IInventoryReportService _inventoryReportService;
+        private readonly IInventoryReportDetailService _inventoryReportDetail;
         private readonly IMapper _mapper;
         public InvoiceService(
             IInvoiceRepository invoiceRepository, 
@@ -35,6 +38,8 @@ namespace BookManagementSystem.Application.Services
             IBookService bookService,
             IDebtReportService debtReportService,
             IDebtReportDetailService debtReportDetailService,
+            IInventoryReportService inventoryReportService,
+            IInventoryReportDetailService inventoryReportDetail,
             IMapper mapper
   )
         {
@@ -45,16 +50,15 @@ namespace BookManagementSystem.Application.Services
             _bookService = bookService;
             _debtReportService = debtReportService;
             _debtReportDetailService = debtReportDetailService;
+            _inventoryReportService = inventoryReportService;
+            _inventoryReportDetail = inventoryReportDetail;
             _mapper = mapper;
         }
 
         public async Task<InvoiceDto> CreateNewInvoice(CreateInvoiceDto createInvoiceDto)
         {
-            if (createInvoiceDto == null)
-                throw new InvoiceException("Không có thông tin hóa đơn");
             var invoiceDetails = createInvoiceDto.InvoiceDetails;
-            if (invoiceDetails == null)
-                throw new InvoiceException("Chi tiết hóa đơn không được để trống");
+            
             var invoice = _mapper.Map<Invoice>(createInvoiceDto);
             var customer = await _customerService.GetCustomerById(invoice.CustomerID);
 
@@ -87,11 +91,20 @@ namespace BookManagementSystem.Application.Services
             }
             
             var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
-            int reportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
-            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,invoice.CustomerID);
+            int inventoryReportID = await _inventoryReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
+            if (inventoryReportID == null)
+            {
+                throw new BaseException($"Không tìm thấy báo cáo tồn kho tháng {invoiceDto.InvoiceDate.Month} năm {invoiceDto.InvoiceDate.Year}");
+            }
+
+
+
+
+            int debtReportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
+            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(debtReportId,invoice.CustomerID);
             if (debtReportDetail == null)
             {
-                throw new DebtReportDetailNotFound(reportId, invoice.CustomerID);
+                throw new DebtReportDetailNotFound(debtReportId, invoice.CustomerID);
             }
             // Update TotalDebt of Customer
             var totalDebt = 0;
@@ -114,6 +127,14 @@ namespace BookManagementSystem.Application.Services
                 {
                     StockQuantity = book.StockQuantity - detail.Quantity
                 };
+                // update inventory report detail
+                var inventoryReportDetail = await _inventoryReportDetail.GetInventoryReportDetailById(inventoryReportID, bookID);
+                var updateInventoryReportDetailDto = new UpdateInventoryReportDetailDto
+                {
+                    FinalStock = inventoryReportDetail.FinalStock - detail.Quantity
+
+                };
+                await _inventoryReportDetail.UpdateInventoryReportDetail(inventoryReportID, bookID, updateInventoryReportDetailDto);
                 await _bookService.UpdateBook(bookID, updateBookDto);
             }
             
@@ -129,13 +150,13 @@ namespace BookManagementSystem.Application.Services
             {
                 FinalDebt = debtReportDetail.FinalDebt + totalDebt
             };
-            await _debtReportDetailService.UpdateDebtReportDetail(reportId, invoice.CustomerID, updateDebtReportDetailDto);
+            await _debtReportDetailService.UpdateDebtReportDetail(debtReportId, invoice.CustomerID, updateDebtReportDetailDto);
             
 
             await _invoiceRepository.AddAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
             if (createInvoiceDto.InvoiceDetails == null)
-                throw new InvoiceException("InvoiceDetails is required");
+                throw new InvoiceException("Chi tiết hóa đơn không được để trống");
             
             return _mapper.Map<InvoiceDto>(invoice);
         }

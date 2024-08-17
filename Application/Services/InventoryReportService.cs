@@ -32,6 +32,10 @@ namespace BookManagementSystem.Application.Services
             _mapper = mapper;
 
         }
+        public async Task<int> GetReportIdByMonthYear(int month, int year)
+        {
+            return await _inventoryReportRepository.GetReportIdByMonthYearAsync(month, year);
+        }
 
         public async Task<InventoryReportDto> CreateInventoryReport(CreateInventoryReportDto _createInventoryReportDto)
         {
@@ -86,7 +90,7 @@ namespace BookManagementSystem.Application.Services
             var existingReport = await _inventoryReportRepository.GetByIdAsync(reportId);
             if (existingReport == null)
             {
-                throw new KeyNotFoundException($"DebtReport with ID {reportId} not found.");
+                throw new KeyNotFoundException($"Inventory Report with ID {reportId} not found.");
             }
 
             _mapper.Map(_updateInventoryReportDto, existingReport);
