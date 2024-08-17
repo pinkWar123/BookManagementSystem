@@ -60,6 +60,12 @@ namespace BookManagementSystem.Application.Services
 
             if (customer == null)
                 throw new CustomerException($"Customer not found with ID {invoice.CustomerID}");
+            // Check if Customer is blocked
+            var regulation = await _regulationService.GetMaximumCustomerDebt();
+            if(customer.TotalDebt > regulation?.Value)
+            {
+                throw new DebtExceedException();
+            }
             // check book is available
             foreach (var detail in invoiceDetails)
             {
@@ -67,8 +73,8 @@ namespace BookManagementSystem.Application.Services
                 var book = await _bookService.GetBookById(bookID);
                 if (book == null)
                     throw new BaseException($"Sách {book.Title} không tồn tại");
-                if (book.StockQuantity < detail.Quantity)
-                    throw new BaseException($"Sách {book.Title} không đủ số lượng");
+                if(book.StockQuantity < detail.Quantity) 
+                    throw new ExceedMinimumInventoryAfterSelling();
             }
             // check two books are the same
             for (int i = 0; i < invoiceDetails.Count; i++)
@@ -79,6 +85,26 @@ namespace BookManagementSystem.Application.Services
                         throw new BaseException($"Có 2 cuốn sách {invoiceDetails[i].BookID} trong hóa đơn");
                 }
             }
+            
+            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
+            int reportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
+            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,invoice.CustomerID);
+            if (debtReportDetail == null)
+            {
+                throw new DebtReportDetailNotFound(reportId, invoice.CustomerID);
+            }
+            // Update TotalDebt of Customer
+            var totalDebt = 0;
+            var inventoryRegulation = await _regulationService.GetMinimumInventoryAfterSelling();
+            foreach (var detail in invoiceDetails)
+            {
+                int bookID = detail.BookID;
+                var book = await _bookService.GetBookById(bookID);
+                if(inventoryRegulation?.Status == true && book.StockQuantity - detail.Quantity < inventoryRegulation?.Value)
+                    throw new ExceedMinimumInventoryAfterSelling();
+                totalDebt += detail.Quantity * book.Price;
+            }
+
             // Update StockQuantity of Book
             foreach (var detail in invoiceDetails)
             {
@@ -91,51 +117,6 @@ namespace BookManagementSystem.Application.Services
                 await _bookService.UpdateBook(bookID, updateBookDto);
             }
             
-
-
-            // Check if Customer is blocked
-            var regulation = await _regulationService.GetRegulationById(1);
-
-            // Check if Customer is blocked
-            var regulation = await _regulationService.GetMaximumCustomerDebt();
-            if(customer.TotalDebt > regulation?.Value)
-            {
-                throw new DebtExceedException();
-            }
-            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
-            int reportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
-            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,invoice.CustomerID);
-            if (debtReportDetail == null)
-            {
-                throw new DebtReportDetailNotFound(reportId, invoice.CustomerID);
-            }
-            // Update TotalDebt of Customer
-            var totalDebt = 0;
-            var inventoryRegulation = await _regulationService.GetMinimumInventoryAfterSelling();
-            var books = new List<BookDto>();
-            foreach (var detail in invoiceDetails)
-            {
-                int bookID = detail.BookID;
-                var book = await _bookService.GetBookById(bookID);
-                if(book.StockQuantity < detail.Quantity) 
-                    throw new ExceedMinimumInventoryAfterSelling();
-                if(inventoryRegulation?.Status == true && book.StockQuantity - detail.Quantity < inventoryRegulation?.Value)
-                    throw new ExceedMinimumInventoryAfterSelling();
-                totalDebt += detail.Quantity * book.Price;
-                book.StockQuantity -= detail.Quantity;
-                books.Add(book);
-            }
-            foreach(var book in books)
-            {
-                // var bookEntity = _mapper.Map<UpdateBookDto>(book);
-                var updateBookDto =  new UpdateBookDto
-                {
-                    StockQuantity = book.StockQuantity,
-                    Price = book.Price
-                };
-                await _bookService.UpdateBook(book.BookId, updateBookDto);
-                // await _invoiceRepository.SaveChangesAsync();
-            }
             var updateCustomerDto = new UpdateCustomerDto
             {
                 TotalDebt = totalDebt + customer.TotalDebt
