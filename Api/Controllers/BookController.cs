@@ -95,7 +95,7 @@ namespace BookManagementSystem.Api.Controllers
             return Ok("delete Successfully");
         }
 
-        [HttpGet("AllBooks")]
+        [HttpGet()]
         [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetAllBooks([FromQuery] BookQuery bookQuery)
         {

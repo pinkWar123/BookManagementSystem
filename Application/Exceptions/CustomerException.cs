@@ -18,5 +18,5 @@ namespace BookManagementSystem.Application.Exceptions
         public CustomerNotFound(int id) : base($"Không tìm thấy khách hàng với ID {id}.", HttpStatusCode.NotFound)
         {
         }
-    }
+    }    
 }

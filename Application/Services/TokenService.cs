@@ -93,10 +93,10 @@ namespace BookManagementSystem.Application.Services
             return new TokenValidationParameters
             {
                 // Set your token validation parameters here
-                ValidateIssuer = true,
-                ValidateAudience = true,
+                // ValidateIssuer = true,
+                // ValidateAudience = true,
                 ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
+                // ValidateIssuerSigningKey = true,
                 // Other parameters like Issuer, Audience, SigningKey, etc.
             };
         }

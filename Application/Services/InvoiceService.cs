@@ -57,6 +57,7 @@ namespace BookManagementSystem.Application.Services
                 throw new InvoiceException("Chi tiết hóa đơn không được để trống");
             var invoice = _mapper.Map<Invoice>(createInvoiceDto);
             var customer = await _customerService.GetCustomerById(invoice.CustomerID);
+
             if (customer == null)
                 throw new CustomerException($"Customer not found with ID {invoice.CustomerID}");
             // check book is available
@@ -95,13 +96,45 @@ namespace BookManagementSystem.Application.Services
             // Check if Customer is blocked
             var regulation = await _regulationService.GetRegulationById(1);
 
+            // Check if Customer is blocked
+            var regulation = await _regulationService.GetMaximumCustomerDebt();
+            if(customer.TotalDebt > regulation?.Value)
+            {
+                throw new DebtExceedException();
+            }
+            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
+            int reportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
+            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,invoice.CustomerID);
+            if (debtReportDetail == null)
+            {
+                throw new DebtReportDetailNotFound(reportId, invoice.CustomerID);
+            }
             // Update TotalDebt of Customer
             var totalDebt = 0;
+            var inventoryRegulation = await _regulationService.GetMinimumInventoryAfterSelling();
+            var books = new List<BookDto>();
             foreach (var detail in invoiceDetails)
             {
                 int bookID = detail.BookID;
                 var book = await _bookService.GetBookById(bookID);
+                if(book.StockQuantity < detail.Quantity) 
+                    throw new ExceedMinimumInventoryAfterSelling();
+                if(inventoryRegulation?.Status == true && book.StockQuantity - detail.Quantity < inventoryRegulation?.Value)
+                    throw new ExceedMinimumInventoryAfterSelling();
                 totalDebt += detail.Quantity * book.Price;
+                book.StockQuantity -= detail.Quantity;
+                books.Add(book);
+            }
+            foreach(var book in books)
+            {
+                // var bookEntity = _mapper.Map<UpdateBookDto>(book);
+                var updateBookDto =  new UpdateBookDto
+                {
+                    StockQuantity = book.StockQuantity,
+                    Price = book.Price
+                };
+                await _bookService.UpdateBook(book.BookId, updateBookDto);
+                // await _invoiceRepository.SaveChangesAsync();
             }
             var updateCustomerDto = new UpdateCustomerDto
             {
@@ -110,14 +143,7 @@ namespace BookManagementSystem.Application.Services
             await _customerService.UpdateCustomer(invoice.CustomerID, updateCustomerDto);
 
             /// Update FinalDebt of DebtReportDetail
-            var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
-            int reportId = await _debtReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
-
-            var debtReportDetail = await _debtReportDetailService.GetDebtReportDetailById(reportId,invoice.CustomerID);
-            if (debtReportDetail == null)
-            {
-                throw new DebtReportDetailNotFound(reportId, invoice.CustomerID);
-            }
+            
             var updateDebtReportDetailDto = new UpdateDebtReportDetailDto
             {
                 FinalDebt = debtReportDetail.FinalDebt + totalDebt
@@ -175,7 +201,7 @@ namespace BookManagementSystem.Application.Services
         {
             return await _invoiceRepository.GetInvoiceIdByMonthYearAsync(month, year);
         }
-        public async Task<int> getPriceByMonth(int month, int year)
+        public async Task<IncomeViewDto?> getPriceByMonth(int month, int year)
         {
             var invoiceIds = await _invoiceRepository.GetInvoiceIdByMonthYearAsync(month, year);
             var totalPrices = 0;
@@ -194,7 +220,13 @@ namespace BookManagementSystem.Application.Services
                     totalPrices += detail.Quantity * book.Price;
                 }
             }
-            return totalPrices;
+            var incomeViewDto = new IncomeViewDto
+            {
+                Month = month,
+                Year = year,
+                Income = totalPrices
+            };
+            return incomeViewDto;
         }
 
         public async Task<bool> DeleteInvoice(int InvoiceID)

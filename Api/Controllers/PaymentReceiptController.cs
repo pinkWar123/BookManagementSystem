@@ -113,5 +113,23 @@ namespace BookManagementSystem.Api.Controllers
 
             return NoContent();
         }
+        
+        [HttpGet("getAmountByMonthAndYear")]
+        // [Authorize(Roles = "Cashier")]
+        [Authorize(Roles = "Manager, Cashier")]
+        public async Task<IActionResult> GetTotalAmountByMonthYear([FromQuery] int month, [FromQuery] int year)
+        {
+            int totalAmount = await _paymentReceiptService.GetTotalAmountByMonthYear(month, year);
+            return Ok(totalAmount);
+        }
+
+        [HttpGet("getAmountByYear")]
+        // [Authorize(Roles = "Cashier")]
+        [Authorize(Roles = "Manager, Cashier")]
+        public async Task<IActionResult> GetTotalAmountByYear([FromQuery] int year)
+        {
+            int totalAmount = await _paymentReceiptService.GetTotalAmountByOnlyYear(year);
+            return Ok(totalAmount);
+        }
     }
 }
