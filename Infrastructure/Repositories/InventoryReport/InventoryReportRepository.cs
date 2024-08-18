@@ -23,6 +23,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReport
 
         return report.Id;
     }
-    }
+
 
 }

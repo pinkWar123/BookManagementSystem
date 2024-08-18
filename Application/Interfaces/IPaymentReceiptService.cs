@@ -10,5 +10,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<PaymentReceiptDto> GetPaymentReceiptById(int receiptId);
         Task<IEnumerable<PaymentReceiptDto>> GetAllPaymentReceipts(PaymentReceiptQuery paymentReceiptQuery);
         Task<bool> DeletePaymentReceipt(int receiptId);
+        Task<int> GetTotalAmountByMonthYear(int month, int year);
+        Task<int> GetTotalAmountByOnlyYear(int year);
     }
 }
