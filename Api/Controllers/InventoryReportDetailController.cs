@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure;
 using BookManagementSystem.Application.Dtos.InventoryReportDetail;
+using BookManagementSystem.Application.Dtos.BookEntryDetail;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Validators;
 using FluentValidation;
@@ -100,6 +101,22 @@ namespace BookManagementSystem.Api.Controllers
             var pagedInventoryReportDetails = InventoryReportDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
             var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInventoryReportDetails, validFilter, totalRecords, _uriService, Request.Path.Value);
             return Ok(pagedResponse);
+        }
+
+        [HttpPut("Book")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> UpdateinventoryReportDetail(BookEntryDetailDto bookentrydetail)
+        {
+            try
+            {
+                var temp = _inventoryReportDetailService.CreateInventoryFromBookEntry(bookentrydetail);
+                Console.WriteLine("++++++++++++ddmdmmdmdmmd++++++++++++++++++++++++++++++++++++++++++++++++++");
+                return Ok(temp);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the debt report detail: {ex.Message}");
+            }
         }
     }
 }

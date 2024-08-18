@@ -69,7 +69,6 @@ namespace BookManagementSystem.Services
                                 await inventoryReportDetailService.CreateInventoryReportDetail(createinventoryReportDetailDto);
                             }
 
-                            // Console.WriteLine("Doneeeeeeeeeeeeee");
 
                             await context.SaveChangesAsync();
                             await transaction.CommitAsync();

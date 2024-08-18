@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookManagementSystem.Application.Dtos.InventoryReportDetail;
+using BookManagementSystem.Application.Dtos.BookEntryDetail;
 using BookManagementSystem.Application.Queries;
 
 namespace BookManagementSystem.Application.Interfaces
@@ -16,5 +17,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<bool> DeleteAllInventoryReportDetailWithReportId(int reportId);
 
         Task<IEnumerable<InventoryReportDetailDto>> GetAllInventoryReportDetails(InventoryReportDetailQuery inventoryReportDetailQuery);
+
+        Task<InventoryReportDetailDto> CreateInventoryFromBookEntry(BookEntryDetailDto entry);
     }
 }
