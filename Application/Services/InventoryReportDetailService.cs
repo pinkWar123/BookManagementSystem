@@ -63,7 +63,7 @@ namespace BookManagementSystem.Application.Services
         public async Task<bool> DeleteInventoryReportDetail(int reportId, int BookID)
         {
             // var debtReportDetail = await _debtReportDetailRepository.GetByIdAsync(reportId, customerId);
-            var InventoryReportDetail = await _inventoryReportDetailRepository.GetByIdAsync(reportId);
+            var InventoryReportDetail = await _inventoryReportDetailRepository.GetByIdAsync(reportId, BookID);
             if (InventoryReportDetail == null)
             {
                 return false;
