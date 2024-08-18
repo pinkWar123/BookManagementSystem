@@ -37,7 +37,7 @@ namespace BookManagementSystem.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> CreateNewDebtReportDetail(CreateInventoryReportDetailDto createinventoryReportDetailDto)
+        public async Task<IActionResult> CreateNewInventoryReportDetail(CreateInventoryReportDetailDto createinventoryReportDetailDto)
         {
 
 
@@ -93,7 +93,7 @@ namespace BookManagementSystem.Api.Controllers
 
         [HttpGet("All")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] InventoryReportDetailQuery InventoryReportDetailQuery)
+        public async Task<IActionResult> GetAllInventoryReportDetails([FromQuery] InventoryReportDetailQuery InventoryReportDetailQuery)
         {
             var InventoryReportDetails = await _inventoryReportDetailService.GetAllInventoryReportDetails(InventoryReportDetailQuery);
             var totalRecords = InventoryReportDetails != null ? InventoryReportDetails.Count() : 0;
