@@ -16,7 +16,8 @@ namespace BookManagementSystem.Application.Validators
                 .InclusiveBetween(1, 12).WithMessage("Tháng phải nằm trong khoảng từ 1 đến 12.");
 
             RuleFor(x => x.ReportYear)
-                .NotEmpty().WithMessage("Năm không được để trống.");
+                .NotEmpty().WithMessage("Năm không được để trống.")
+                .GreaterThanOrEqualTo(1).WithMessage("Năm phải là số dương.");
         }
     }
 }

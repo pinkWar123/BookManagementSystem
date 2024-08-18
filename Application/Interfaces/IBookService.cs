@@ -17,5 +17,6 @@ namespace BookManagementSystem.Application.Interfaces
         Task<bool> CheckBookExists(int bookId);
 
         Task<IEnumerable<BookDto>> GetallBook(BookQuery bookQuery);
+        Task<List<int>> GetAllBookId();
     }
 }

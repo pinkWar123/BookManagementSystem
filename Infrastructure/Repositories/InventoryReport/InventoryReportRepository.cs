@@ -11,13 +11,18 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReport
         {
         }
         public async Task<int> GetReportIdByMonthYearAsync(int month, int year)
+    {
+        var report = await _context.InventoryReports
+            .Where(r => r.ReportMonth == month && r.ReportYear == year)
+            .FirstOrDefaultAsync();
+
+        if (report == null)
         {
-            return await _context.InventoryReports
-                .Where(dr => dr.ReportMonth == month && dr.ReportYear == year)
-                .Select(dr => dr.Id)
-                .FirstOrDefaultAsync();
+            throw new Exception("Không tìm thấy InventoryReport cho tháng và năm này.");
         }
-        
+
+        return report.Id;
     }
+
 
 }

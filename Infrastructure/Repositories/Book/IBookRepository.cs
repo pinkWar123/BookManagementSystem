@@ -9,6 +9,7 @@ namespace BookManagementSystem.Infrastructure.Repositories.Book
 {
     public interface IBookRepository : IGenericRepository<Domain.Entities.Book>
     {
-        
+        Task<List<int>> GetAllBookId();
+        Task<bool> BookExistsAsync(string? title, string? genre, string? author);
     }
 }
