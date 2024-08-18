@@ -17,4 +17,9 @@ namespace BookManagementSystem.Application.Exceptions
         public BookNotFound(int id) : base($"Không tìm thấy sách với ID {id}.", HttpStatusCode.NotFound)
         { }
     }    
+
+    public class BookExisted : BaseException
+    {
+        public BookExisted(string? title, string? author, string? genre) : base($"Cuốn sách với tên : {title}, của tác giả : {author}, thể loại : {genre} đã tồn tại", HttpStatusCode.Ambiguous){}
+    }
 }

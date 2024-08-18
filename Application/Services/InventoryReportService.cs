@@ -94,5 +94,10 @@ namespace BookManagementSystem.Application.Services
             await _inventoryReportRepository.SaveChangesAsync();
             return _mapper.Map<InventoryReportDto>(updatedReport);
         }
+
+        public async Task<int> GetReportIdByMonthYear(int month, int year)
+        {
+            return await _inventoryReportRepository.GetReportIdByMonthYearAsync(month, year);
+        }
     }
 }

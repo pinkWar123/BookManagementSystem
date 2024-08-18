@@ -39,10 +39,18 @@ namespace BookManagementSystem.Application.Services
         public async Task<BookDto> CreateBook(CreateBookDto createBookDto)
         {
             var book = _mapper.Map<Book>(createBookDto);
+
+            if (await _bookRepository.BookExistsAsync(createBookDto.Title, createBookDto.Genre, createBookDto.Author))
+            {
+                throw new BookExisted(createBookDto.Title, createBookDto.Author, createBookDto.Genre);
+            }
+
             await _bookRepository.AddAsync(book);
             await _bookRepository.SaveChangesAsync();
+
             return _mapper.Map<BookDto>(book);
         }
+
 
         public async Task<bool> DeleteBook(int BookId)
         {
@@ -71,6 +79,11 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<IEnumerable<BookDto>>(temp);
         }
 
+        public async Task<List<int>> GetAllBookId()
+        {
+            return await _bookRepository.GetAllBookId();
+        }
+
         public async Task<BookDto> GetBookById(int BookId)
         {
             var book = await _bookRepository.GetByIdAsync(BookId);
@@ -89,6 +102,10 @@ namespace BookManagementSystem.Application.Services
             if (book == null)
             {
                 throw new BookNotFound(BookId);
+            }
+            if (await _bookRepository.BookExistsAsync(updateBookDto.Title, updateBookDto.Genre, updateBookDto.Author))
+            {
+                throw new BookExisted(updateBookDto.Title, updateBookDto.Author, updateBookDto.Genre);
             }
             _mapper.Map(updateBookDto, book);
             await _bookRepository.UpdateAsync(BookId, book);

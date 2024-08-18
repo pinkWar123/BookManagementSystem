@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BookManagementSystem.Application.Dtos.Book;
 using FluentValidation;
+using BookManagementSystem.Application.Dtos.Book;
 
 namespace BookManagementSystem.Application.Validators
 {
@@ -12,8 +8,8 @@ namespace BookManagementSystem.Application.Validators
         public CreateBookValidator()
         {
             RuleFor(book => book.Title)
-            .NotEmpty().WithMessage("Tên sách là bắt buộc.")
-            .MaximumLength(100).WithMessage("Tên sách không được vượt quá 100 ký tự");
+                .NotEmpty().WithMessage("Tên sách là bắt buộc.")
+                .MaximumLength(100).WithMessage("Tên sách không được vượt quá 100 ký tự");
 
             RuleFor(book => book.Genre)
                 .NotEmpty().WithMessage("Thể loại là bắt buộc.")
@@ -21,13 +17,15 @@ namespace BookManagementSystem.Application.Validators
 
             RuleFor(book => book.Author)
                 .NotEmpty().WithMessage("Tác giả là bắt buộc.")
-                .MaximumLength(100).WithMessage("Thể loại không được vượt quá 100 ký tự");
+                .MaximumLength(100).WithMessage("Tác giả không được vượt quá 100 ký tự");
 
-            RuleFor(book => book.Quantity)
-                .GreaterThan(0).WithMessage("Số lượng sách phải là một số dương");
+            RuleFor(book => book)
+                .Must(BeUnique).WithMessage("Tên sách, thể loại, và tác giả phải khác nhau.");
+        }
 
-            RuleFor(book => book.Price)
-                .GreaterThan(0).WithMessage("Giá của sách phải là một số dương");
+        private bool BeUnique(CreateBookDto book)
+        {
+            return book.Title != book.Genre && book.Title != book.Author && book.Genre != book.Author;
         }
     }
 }
