@@ -97,17 +97,21 @@ namespace BookManagementSystem.Application.Services
         public async Task<InventoryReportDetailDto> UpdateInventoryReportDetail(int reportId, int BookID, UpdateInventoryReportDetailDto _updateInventoryReportDetailDto)
         {
 
-
+            Console.WriteLine("cai dit con me m");
             var existingReport = await _inventoryReportDetailRepository.GetByIdAsync(reportId, BookID);
             if (existingReport == null)
             {
+                Console.WriteLine("cai dit con me m");
                 throw new KeyNotFoundException($"DebtReport with ID:  {reportId} not found.");
             }
-
+            Console.WriteLine("cai dit con me m");
             _mapper.Map(_updateInventoryReportDetailDto, existingReport);
+            Console.WriteLine("cai dit con me m11111111111111");
             var temp = _mapper.Map<UpdateInventoryReportDetailDto>(existingReport);
-            var updatedReport = await _inventoryReportDetailRepository.UpdateAsync(reportId, BookID, temp);
+            Console.WriteLine("cai dit con me m2222222222222222222222");
+            var updatedReport = await _inventoryReportDetailRepository.UpdateAsync(reportId, BookID, existingReport);
             await _inventoryReportDetailRepository.SaveChangesAsync();
+            Console.WriteLine("cai dit con me m333333333333333");
             return _mapper.Map<InventoryReportDetailDto>(updatedReport);
         }
 

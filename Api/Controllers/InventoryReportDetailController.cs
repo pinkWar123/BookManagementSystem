@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Authorization;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Helpers;
+using BookManagementSystem.Application.Exceptions;
+
+
 namespace BookManagementSystem.Api.Controllers
 {
     [Authorize]
@@ -42,24 +45,23 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Application.Wrappers.Response<InventoryReportDetailDto>(createdinventoryReportDetail));
         }
 
-        [HttpPut("{reportId, bookId}")]
+        [HttpPut("{reportId}/{bookId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateinventoryReportDetail([FromRoute] int reportId, [FromRoute] int bookId, UpdateInventoryReportDetailDto updateinventoryReportDetailDto)
         {
 
-
+            Console.WriteLine("Hello World");
             var existingInventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(reportId, bookId);
             if (existingInventoryReportDetail == null)
             {
-                return NotFound($"Debt report detail with report ID {reportId} and customer ID {bookId} not found.");
+                return BadRequest("Unable to update");
             }
-
+            Console.WriteLine("hehehehhe");
             try
             {
                 var updatedDebtReportDetail = await _inventoryReportDetailService.UpdateInventoryReportDetail(reportId, bookId, updateinventoryReportDetailDto);
                 return Ok(new Application.Wrappers.Response<InventoryReportDetailDto>(updatedDebtReportDetail));
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while updating the debt report detail: {ex.Message}");
@@ -77,7 +79,7 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Application.Wrappers.Response<InventoryReportDetailDto>(inventoryReportDetail));
         }
 
-        [HttpDelete("{reportId, customerId}")]
+        [HttpDelete("{reportId}/{BookId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteinventoryReportDetail([FromRoute] int reportId, [FromRoute] int BookId)
         {

@@ -99,9 +99,9 @@ namespace BookManagementSystem.Application.Services
             return _mapper.Map<InventoryReportDto>(updatedReport);
         }
 
-        public async Task<int> GetReportIdByMonthYear(int month, int year)
-        {
-            return await _inventoryReportRepository.GetReportIdByMonthYearAsync(month, year);
-        }
+        // public async Task<int> GetReportIdByMonthYear(int month, int year)
+        // {
+        //     return await _inventoryReportRepository.GetReportIdByMonthYearAsync(month, year);
+        // }
     }
 }
