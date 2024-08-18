@@ -103,10 +103,7 @@ namespace BookManagementSystem.Application.Services
             {
                 throw new BookNotFound(BookId);
             }
-            if (await _bookRepository.BookExistsAsync(updateBookDto.Title, updateBookDto.Genre, updateBookDto.Author))
-            {
-                throw new BookExisted(updateBookDto.Title, updateBookDto.Author, updateBookDto.Genre);
-            }
+            
             _mapper.Map(updateBookDto, book);
             await _bookRepository.UpdateAsync(BookId, book);
             await _bookRepository.SaveChangesAsync();
