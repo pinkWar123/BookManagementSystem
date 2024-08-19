@@ -18,4 +18,11 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+
+    public class DebtReportDetailListNotFound : BaseException
+    {
+        public DebtReportDetailListNotFound(int reportId) : base($"Không tìm thấy các báo cáo chi tiết với ID báo cáo là {reportId}.", HttpStatusCode.NotFound)
+        {
+        }
+    }
 }

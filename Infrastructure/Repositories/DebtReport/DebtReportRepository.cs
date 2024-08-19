@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BookManagementSystem.Data;
 using BookManagementSystem.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using BookManagementSystem.Application.Dtos.DebtReportDetail;
 
 namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
 {
@@ -27,6 +28,24 @@ namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
                 .AnyAsync(r => r.ReportMonth == month && r.ReportYear == year);
         }
 
+        public async Task<IEnumerable<AllDebtReportDetailDto>> GetDebtReportDetailsByReportIdAsync(int reportId)
+        {
+            var query = from debtReport in _context.DebtReports
+                        join debtReportDetail in _context.DebtReportDetails on debtReport.Id equals debtReportDetail.ReportID
+                        join customer in _context.Customers on debtReportDetail.CustomerID equals customer.Id
+                        where debtReport.Id == reportId
+                        select new AllDebtReportDetailDto
+                        {
+                            ReportID = debtReport.Id,
+                            CustomerID = customer.Id,
+                            customerName = customer.CustomerName,
+                            InitialDebt = debtReportDetail.InitialDebt,
+                            FinalDebt = debtReportDetail.FinalDebt,
+                            AdditionalDebt = debtReportDetail.AdditionalDebt
+                        };
+
+            return await query.ToListAsync();
+        }
     }
 
 }

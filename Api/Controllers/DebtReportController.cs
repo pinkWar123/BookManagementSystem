@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Helpers;
+using BookManagementSystem.Application.Dtos.DebtReportDetail;
+
 
 namespace BookManagementSystem.Api.Controllers
 {
@@ -109,5 +111,18 @@ namespace BookManagementSystem.Api.Controllers
 
             return NoContent();
         }
+
+
+        [HttpGet("getAllDebtReportsByMonth")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllDebtReportDetailsById([FromQuery] int month, [FromQuery] int year)
+        {
+            var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year);
+
+            if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
+
+            return Ok(new Response<IEnumerable<AllDebtReportDetailDto>>(debtReportDetails));
+        }
+
     }
 }
