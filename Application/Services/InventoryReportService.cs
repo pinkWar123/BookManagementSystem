@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.InventoryReport;
 using BookManagementSystem.Application.Dtos.InventoryReportDetail;
+using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Validators;
@@ -99,7 +100,7 @@ namespace BookManagementSystem.Application.Services
             var inventoryReport = await _inventoryReportRepository.GetByIdAsync(reportId);
             if (inventoryReport == null)
             {
-                throw new KeyNotFoundException("Inventory report : " + reportId + "is not found in inventory");
+                throw new InventoryReportNotFound(reportId);
             }
 
             return _mapper.Map<InventoryReportDto>(inventoryReport);
@@ -112,7 +113,7 @@ namespace BookManagementSystem.Application.Services
             var existingReport = await _inventoryReportRepository.GetByIdAsync(reportId);
             if (existingReport == null)
             {
-                throw new KeyNotFoundException($"Inventory Report with ID {reportId} not found.");
+                throw new InventoryReportNotFound(reportId);
             }
 
             _mapper.Map(_updateInventoryReportDto, existingReport);

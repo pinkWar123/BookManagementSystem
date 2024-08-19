@@ -10,6 +10,7 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
+using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail;
 using FluentValidation;
 using FluentValidation.Results;
@@ -90,7 +91,7 @@ namespace BookManagementSystem.Application.Services
             var existingReport = await _inventoryReportDetailRepository.GetByIdAsync(reportId, BookID);
             if (existingReport == null)
             {
-                throw new KeyNotFoundException($"Inventory Report with ID:  {reportId} not found.");
+                throw new InventoryReportDetailNotFound(reportId, BookID);
             }
 
             //_mapper.Map(_updateInventoryReportDetailDto, existingReport);
@@ -104,7 +105,7 @@ namespace BookManagementSystem.Application.Services
             var existingReport = await _inventoryReportDetailRepository.GetByIdAsync(reportId, BookID);
             if (existingReport == null)
             {
-                throw new KeyNotFoundException($"DebtReport with ID:  {reportId} not found.");
+                throw new InventoryReportDetailNotFound(reportId, BookID);
             }
             _mapper.Map(_updateInventoryReportDetailDto, existingReport);
             var temp = _mapper.Map<UpdateInventoryReportDetailDto>(existingReport);
