@@ -14,7 +14,7 @@ namespace BookManagementSystem.Application.Exceptions
     }
     public class InventoryReportDetailNotFound : BaseException
     {
-        public InventoryReportDetailNotFound(int reportId, int customerId) : base($"Không tìm thấy báo cáo chi tiết với ID : {reportId} và ID khách hàng là : {customerId}.", HttpStatusCode.NotFound)
+        public InventoryReportDetailNotFound(int reportId, int bookId) : base($"Không tìm thấy báo cáo chi tiết với ID : {reportId} và ID sách là : {bookId}.", HttpStatusCode.NotFound)
         {
         }
     }

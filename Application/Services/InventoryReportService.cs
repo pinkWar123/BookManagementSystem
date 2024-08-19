@@ -18,8 +18,9 @@ namespace BookManagementSystem.Application.Services
     public class InventoryReportService : IInventoryReportService
     {
         private readonly IInventoryReportRepository _inventoryReportRepository;
-       // private readonly IInventoryReportDetailService _inventoryReportDetailService;
         private readonly IMapper _mapper;
+
+    
 
 
         public InventoryReportService(
@@ -63,10 +64,12 @@ namespace BookManagementSystem.Application.Services
         public async Task<IEnumerable<InventoryReportDto>> GetAllDebtReports(InventoryReportQuery InventoryReportQuery) 
         {
             var query = _inventoryReportRepository.GetValuesByQuery(InventoryReportQuery);
+
             if (query == null)
             {
                 return Enumerable.Empty<InventoryReportDto>();
             }
+            
             var inventoryreprts = await query.ToListAsync();
 
             return _mapper.Map<IEnumerable<InventoryReportDto>>(inventoryreprts);
@@ -75,6 +78,7 @@ namespace BookManagementSystem.Application.Services
         public async Task<InventoryReportDto> GetInventoryReportById(int reportId)
         {
             var inventoryReport = await _inventoryReportRepository.GetByIdAsync(reportId);
+
             if (inventoryReport == null)
             {
                 throw new KeyNotFoundException("Inventory report : " + reportId + "is not found in inventory");

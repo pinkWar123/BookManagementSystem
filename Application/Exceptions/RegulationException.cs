@@ -18,4 +18,11 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+
+    public class ExceedMinimumBookEntry : BaseException
+    {
+        public ExceedMinimumBookEntry() : base($"Số lượng sách nhập vào không được nhỏ hơn số lượng quy định.", HttpStatusCode.BadRequest)
+        {
+        }
+    }
 }

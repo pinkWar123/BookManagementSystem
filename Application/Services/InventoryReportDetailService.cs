@@ -90,7 +90,7 @@ namespace BookManagementSystem.Application.Services
             var existingReport = await _inventoryReportDetailRepository.GetByIdAsync(reportId, BookID);
             if (existingReport == null)
             {
-                throw new KeyNotFoundException($"Inventory Report with ID:  {reportId} not found.");
+                throw new KeyNotFoundException($"Không tìm thấy report {reportId} và book {BookID}");
             }
 
             //_mapper.Map(_updateInventoryReportDetailDto, existingReport);
