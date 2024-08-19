@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Dtos.InventoryReport;
+using BookManagementSystem.Application.Dtos.InventoryReportDetail;
+using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Validators;
@@ -18,19 +20,24 @@ namespace BookManagementSystem.Application.Services
     public class InventoryReportService : IInventoryReportService
     {
         private readonly IInventoryReportRepository _inventoryReportRepository;
-        private readonly IInventoryReportDetailService _inventoryReportDetailService;
         private readonly IMapper _mapper;
+
+    
 
 
         public InventoryReportService(
             IInventoryReportRepository _inventoryReportRepository,
-            IInventoryReportDetailService inventoryReportDetailService,
+            //IInventoryReportDetailService inventoryReportDetailService,
             IMapper mapper)
         {
             this._inventoryReportRepository = _inventoryReportRepository;
-            this._inventoryReportDetailService = inventoryReportDetailService;
+            //this._inventoryReportDetailService = inventoryReportDetailService;
             _mapper = mapper;
 
+        }
+        public async Task<int> GetReportIdByMonthYear(int month, int year)
+        {
+            return await _inventoryReportRepository.GetReportIdByMonthYearAsync(month, year);
         }
 
         public async Task<InventoryReportDto> CreateInventoryReport(CreateInventoryReportDto _createInventoryReportDto)
@@ -48,32 +55,54 @@ namespace BookManagementSystem.Application.Services
             {
                 return false;
             }
-            bool checkdelete = await _inventoryReportDetailService.DeleteAllInventoryReportDetailWithReportId(reportId);
-            
+            //bool checkdelete = await _inventoryReportDetailService.DeleteAllInventoryReportDetailWithReportId(reportId);
+
             _inventoryReportRepository.Remove(inventoryReport);
             await _inventoryReportRepository.SaveChangesAsync();
-            
+
             return true;
         }
 
-        public async Task<IEnumerable<InventoryReportDto>> GetAllDebtReports(InventoryReportQuery InventoryReportQuery) 
+        public async Task<IEnumerable<GetAllInventoryReportDto>> GetAllInventoryReports(InventoryReportQuery inventoryReportQuery)
         {
-            var query = _inventoryReportRepository.GetValuesByQuery(InventoryReportQuery);
+            // Lấy dữ liệu từ _inventoryReportRepository
+            var query = _inventoryReportRepository.GetValuesByQuery(inventoryReportQuery);
+
             if (query == null)
             {
-                return Enumerable.Empty<InventoryReportDto>();
+                return Enumerable.Empty<GetAllInventoryReportDto>();
             }
-            var inventoryreprts = await query.ToListAsync();
 
-            return _mapper.Map<IEnumerable<InventoryReportDto>>(inventoryreprts);
+            var inventoryReports = await query
+                .Include(ir => ir.InventoryReportDetails)
+                    .ThenInclude(ird => ird.Book)
+                .ToListAsync();
+            var result = inventoryReports.Select(ir => new GetAllInventoryReportDto
+            {
+                ReportID = ir.Id,
+                ReportMonth = ir.ReportMonth,
+                ReportYear = ir.ReportYear,
+                InventoryReportDetails = ir.InventoryReportDetails.Select(ird => new GetListInventoryReportDetailDto
+                {
+                    ReportID = ir.Id,
+                    BookID = ird.BookID,
+                    Title = ird.Book != null ? ird.Book.Title : "Unknown",  // Lấy tên sách từ Book
+                    InitialStock = ird.InitalStock,
+                    FinalStock = ird.FinalStock,
+                    AdditionalStock = ird.AdditionalStock
+                }).ToList()
+            });
+
+            return result;
         }
 
         public async Task<InventoryReportDto> GetInventoryReportById(int reportId)
         {
             var inventoryReport = await _inventoryReportRepository.GetByIdAsync(reportId);
+
             if (inventoryReport == null)
             {
-                throw new KeyNotFoundException("Inventory report : " + reportId + "is not found in inventory");
+                throw new InventoryReportNotFound(reportId);
             }
 
             return _mapper.Map<InventoryReportDto>(inventoryReport);
@@ -86,7 +115,7 @@ namespace BookManagementSystem.Application.Services
             var existingReport = await _inventoryReportRepository.GetByIdAsync(reportId);
             if (existingReport == null)
             {
-                throw new KeyNotFoundException($"DebtReport with ID {reportId} not found.");
+                throw new InventoryReportNotFound(reportId);
             }
 
             _mapper.Map(_updateInventoryReportDto, existingReport);

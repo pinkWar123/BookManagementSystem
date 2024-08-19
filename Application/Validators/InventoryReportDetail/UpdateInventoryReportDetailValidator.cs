@@ -14,18 +14,6 @@ namespace BookManagementSystem.Application.Validators
             RuleFor(x => x.FinalStock)
                 .GreaterThanOrEqualTo(0).When(x => x.FinalStock.HasValue)
                 .WithMessage("Số lượng cuối phải là số không âm.");
-
-            RuleFor(x => x)
-                .Custom((dto, context) =>
-                {
-                    if (dto.InitialStock.HasValue && dto.FinalStock.HasValue && dto.AdditionalStock.HasValue)
-                    {
-                        if (dto.FinalStock.Value - dto.InitialStock.Value != dto.AdditionalStock.Value)
-                        {
-                            context.AddFailure("AdditionalStock", "Số lượng thay đổi phải bằng nợ cuối trừ nợ đầu.");
-                        }
-                    }
-                });
         }
     }
 }

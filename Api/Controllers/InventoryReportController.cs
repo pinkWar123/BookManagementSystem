@@ -105,7 +105,7 @@ namespace BookManagementSystem.Api.Controllers
         [Authorize(Roles = "Manager,StoreKeeper,Cashier")]
         public async Task<IActionResult> GetAllDebtReports([FromQuery] InventoryReportQuery InventoryReportQuery)
         {
-            var inventoryReports = await _inventoryreportservice.GetAllDebtReports(InventoryReportQuery);
+            var inventoryReports = await _inventoryreportservice.GetAllInventoryReports(InventoryReportQuery);
             var totalRecords = inventoryReports != null ? inventoryReports.Count() : 0;
             var validFilter = new PaginationFilter(InventoryReportQuery.PageNumber, InventoryReportQuery.PageSize);
             var pagedInventoryReports = inventoryReports.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();

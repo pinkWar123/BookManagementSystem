@@ -12,6 +12,9 @@ namespace BookManagementSystem.Application.Validators
         }
         public CreateBookEntryValidator()
         {
+            RuleFor(x => x.BookEntryDetails)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Thông tin chi tiết phiếu nhập sách không được để trống.");
             RuleFor(x => x.EntryDate)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("EntryDate không được để trống.")

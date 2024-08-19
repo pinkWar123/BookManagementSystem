@@ -34,6 +34,7 @@ using Microsoft.Extensions.Options;
 using BookManagementSystem.Configuration.Settings;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -171,7 +172,10 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 });
+
+builder.Services.AddHostedService<BookManagementSystem.Services.InventoryReportMonthlyCreateBackgroundService>();
 builder.Services.AddHostedService<BookManagementSystem.Services.DebtReportBackgroundService>();
+
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -195,4 +199,3 @@ app.UseAuthorization();
 app.UseMiddleware<GlobalExceptionHandler>();
 app.MapControllers();
 app.Run();
-

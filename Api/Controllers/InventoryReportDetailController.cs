@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure;
 using BookManagementSystem.Application.Dtos.InventoryReportDetail;
+using BookManagementSystem.Application.Dtos.BookEntryDetail;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Validators;
 using FluentValidation;
@@ -13,6 +14,9 @@ using Microsoft.AspNetCore.Authorization;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Filter;
 using BookManagementSystem.Helpers;
+using BookManagementSystem.Application.Exceptions;
+
+
 namespace BookManagementSystem.Api.Controllers
 {
     [Authorize]
@@ -33,7 +37,7 @@ namespace BookManagementSystem.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> CreateNewDebtReportDetail(CreateInventoryReportDetailDto createinventoryReportDetailDto)
+        public async Task<IActionResult> CreateNewInventoryReportDetail(CreateInventoryReportDetailDto createinventoryReportDetailDto)
         {
 
 
@@ -42,24 +46,23 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Application.Wrappers.Response<InventoryReportDetailDto>(createdinventoryReportDetail));
         }
 
-        [HttpPut("{reportId, bookId}")]
+        [HttpPut("{reportId}/{bookId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateinventoryReportDetail([FromRoute] int reportId, [FromRoute] int bookId, UpdateInventoryReportDetailDto updateinventoryReportDetailDto)
         {
 
-
+            Console.WriteLine("Hello World");
             var existingInventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(reportId, bookId);
             if (existingInventoryReportDetail == null)
             {
-                return NotFound($"Debt report detail with report ID {reportId} and customer ID {bookId} not found.");
+                return BadRequest("Unable to update");
             }
-
+            Console.WriteLine("hehehehhe");
             try
             {
                 var updatedDebtReportDetail = await _inventoryReportDetailService.UpdateInventoryReportDetail(reportId, bookId, updateinventoryReportDetailDto);
                 return Ok(new Application.Wrappers.Response<InventoryReportDetailDto>(updatedDebtReportDetail));
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while updating the debt report detail: {ex.Message}");
@@ -77,7 +80,7 @@ namespace BookManagementSystem.Api.Controllers
             return Ok(new Application.Wrappers.Response<InventoryReportDetailDto>(inventoryReportDetail));
         }
 
-        [HttpDelete("{reportId, customerId}")]
+        [HttpDelete("{reportId}/{BookId}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteinventoryReportDetail([FromRoute] int reportId, [FromRoute] int BookId)
         {
@@ -90,7 +93,7 @@ namespace BookManagementSystem.Api.Controllers
 
         [HttpGet("All")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] InventoryReportDetailQuery InventoryReportDetailQuery)
+        public async Task<IActionResult> GetAllInventoryReportDetails([FromQuery] InventoryReportDetailQuery InventoryReportDetailQuery)
         {
             var InventoryReportDetails = await _inventoryReportDetailService.GetAllInventoryReportDetails(InventoryReportDetailQuery);
             var totalRecords = InventoryReportDetails != null ? InventoryReportDetails.Count() : 0;
@@ -98,6 +101,22 @@ namespace BookManagementSystem.Api.Controllers
             var pagedInventoryReportDetails = InventoryReportDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
             var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInventoryReportDetails, validFilter, totalRecords, _uriService, Request.Path.Value);
             return Ok(pagedResponse);
+        }
+
+        [HttpPut("Book")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> UpdateinventoryReportDetail(BookEntryDetailDto bookentrydetail)
+        {
+            try
+            {
+                var temp = _inventoryReportDetailService.CreateInventoryFromBookEntry(bookentrydetail);
+                Console.WriteLine("++++++++++++ddmdmmdmdmmd++++++++++++++++++++++++++++++++++++++++++++++++++");
+                return Ok(temp);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the debt report detail: {ex.Message}");
+            }
         }
     }
 }
