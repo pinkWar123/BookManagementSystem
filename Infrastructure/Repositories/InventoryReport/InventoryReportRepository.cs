@@ -17,8 +17,9 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReport
                 .FirstOrDefaultAsync();
 
             if (report == null)
-            {
-                throw new Exception("Không tìm thấy InventoryReport cho tháng và năm này.");
+            { 
+               return -1;
+
             }
 
             return report.Id;

@@ -9,41 +9,20 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail
     {
         public InventoryReportDetailRepository(ApplicationDBContext applicationDbContext) : base(applicationDbContext)
         { }
-        public async Task<Domain.Entities.InventoryReportDetail> UpdateAsync(int id, int id2, UpdateInventoryReportDetailDto entity)
+        public async Task<Domain.Entities.InventoryReportDetail?> UpdateAsync<TUpdateDto>(int reportId, int bookId, TUpdateDto entity) where TUpdateDto : class
         {
-            var existingEntity = await GetByIdAsync(id, id2);
+            var existingEntity = await GetByIdAsync(reportId, bookId);
             if (existingEntity == null)
                 return null;
 
-            var updateDtoProperties = typeof(InventoryReportDetailDto).GetProperties();
-            var entityProperties = typeof(InventoryReportDetailDto).GetProperties().Select(p => p.Name).ToHashSet();
-
-            // Ensure all properties in updateDto exist in the entity class
-            foreach (var property in updateDtoProperties)
-            {
-                if (!entityProperties.Contains(property.Name))
-                {
-                    throw new Exception($"Property {property.Name} does not exist in the entity class.");
-                }
-            }
-
-            foreach (var property in updateDtoProperties)
-            {
-                var newValue = property.GetValue(entity);
-                var existingProperty = existingEntity.GetType().GetProperty(property.Name);
-                if (existingProperty != null && existingProperty.CanWrite)
-                {
-                    existingProperty.SetValue(existingEntity, newValue);
-                }
-            }
-
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
             return existingEntity;
         }
 
         public async Task<Domain.Entities.InventoryReportDetail?> GetByIdAsync(int id, int id2)
         {
-
-            return await GetContext().FindAsync(id, id2);
+            return await _context.Set<Domain.Entities.InventoryReportDetail>()
+                .FindAsync(id, id2);
         }
 
         public async Task<List<Domain.Entities.InventoryReportDetail>> GetListInventoryReportDetailsByIdAsync(int id)

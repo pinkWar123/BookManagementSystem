@@ -18,17 +18,17 @@ namespace BookManagementSystem.Application.Services
     public class InventoryReportService : IInventoryReportService
     {
         private readonly IInventoryReportRepository _inventoryReportRepository;
-        private readonly IInventoryReportDetailService _inventoryReportDetailService;
+       // private readonly IInventoryReportDetailService _inventoryReportDetailService;
         private readonly IMapper _mapper;
 
 
         public InventoryReportService(
             IInventoryReportRepository _inventoryReportRepository,
-            IInventoryReportDetailService inventoryReportDetailService,
+            //IInventoryReportDetailService inventoryReportDetailService,
             IMapper mapper)
         {
             this._inventoryReportRepository = _inventoryReportRepository;
-            this._inventoryReportDetailService = inventoryReportDetailService;
+            //this._inventoryReportDetailService = inventoryReportDetailService;
             _mapper = mapper;
 
         }
@@ -52,7 +52,7 @@ namespace BookManagementSystem.Application.Services
             {
                 return false;
             }
-            bool checkdelete = await _inventoryReportDetailService.DeleteAllInventoryReportDetailWithReportId(reportId);
+            //bool checkdelete = await _inventoryReportDetailService.DeleteAllInventoryReportDetailWithReportId(reportId);
             
             _inventoryReportRepository.Remove(inventoryReport);
             await _inventoryReportRepository.SaveChangesAsync();
@@ -98,5 +98,10 @@ namespace BookManagementSystem.Application.Services
             await _inventoryReportRepository.SaveChangesAsync();
             return _mapper.Map<InventoryReportDto>(updatedReport);
         }
+
+        // public async Task<int> GetReportIdByMonthYear(int month, int year)
+        // {
+        //     return await _inventoryReportRepository.GetReportIdByMonthYearAsync(month, year);
+        // }
     }
 }
