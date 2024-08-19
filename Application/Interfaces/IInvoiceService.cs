@@ -13,5 +13,6 @@ namespace BookManagementSystem.Application.Interfaces
         Task<List<int>> getInvoiceByMonth(int month, int year);
         Task<IncomeViewDto?> getPriceByMonth(int month, int year);
         Task<bool> DeleteInvoice(int InvoiceID);
+        Task<int> GetInvoiceCountByMonthYear(int month, int year);
     }
 }

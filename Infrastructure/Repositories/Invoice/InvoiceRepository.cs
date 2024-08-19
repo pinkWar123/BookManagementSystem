@@ -12,6 +12,14 @@ namespace BookManagementSystem.Infrastructure.Repositories.Book
         {
             
         }
+
+        public async Task<int> GetInvoiceCountByMonthYear(int month, int year)
+        {
+            var invoices = await FindAllAsync(i => i.Date.Month == month && i.Date.Year == year);
+            return invoices == null ? 0 : invoices.Count;
+        }
+
+
         public async Task<List<int>> GetInvoiceIdByMonthYearAsync(int month, int year)
       
         {
@@ -20,5 +28,7 @@ namespace BookManagementSystem.Infrastructure.Repositories.Book
                 .Select(i => i.Id)
                 .ToListAsync();
         }
+
+        
     }
 }

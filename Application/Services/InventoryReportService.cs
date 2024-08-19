@@ -81,7 +81,7 @@ namespace BookManagementSystem.Application.Services
             {
                 ReportID = ir.Id,
                 ReportMonth = ir.ReportMonth,
-                ReportYear = ir.ReportMonth,
+                ReportYear = ir.ReportYear,
                 InventoryReportDetails = ir.InventoryReportDetails.Select(ird => new GetListInventoryReportDetailDto
                 {
                     ReportID = ir.Id,

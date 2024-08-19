@@ -72,6 +72,7 @@ namespace BookManagementSystem.Application.Services
                 // update inventory report detail final stock
                 var inventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(inventoryReportID, bookEntryDetail.BookID);
                 inventoryReportDetail.FinalStock += bookEntryDetail.Quantity;
+                inventoryReportDetail.AdditionalStock = inventoryReportDetail.FinalStock - inventoryReportDetail.InitialStock;
                 await _inventoryReportDetailService.UpdateInventoryReportDetail(inventoryReportID, bookEntryDetail.BookID, _mapper.Map<UpdateInventoryReportDetailDto>(inventoryReportDetail)); 
             }
 
