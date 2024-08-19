@@ -15,6 +15,6 @@ namespace BookManagementSystem.Application.Interfaces
         Task<InventoryReportDto> GetInventoryReportById(int reportId);
         Task<bool> DeleteInventoryReport(int reportId);
         Task<int> GetReportIdByMonthYear(int month, int year);
-        Task<IEnumerable<InventoryReportDto>> GetAllDebtReports(InventoryReportQuery debtReportQuery);
+        Task<IEnumerable<GetAllInventoryReportDto>> GetAllInventoryReports(InventoryReportQuery inventoryReportQuery);
     }
 }
