@@ -27,6 +27,7 @@ namespace BookManagementSystem.Application.Mappers
             
 
             CreateMap<UpdateInventoryReportDetailDto, InventoryReportDetailDto>();
+            CreateMap<InventoryReportDetailDto, UpdateInventoryReportDetailDto>();
         }
     }
 }
