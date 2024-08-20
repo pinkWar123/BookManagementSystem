@@ -119,8 +119,8 @@ namespace BookManagementSystem.Api.Controllers
         {
             var topCustomers = await _customerService.GetTopCustomersByMonthYear(month, year);
 
-            if (!topCustomers.Any())
-                return NotFound();
+            // if (!topCustomers.Any())
+            //     return NotFound();
 
             return Ok(topCustomers);
         }
