@@ -25,4 +25,11 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+
+    public class PaymentReceiptConflictRegulation : BaseException
+    {
+        public PaymentReceiptConflictRegulation(): base("Số tiền thu không vượt quá số tiền khách hàng đang nợ.", HttpStatusCode.BadRequest)
+        {
+        }
+    }
 }
