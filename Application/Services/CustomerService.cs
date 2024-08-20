@@ -137,5 +137,10 @@ namespace BookManagementSystem.Application.Services
             return customerIds.ToList().Count;
         }
 
+        public async Task<IEnumerable<CustomerDtoWithAmount>> GetTopCustomersByMonthYear(int month, int year)
+        {
+            return await _customerRepository.GetTopCustomersByMonthYearAsync(month, year);
+        }
+
     }
 }
