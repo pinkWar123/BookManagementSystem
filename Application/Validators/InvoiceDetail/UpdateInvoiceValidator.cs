@@ -10,8 +10,8 @@ namespace BookManagementSystem.Application.Validators
         {  
             RuleFor(x => x.Quantity)
                 .NotEmpty()
-                .GreaterThanOrEqualTo(0).WithMessage("Quantity không được nhỏ hơn 0")
-                .WithMessage("Quantity không được để trống");
+                .GreaterThan(0).WithMessage("Số lượng không được nhỏ hơn hoặc bằng 0")
+                .WithMessage("Số lượng không được để trống");
         } 
     }
 }

@@ -8,10 +8,10 @@ namespace BookManagementSystem.Application.Validators.InvoiceDetail
         public CreateInvoiceDetailValidator()
         {
             RuleFor(x => x.BookID)
-                .NotEmpty().WithMessage("BookID không được để trống");
+                .NotEmpty().WithMessage("ID của sách không được để trống");
             RuleFor(x => x.Quantity)
-                .NotEmpty().WithMessage("Quantity không được để trống")
-                .GreaterThanOrEqualTo(0).WithMessage("Quantity không được nhỏ hơn 0");
+                .NotEmpty().WithMessage("Số lượng không được để trống")
+                .GreaterThan(0).WithMessage("Số lượng không được nhỏ hơn hoặc bằng 0");
             
             
         }

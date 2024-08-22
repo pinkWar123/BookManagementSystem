@@ -17,5 +17,8 @@ namespace BookManagementSystem.Application.Exceptions
         public InventoryReportNotFound(int id) : base($"Không tìm thấy báo cáo với ID : {id}.", HttpStatusCode.NotFound)
         {
         }
+        public InventoryReportNotFound(int month,int year) : base($"Không tìm thấy báo cáo với tháng {month} năm {year}.", HttpStatusCode.NotFound)
+        {
+        }
     }
 }

@@ -12,4 +12,10 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+    public class InvoiceNotFound: BaseException
+    {
+        public InvoiceNotFound(int id) : base($"Không tìm thấy hóa đơn với ID : {id}.", HttpStatusCode.NotFound)
+        {
+        }
+    }
 }

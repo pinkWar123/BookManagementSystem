@@ -35,10 +35,7 @@ namespace BookManagementSystem.Application.Services
             int BookID = createInvoiceDetailDto.BookID;
             var book = await _bookRepository.GetByIdAsync(BookID);
             if (book == null)
-            {
-                // throw new ($"Không tìm thấy sách với ID {BookID}"); wtf book Exception dau
-                throw new Exception($"Không tìm thấy sách với ID {BookID}");
-            }
+                throw new BookNotFound(BookID);
             invoiceDetail.Price = book.Price * invoiceDetail.Quantity;
             await _invoiceDetailRepository.AddAsync(invoiceDetail);
             await _invoiceDetailRepository.SaveChangesAsync();
@@ -49,15 +46,12 @@ namespace BookManagementSystem.Application.Services
         {
             var book = await _bookRepository.GetByIdAsync(BookID);
             if (book == null)
-            {
-                throw new InvoiceDetailException($"Không tìm thấy sách với ID {BookID}");
-            }
+                throw new BookNotFound(BookID);
 
             var existingDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             if (existingDetail == null)
-            {
-                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với ID {InvoiceID} và sách {BookID}");
-            }
+                throw new InvoiceDetailNotFound(InvoiceID, BookID);
+
             existingDetail.Price = book.Price * updateInvoiceDetailDto.Quantity;
 
             
@@ -73,7 +67,7 @@ namespace BookManagementSystem.Application.Services
         {
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             if (invoiceDetail == null)
-                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với hóa đơn ID {InvoiceID} và sách ID {BookID}");
+                throw new InvoiceDetailNotFound(InvoiceID, BookID);
             
             return _mapper.Map<InvoiceDetailDto>(invoiceDetail);
         }
@@ -94,8 +88,7 @@ namespace BookManagementSystem.Application.Services
         {
             var invoiceDetail = await _invoiceDetailRepository.GetByIdAsync(InvoiceID, BookID);
             if (invoiceDetail == null)
-                throw new InvoiceDetailException($"Không tìm thấy chi tiết hóa đơn với ID {InvoiceID} và sách {BookID}");
-        
+                throw new InvoiceDetailNotFound(InvoiceID, BookID);
             _invoiceDetailRepository.Remove(invoiceDetail);
             await _invoiceDetailRepository.SaveChangesAsync();
             return true;

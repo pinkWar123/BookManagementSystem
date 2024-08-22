@@ -39,18 +39,14 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookEntryDto> CreateNewBookEntry(CreateBookEntryDto createBookEntryDto)
         {
-            var bookEntry = _mapper.Map<BookEntry>(createBookEntryDto);
             var bookEntryDetails  = createBookEntryDto.BookEntryDetails;
             var regulation = await _regulationService.GetMinimumBookEntry();
             foreach (var bookEntryDetail in bookEntryDetails)
-            {
                 if (regulation?.Value > bookEntryDetail.Quantity)
-                {
                     throw new ExceedMinimumBookEntry();
-                }
-            }
+            
             // Add stock to book
-            bookEntry = _mapper.Map<BookEntry>(createBookEntryDto);
+            var bookEntry = _mapper.Map<BookEntry>(createBookEntryDto);
             var inventoryReportID = await _inventoryReportService.GetReportIdByMonthYear(bookEntry.Date.Month, bookEntry.Date.Year);
             // check inventory report null
             foreach (var bookEntryDetail in bookEntryDetails)
@@ -58,9 +54,8 @@ namespace BookManagementSystem.Application.Services
                 var book = await _bookService.GetBookById(bookEntryDetail.BookID);
                 var inventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(inventoryReportID, bookEntryDetail.BookID);
                 if (inventoryReportDetail == null)
-                {
                     throw new InventoryReportDetailNotFound(inventoryReportID, bookEntryDetail.BookID);
-                }
+                
             }
             // update stock quantity
             foreach (var bookEntryDetail in bookEntryDetails)
@@ -87,10 +82,7 @@ namespace BookManagementSystem.Application.Services
             
             var existingEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (existingEntry == null)
-            {
-                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}.");
-            }
-
+                throw new BookEntryNotFound(EntryID);
             _mapper.Map(updateBookEntryDto, existingEntry);
             var updatedEntry = await _bookEntryRepository.UpdateAsync(EntryID, existingEntry);
             await _bookEntryRepository.SaveChangesAsync();
@@ -101,9 +93,7 @@ namespace BookManagementSystem.Application.Services
         {
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
             if (bookEntry == null)
-            {
-                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}.");
-            }
+                throw new BookEntryNotFound(EntryID);
             return _mapper.Map<BookEntryDto>(bookEntry);
         }
 
@@ -111,12 +101,8 @@ namespace BookManagementSystem.Application.Services
         {
             var query = _bookEntryRepository.GetValuesByQuery(bookEntryQuery);
             if (query == null)
-            {
                 return Enumerable.Empty<BookEntryDto>();
-            }
-
             var bookEntries = await query.ToListAsync();
-
             return _mapper.Map<IEnumerable<BookEntryDto>>(bookEntries);
         }
        
@@ -124,15 +110,10 @@ namespace BookManagementSystem.Application.Services
         public async Task<bool> DeleteBookEntry(int EntryID)
         {
             var bookEntry = await _bookEntryRepository.GetByIdAsync(EntryID);
-
             if (bookEntry == null)
-            {
-                throw new BookEntryException($"Không tìm thấy BookEntry với EntryID {EntryID}");
-            }
-            
+                throw new BookEntryNotFound(EntryID);
             _bookEntryRepository.Remove(bookEntry);
             await _bookEntryRepository.SaveChangesAsync();
-            
             return true;
         }
     }

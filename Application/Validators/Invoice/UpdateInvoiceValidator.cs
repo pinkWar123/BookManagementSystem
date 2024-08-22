@@ -13,11 +13,11 @@ namespace BookManagementSystem.Application.Validators
         }
         public UpdateInvoiceValidator()
         {  
-            RuleFor(x => x.CustomerID).NotEmpty().WithMessage("CustomerID không được để trống");
+            RuleFor(x => x.CustomerID).NotEmpty().WithMessage("ID của khách hàng không được để trống");
             RuleFor(x => x.InvoiceDate)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("Date không được để trống.")
-                .Must(BeAValidDate).WithMessage("InvoiceDate phải là giá trị ngày tháng năm hợp lệ.");
+                .NotEmpty().WithMessage("Ngày tháng nhập hóa đơn không được để trống.")
+                .Must(BeAValidDate).WithMessage("Ngày tháng nhập hóa đơn phải là giá trị ngày tháng năm hợp lệ.");
         } 
     }
 }
