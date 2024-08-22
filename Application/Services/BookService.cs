@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookManagementSystem.Application.Exceptions;
 using BookManagementSystem.Application.Dtos.Book;
+using BookManagementSystem.Application.Dtos.InventoryReportDetail;
+using BookManagementSystem.Application.Dtos.InventoryReport;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Application.Validators;
@@ -19,7 +21,6 @@ namespace BookManagementSystem.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
-
         private readonly IInventoryReportDetailService _inventoryReportDetailService;
         private readonly IInventoryReportService _inventoryReportService;
         public BookService(
@@ -43,18 +44,31 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<BookDto> CreateBook(CreateBookDto createBookDto)
         {
-            var book = _mapper.Map<Book>(createBookDto);
+            var booktemp = _mapper.Map<Book>(createBookDto);
 
             if (await _bookRepository.BookExistsAsync(createBookDto.Title, createBookDto.Genre, createBookDto.Author))
             {
                 throw new BookExisted(createBookDto.Title, createBookDto.Author, createBookDto.Genre);
             }
 
-            await _bookRepository.AddAsync(book);
+            await _bookRepository.AddAsync(booktemp);
+            var Reportid = await _inventoryReportService.GetReportIdByMonthYear(DateTime.Now.Month, DateTime.Now.Year);
+
             
             await _bookRepository.SaveChangesAsync();
 
-            return _mapper.Map<BookDto>(book);
+            var book = _mapper.Map<BookDto>(booktemp);
+            
+            // create inventory report detail for this book
+            var newInventoryReportDetail = new CreateInventoryReportDetailDto {
+                ReportID = Reportid,
+                BookID = booktemp.Id,
+                InitialStock = 0,
+                FinalStock = 0,
+                AdditionalStock = 0,
+            };
+            await _inventoryReportDetailService.CreateInventoryReportDetail(newInventoryReportDetail);
+            return book;
         }
 
 

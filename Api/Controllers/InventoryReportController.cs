@@ -103,7 +103,7 @@ namespace BookManagementSystem.Api.Controllers
 
         [HttpGet("All")]
         [Authorize(Roles = "Manager,StoreKeeper,Cashier")]
-        public async Task<IActionResult> GetAllDebtReports([FromQuery] InventoryReportQuery InventoryReportQuery)
+        public async Task<IActionResult> GetAllInventoryReports([FromQuery] InventoryReportQuery InventoryReportQuery)
         {
             var inventoryReports = await _inventoryreportservice.GetAllInventoryReports(InventoryReportQuery);
             var totalRecords = inventoryReports != null ? inventoryReports.Count() : 0;

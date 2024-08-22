@@ -65,14 +65,13 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<IEnumerable<GetAllInventoryReportDto>> GetAllInventoryReports(InventoryReportQuery inventoryReportQuery)
         {
-            // Lấy dữ liệu từ _inventoryReportRepository
             var query = _inventoryReportRepository.GetValuesByQuery(inventoryReportQuery);
 
             if (query == null)
             {
                 return Enumerable.Empty<GetAllInventoryReportDto>();
             }
-
+            
             var inventoryReports = await query
                 .Include(ir => ir.InventoryReportDetails)
                     .ThenInclude(ird => ird.Book)
@@ -86,7 +85,7 @@ namespace BookManagementSystem.Application.Services
                 {
                     ReportID = ir.Id,
                     BookID = ird.BookID,
-                    Title = ird.Book != null ? ird.Book.Title : "Unknown",  // Lấy tên sách từ Book
+                    Title = ird.Book != null ? ird.Book.Title : "Unknown",  
                     InitialStock = ird.InitalStock,
                     FinalStock = ird.FinalStock,
                     AdditionalStock = ird.AdditionalStock
@@ -110,8 +109,6 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<InventoryReportDto> UpdateInventoryReport(int reportId, UpdateInventoryReportDto _updateInventoryReportDto)
         {
-
-
             var existingReport = await _inventoryReportRepository.GetByIdAsync(reportId);
             if (existingReport == null)
             {
@@ -123,5 +120,14 @@ namespace BookManagementSystem.Application.Services
             await _inventoryReportRepository.SaveChangesAsync();
             return _mapper.Map<InventoryReportDto>(updatedReport);
         }
+
+        //public Task<IEnumerable<GetAllInventoryReportDto>> GetInventoryReportDetailsByMonthYear(int month, int year) => throw new NotImplementedException();
+
+        // public async Task<IEnumerable<GetAllInventoryReportDto>> GetInventoryReportDetailsByMonthYear(int month, int year)
+        // {
+        //     var reportid = GetReportIdByMonthYear(month, year);
+
+
+        // }
     }
 }

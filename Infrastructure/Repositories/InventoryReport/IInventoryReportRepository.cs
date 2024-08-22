@@ -10,5 +10,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReport
     public interface IInventoryReportRepository : IGenericRepository<Domain.Entities.InventoryReport>
     {
         Task<int> GetReportIdByMonthYearAsync(int month, int year);
+        IQueryable<Domain.Entities.InventoryReport>? GetValuesByQuery(QueryObject queryObject);
     }
 }
