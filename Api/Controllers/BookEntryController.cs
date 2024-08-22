@@ -33,7 +33,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager, Cashier")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> CreateNewBookEntryAsync(CreateBookEntryDto createBookEntryDto)
         {
             var validateResult = await _createBookEntryValidator.ValidateAsync(createBookEntryDto);
@@ -49,7 +49,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPut("{entryId}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> UpdateBookEntryAsync([FromRoute] int entryId, UpdateBookEntryDto updateBookEntryDto)
         {
             var validateResult = await _updateBookEntryValidator.ValidateAsync(updateBookEntryDto);
@@ -77,7 +77,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet("{entryId}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> GetBookEntryByIdAsync([FromRoute] int entryId)
         {
             var bookEntry = await _bookEntryService.GetBookEntryById(entryId);
@@ -88,7 +88,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpDelete("{entryId}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> DeleteBookEntryAsync([FromRoute] int entryId)
         {
             var result = await _bookEntryService.DeleteBookEntry(entryId);
@@ -98,7 +98,7 @@ namespace BookManagementSystem.Api.Controllers
             return NoContent();
         }
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> GetAllBookEntriesAsync([FromQuery] BookEntryQuery query)
         {
             var bookEntries = await _bookEntryService.GetAllBookEntries(query);
