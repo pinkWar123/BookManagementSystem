@@ -14,6 +14,7 @@ namespace BookManagementSystem.Domain.Entities
 
         [StringLength(100)]
         public required string Author { get; set; }
+        public string? ImagePath { get; set; }
 
         public required int StockQuantity { get; set; }
         public required int Price { get; set; }

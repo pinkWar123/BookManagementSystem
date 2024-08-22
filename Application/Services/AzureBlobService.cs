@@ -22,23 +22,31 @@ namespace BookManagementSystem.Application.Services
             _containerClient = _blobClient.GetBlobContainerClient(_azureConfig.BlobContainer);
         }
 
-        public async Task<List<Azure.Response<BlobContentInfo>>> UploadFiles(List<IFormFile> files)
+        public async Task<List<string>> UploadFiles(List<IFormFile> files)
         {
 
             var azureResponse = new List<Azure.Response<BlobContentInfo>>();
+            var fileList = new List<string>();
             foreach(var file in files)
             {
-                string fileName = file.FileName;
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.FileName);
+                // Get the file extension
+                string fileExtension = Path.GetExtension(file.FileName);
+                // Create a new file name with a timestamp
+                string newFileName = $"{fileNameWithoutExtension}_{DateTime.UtcNow:yyyyMMdd_HHmmssfff}{fileExtension}";
+
                 using (var memoryStream = new MemoryStream())
                 {
                     file.CopyTo(memoryStream);
                     memoryStream.Position = 0;
-                    var client = await _containerClient.UploadBlobAsync(fileName, memoryStream, default);
+                    var client = await _containerClient.UploadBlobAsync(newFileName, memoryStream, default);
                     azureResponse.Add(client);
                 }
+
+                fileList.Add(newFileName);
             };
 
-            return azureResponse;
+            return fileList.Select(file => $"https://miniieltsbypinkwar.blob.core.windows.net/apiimages/{file}").ToList();
         }
 
         public async Task<List<BlobItem>> GetUploadedBlobs()

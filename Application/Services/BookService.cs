@@ -20,13 +20,18 @@ namespace BookManagementSystem.Application.Services
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
 
-
+        private readonly IInventoryReportDetailService _inventoryReportDetailService;
+        private readonly IInventoryReportService _inventoryReportService;
         public BookService(
             IBookRepository bookRepository,
+            IInventoryReportDetailService inventoryReportDetailService,
+            IInventoryReportService inventoryReportService,
             IMapper mapper
 )
         {
             _bookRepository = bookRepository;
+            _inventoryReportDetailService = inventoryReportDetailService;
+            _inventoryReportService = inventoryReportService;
             _mapper = mapper;
         }
 
@@ -46,6 +51,7 @@ namespace BookManagementSystem.Application.Services
             }
 
             await _bookRepository.AddAsync(book);
+            
             await _bookRepository.SaveChangesAsync();
 
             return _mapper.Map<BookDto>(book);

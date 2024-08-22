@@ -18,4 +18,18 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+
+    public class ExceedMinimumBookEntry : BaseException
+    {
+        public ExceedMinimumBookEntry() : base($"Số lượng sách nhập vào không được nhỏ hơn số lượng quy định.", HttpStatusCode.BadRequest)
+        {
+        }
+    }
+
+    public class PaymentReceiptConflictRegulation : BaseException
+    {
+        public PaymentReceiptConflictRegulation(): base("Số tiền thu không vượt quá số tiền khách hàng đang nợ.", HttpStatusCode.BadRequest)
+        {
+        }
+    }
 }

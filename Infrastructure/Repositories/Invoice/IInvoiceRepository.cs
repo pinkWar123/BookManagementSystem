@@ -10,6 +10,7 @@ namespace BookManagementSystem.Infrastructure.Repositories.Invoice
     public interface IInvoiceRepository : IGenericRepository<Domain.Entities.Invoice>
     {
         Task<List<int>> GetInvoiceIdByMonthYearAsync(int month, int year);
+        Task<int> GetInvoiceCountByMonthYear(int month, int year);
 
     }
 }

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookManagementSystem.Application.Dtos.Upload;
 using BookManagementSystem.Application.Services;
+using BookManagementSystem.Application.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookManagementSystem.Api.Controllers
@@ -21,7 +23,8 @@ namespace BookManagementSystem.Api.Controllers
         public async Task<IActionResult> UploadBlobs(List<IFormFile> files)
         {
             var response = await _service.UploadFiles(files);
-            return Ok(response);
+            return Ok(new Response<UploadResultDto>(new UploadResultDto{
+                 FileNames = response}));
         }
 
         [HttpGet]

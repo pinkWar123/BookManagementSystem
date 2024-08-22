@@ -13,5 +13,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<IEnumerable<CustomerDto>> GetAllCustomers(CustomerQuery customerQuery);
         Task<bool> DeleteCustomer(int customerId);
         Task<IEnumerable<int>> GetAllCustomerId();
+        Task<int> GetCustomerCount();
+        Task<IEnumerable<CustomerDtoWithAmount>> GetTopCustomersByMonthYear(int month, int year);
     }
 }

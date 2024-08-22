@@ -92,6 +92,7 @@ namespace BookManagementSystem.Application.Services
             
             var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
             int inventoryReportID = await _inventoryReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
+            
             if (inventoryReportID == null)
             {
                 throw new BaseException($"Không tìm thấy báo cáo tồn kho tháng {invoiceDto.InvoiceDate.Month} năm {invoiceDto.InvoiceDate.Year}");
@@ -131,8 +132,8 @@ namespace BookManagementSystem.Application.Services
                 var inventoryReportDetail = await _inventoryReportDetail.GetInventoryReportDetailById(inventoryReportID, bookID);
                 var updateInventoryReportDetailDto = new UpdateInventoryReportDetailDto
                 {
-                    FinalStock = inventoryReportDetail.FinalStock - detail.Quantity
-
+                    FinalStock = inventoryReportDetail.FinalStock - detail.Quantity,
+                    AdditionalStock = inventoryReportDetail.FinalStock - inventoryReportDetail.InitialStock
                 };
                 await _inventoryReportDetail.UpdateInventoryReportDetail(inventoryReportID, bookID, updateInventoryReportDetailDto);
                 await _bookService.UpdateBook(bookID, updateBookDto);
@@ -242,5 +243,11 @@ namespace BookManagementSystem.Application.Services
             await _invoiceRepository.SaveChangesAsync();
             return true;
         }
+
+        public async Task<int> GetInvoiceCountByMonthYear(int month, int year)
+        {
+            return await _invoiceRepository.GetInvoiceCountByMonthYear(month, year);
+        }
+
     }
 }

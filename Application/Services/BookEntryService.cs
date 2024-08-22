@@ -46,7 +46,7 @@ namespace BookManagementSystem.Application.Services
             {
                 if (regulation?.Value > bookEntryDetail.Quantity)
                 {
-                    throw new BookEntryException("Số lượng sách nhập vào không được nhỏ hơn số lượng quy định.");
+                    throw new ExceedMinimumBookEntry();
                 }
             }
             // Add stock to book
@@ -59,7 +59,7 @@ namespace BookManagementSystem.Application.Services
                 var inventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(inventoryReportID, bookEntryDetail.BookID);
                 if (inventoryReportDetail == null)
                 {
-                    throw new BookEntryException("Không tìm thấy InventoryReportDetail.");
+                    throw new InventoryReportDetailNotFound(inventoryReportID, bookEntryDetail.BookID);
                 }
             }
             // update stock quantity
@@ -72,6 +72,7 @@ namespace BookManagementSystem.Application.Services
                 // update inventory report detail final stock
                 var inventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(inventoryReportID, bookEntryDetail.BookID);
                 inventoryReportDetail.FinalStock += bookEntryDetail.Quantity;
+                inventoryReportDetail.AdditionalStock = inventoryReportDetail.FinalStock - inventoryReportDetail.InitialStock;
                 await _inventoryReportDetailService.UpdateInventoryReportDetail(inventoryReportID, bookEntryDetail.BookID, _mapper.Map<UpdateInventoryReportDetailDto>(inventoryReportDetail)); 
             }
 

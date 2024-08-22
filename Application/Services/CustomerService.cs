@@ -126,5 +126,21 @@ namespace BookManagementSystem.Application.Services
         {
             return await _customerRepository.GetAllCustomerIdAsync();
         }
+
+        public async Task<int> GetCustomerCount()
+        {
+            var customerIds = await _customerRepository.GetAllCustomerIdAsync();
+            if(customerIds == null)
+            {
+                return 0;
+            }
+            return customerIds.ToList().Count;
+        }
+
+        public async Task<IEnumerable<CustomerDtoWithAmount>> GetTopCustomersByMonthYear(int month, int year)
+        {
+            return await _customerRepository.GetTopCustomersByMonthYearAsync(month, year);
+        }
+
     }
 }
