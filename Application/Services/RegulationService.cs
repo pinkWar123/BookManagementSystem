@@ -62,7 +62,7 @@ namespace BookManagementSystem.Application.Services
             return true;
         }
 
-        public async Task<IEnumerable<RegulationDto>> GetallBook(RegulationQuery regulationQuery) 
+        public async Task<IEnumerable<RegulationDto>> GetAllRegulations(RegulationQuery regulationQuery) 
         {
             var regulations =  _RegulationRepository.GetValuesByQuery(regulationQuery);
 

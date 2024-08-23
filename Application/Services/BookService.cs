@@ -53,7 +53,21 @@ namespace BookManagementSystem.Application.Services
 
             await _bookRepository.AddAsync(booktemp);
             var Reportid = await _inventoryReportService.GetReportIdByMonthYear(DateTime.Now.Month, DateTime.Now.Year);
-
+            
+            if(Reportid == -1)
+            {
+                var now = DateTime.Now;
+                var createInventoryReportDto = new CreateInventoryReportDto
+                {
+                    ReportMonth = now.Month,
+                    ReportYear = now.Year
+                };
+                var report = await _inventoryReportService.CreateInventoryReport(createInventoryReportDto);
+                if(report != null)
+                {
+                    Reportid = report.ReportID;
+                }
+            }
             
             await _bookRepository.SaveChangesAsync();
 

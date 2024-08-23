@@ -8,7 +8,7 @@ namespace BookManagementSystem.Application.Mappers
     {
         public RegulationProfile()
         {
-            CreateMap<CreateRegulationDto, Regulation>();
+            CreateMap<CreateRegulationDto, Regulation>().ReverseMap();
             CreateMap<CreateRegulationDto, RegulationDto>();
             CreateMap<Regulation, RegulationDto>()
                 .ForMember(dest => dest.RegulationId, opt => opt.MapFrom(src => src.Id));

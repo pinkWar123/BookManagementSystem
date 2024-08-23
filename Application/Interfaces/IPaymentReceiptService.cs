@@ -12,5 +12,6 @@ namespace BookManagementSystem.Application.Interfaces
         Task<bool> DeletePaymentReceipt(int receiptId);
         Task<int> GetTotalAmountByMonthYear(int month, int year);
         Task<int> GetTotalAmountByOnlyYear(int year);
+        Task<List<IncomeByMonthDto>> GetIncomeFromJanuary();
     }
 }

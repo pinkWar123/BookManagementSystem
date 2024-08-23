@@ -97,7 +97,7 @@ namespace BookManagementSystem.Api.Controllers
         [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetAllRegulations([FromQuery] RegulationQuery regulationQuery)
         {
-            var books = await _regulationService.GetallBook(regulationQuery);
+            var books = await _regulationService.GetAllRegulations(regulationQuery);
             var totalRecords = books != null ? books.Count() : 0;
             var validFilter = new PaginationFilter(regulationQuery.PageNumber, regulationQuery.PageSize);
             var pagedregulations = books.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();

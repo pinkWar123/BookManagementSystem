@@ -192,5 +192,23 @@ namespace BookManagementSystem.Application.Services
             return totalAmount;
         }
 
+        public async Task<List<IncomeByMonthDto>> GetIncomeFromJanuary()
+        {
+            var today = DateTime.UtcNow;
+            var incomeList = new List<IncomeByMonthDto>();
+            for(var i = 1; i <= today.Month; i++)
+            {
+                var income = await GetTotalAmountByMonthYear(i, today.Year);
+                var incomeByMonthDto = new IncomeByMonthDto
+                {
+                    Month = i,
+                    Year = today.Year,
+                    Income = income
+                };
+                incomeList.Add(incomeByMonthDto);
+            }
+
+            return incomeList;
+        }
     }
 }

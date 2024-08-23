@@ -122,7 +122,7 @@ namespace BookManagementSystem.Api.Controllers
             // if (!topCustomers.Any())
             //     return NotFound();
 
-            return Ok(topCustomers);
+            return Ok(new Response<List<CustomerDtoWithAmount>>(topCustomers as List<CustomerDtoWithAmount>));
         }
 
     }

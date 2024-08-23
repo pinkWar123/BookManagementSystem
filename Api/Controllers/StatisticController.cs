@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookManagementSystem.Application.Dtos.Invoice;
+using BookManagementSystem.Application.Dtos.PaymentReceipt;
 using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Wrappers;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +50,13 @@ namespace BookManagementSystem.Api.Controllers
         {
             var invoiceCount = await _invoiceService.GetInvoiceCountByMonthYear(month, year);
             return Ok(new Response<int>(invoiceCount));
+        }
+
+        [HttpGet("income-history")]
+        public async Task<IActionResult> GetIncomeFromJanuary()
+        {
+            var incomeList = await _paymentReceiptService.GetIncomeFromJanuary();
+            return Ok(new Response<List<IncomeByMonthDto>>(incomeList));
         }
     }
 }

@@ -15,6 +15,7 @@ using BookManagementSystem.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Data;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
+using BookManagementSystem.Application.Dtos.DebtReport;
 
 namespace BookManagementSystem.Application.Services
 {
@@ -52,6 +53,22 @@ namespace BookManagementSystem.Application.Services
                     await _context.SaveChangesAsync();
                     
                     int reportId = await _debtReportService.GetReportIdByMonthYear(DateTime.Today.Month, DateTime.Today.Year);
+                    Console.WriteLine($"ReportId: {reportId}-----------------------------------------");
+                    if(reportId == 0)
+                    {
+                        var now = DateTime.Now;
+                        var createDebtReportDto = new CreateDebtReportDto
+                        {
+                            ReportMonth = now.Month,
+                            ReportYear = now.Year
+                        };
+                        var report = await _debtReportService.CreateNewDebtReport(createDebtReportDto);
+                        if(report != null)
+                        {
+                            reportId = report.Id;
+                        }
+                    }
+                    
                     var createDebtReportDetailDto = new CreateDebtReportDetailDto
                     {
                         ReportID = reportId,
