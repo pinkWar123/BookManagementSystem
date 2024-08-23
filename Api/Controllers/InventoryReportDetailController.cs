@@ -110,7 +110,6 @@ namespace BookManagementSystem.Api.Controllers
             try
             {
                 var temp = _inventoryReportDetailService.CreateInventoryFromBookEntry(bookentrydetail);
-                Console.WriteLine("++++++++++++ddmdmmdmdmmd++++++++++++++++++++++++++++++++++++++++++++++++++");
                 return Ok(temp);
             }
             catch (Exception ex)
