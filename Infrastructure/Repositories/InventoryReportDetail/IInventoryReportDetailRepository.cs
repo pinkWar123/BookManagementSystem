@@ -15,5 +15,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReportDetail
         Task<Domain.Entities.InventoryReportDetail?> GetByIdAsync(int id, int id2);
 
         Task<List<Domain.Entities.InventoryReportDetail>> GetListInventoryReportDetailsByIdAsync(int id);
+        IQueryable<Domain.Entities.InventoryReportDetail>? GetValuesByQuery(QueryObject queryObject);
     }
 }

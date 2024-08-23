@@ -112,5 +112,17 @@ namespace BookManagementSystem.Api.Controllers
             var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInventoryReports, validFilter, totalRecords, _uriService, Request.Path.Value);
             return Ok(pagedResponse);
         }
+
+        [HttpGet("AllbyMonthYear")]
+        [Authorize(Roles = "Manager,StoreKeeper,Cashier")]
+        public async Task<IActionResult> GetAllInventoryReportDetailsByMonthYear([FromQuery] InventoryReportQuery InventoryReportQuery)
+        {
+            var inventoryReportDetails = await _inventoryreportservice.GetAllInventoryReportDetailsByMonthYear(InventoryReportQuery);
+            var totalRecords = inventoryReportDetails != null ? inventoryReportDetails.Count() : 0;
+            var validFilter = new PaginationFilter(InventoryReportQuery.PageNumber, InventoryReportQuery.PageSize);
+            var pagedInventoryReports = inventoryReportDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedInventoryReports, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
+        }
     }
 }

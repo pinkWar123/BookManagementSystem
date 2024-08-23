@@ -19,7 +19,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.InventoryReport
             if (report == null)
             {
                 return -1;
-
             }
 
             return report.Id;

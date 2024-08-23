@@ -8,8 +8,8 @@ namespace BookManagementSystem.Application.Queries
 {
     public class InventoryReportDetailQuery : QueryObject
     {
-        public int? ReportId { get; set; }
-        public int? BookId { get; set; }
+        public int? ReportID { get; set; }
+        public int? BookID { get; set; }
         public int? InitialStock { get; set; }
         public int? FinalStock { get; set; }
         public int? AdditionalStock { get; set; }
