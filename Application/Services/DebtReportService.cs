@@ -13,6 +13,7 @@ using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
 using System.Net;
 using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
 
@@ -96,18 +97,20 @@ namespace BookManagementSystem.Application.Services
             return await _debtReportRepository.DebtReportExists(month, year);
         }
 
-        // public async Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year)
-        // {
-        //     int reportId = await GetReportIdByMonthYear(month, year);
-        //     var debtReportDetails = await _debtReportRepository.GetDebtReportDetailsByReportIdAsync(reportId);
+        public async Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year, DebtReportQuery debtReportQuery)
+        {
+            int reportId = await GetReportIdByMonthYear(month, year);
+            
+            var debtReportDetails = await _debtReportRepository.GetDebtReportDetailsByReportIdAsync(reportId, debtReportQuery);
 
-        //     if (debtReportDetails == null || !debtReportDetails.Any())
-        //     {
-        //         throw new DebtReportDetailListNotFound(reportId);
-        //     }
+            if (debtReportDetails == null || !debtReportDetails.Any())
+            {
+                // throw new DebtReportDetailListNotFound(reportId);
+                return new List<AllDebtReportDetailDto>();
+            }
 
-        //     return debtReportDetails;
-        // }
+            return debtReportDetails;
+        }
         public async Task<IEnumerable<GetAllDebtReportDto>> GetAllDebtReportDetails(DebtReportQuery debtReportQuery)
         {
             var query = _debtReportRepository.GetValuesByQuery(debtReportQuery);
