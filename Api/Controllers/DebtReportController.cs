@@ -113,16 +113,16 @@ namespace BookManagementSystem.Api.Controllers
         }
 
 
-        // [HttpGet("getAllDebtReportsByMonth")]
-        // [Authorize(Roles = "Manager")]
-        // public async Task<IActionResult> GetAllDebtReportDetailsById([FromQuery] int month, [FromQuery] int year)
-        // {
-        //     var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year);
+        [HttpGet("getAllDebtReportsByMonth")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllDebtReportDetailsById([FromQuery] int month, [FromQuery] int year, [FromQuery] DebtReportQuery debtReportQuery)
+        {
+            var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year, debtReportQuery);
 
-        //     if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
+            if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
 
-        //     return Ok(new Response<IEnumerable<AllDebtReportDetailDto>>(debtReportDetails));
-        // }
+            return Ok(new Response<IEnumerable<AllDebtReportDetailDto>>(debtReportDetails));
+        }
 
 
         [HttpGet("getAllDebtReportDetails")]

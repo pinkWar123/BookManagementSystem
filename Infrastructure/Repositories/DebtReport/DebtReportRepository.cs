@@ -6,6 +6,8 @@ using BookManagementSystem.Data;
 using BookManagementSystem.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
+using BookManagementSystem.Application.Queries;
+
 
 namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
 {
@@ -28,7 +30,26 @@ namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
                 .AnyAsync(r => r.ReportMonth == month && r.ReportYear == year);
         }
 
-        public async Task<IEnumerable<AllDebtReportDetailDto>> GetDebtReportDetailsByReportIdAsync(int reportId)
+        // public async Task<IEnumerable<AllDebtReportDetailDto>> GetDebtReportDetailsByReportIdAsync(int reportId)
+        // {
+        //     var query = from debtReport in _context.DebtReports
+        //                 join debtReportDetail in _context.DebtReportDetails on debtReport.Id equals debtReportDetail.ReportID
+        //                 join customer in _context.Customers on debtReportDetail.CustomerID equals customer.Id
+        //                 where debtReport.Id == reportId
+        //                 select new AllDebtReportDetailDto
+        //                 {
+        //                     ReportID = debtReport.Id,
+        //                     CustomerID = customer.Id,
+        //                     customerName = customer.CustomerName,
+        //                     InitialDebt = debtReportDetail.InitialDebt,
+        //                     FinalDebt = debtReportDetail.FinalDebt,
+        //                     AdditionalDebt = debtReportDetail.AdditionalDebt
+        //                 };
+
+        //     return await query.ToListAsync();
+        // }
+
+        public async Task<IEnumerable<AllDebtReportDetailDto>> GetDebtReportDetailsByReportIdAsync(int reportId, DebtReportQuery debtReportQuery)
         {
             var query = from debtReport in _context.DebtReports
                         join debtReportDetail in _context.DebtReportDetails on debtReport.Id equals debtReportDetail.ReportID
@@ -44,8 +65,22 @@ namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
                             AdditionalDebt = debtReportDetail.AdditionalDebt
                         };
 
+            // Apply sorting
+            if (!string.IsNullOrEmpty(debtReportQuery.SortBy))
+            {
+                query = debtReportQuery.IsDescending
+                    ? query.OrderByDescending(r => EF.Property<object>(r, debtReportQuery.SortBy))
+                    : query.OrderBy(r => EF.Property<object>(r, debtReportQuery.SortBy));
+            }
+
+            // Apply pagination
+            query = query
+                .Skip((debtReportQuery.PageNumber - 1) * debtReportQuery.PageSize)
+                .Take(debtReportQuery.PageSize);
+
             return await query.ToListAsync();
         }
+
 
         public override IQueryable<Domain.Entities.DebtReport>? GetValuesByQuery(QueryObject queryObject)
         {

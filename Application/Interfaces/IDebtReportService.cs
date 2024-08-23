@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using BookManagementSystem.Application.Dtos.DebtReport;
 using BookManagementSystem.Application.Dtos.DebtReportDetail;
 using BookManagementSystem.Application.Queries;
+using BookManagementSystem.Data.Repositories;
+
 
 namespace BookManagementSystem.Application.Interfaces
 {
@@ -18,6 +20,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<int> GetReportIdByMonthYear(int month, int year);
         Task<bool> DebtReportExists(int month, int year);
         // Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year);
+        Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year, DebtReportQuery debtReportQuery);
         Task<IEnumerable<GetAllDebtReportDto>> GetAllDebtReportDetails(DebtReportQuery debtReportQuery);
     }
 }
