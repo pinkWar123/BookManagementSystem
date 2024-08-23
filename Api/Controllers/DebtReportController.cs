@@ -119,7 +119,7 @@ namespace BookManagementSystem.Api.Controllers
         {
             var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year, debtReportQuery);
 
-            if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
+            // if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
 
             return Ok(new Response<IEnumerable<AllDebtReportDetailDto>>(debtReportDetails));
         }

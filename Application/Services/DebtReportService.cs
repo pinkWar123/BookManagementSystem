@@ -105,7 +105,8 @@ namespace BookManagementSystem.Application.Services
 
             if (debtReportDetails == null || !debtReportDetails.Any())
             {
-                throw new DebtReportDetailListNotFound(reportId);
+                // throw new DebtReportDetailListNotFound(reportId);
+                return new List<AllDebtReportDetailDto>();
             }
 
             return debtReportDetails;
