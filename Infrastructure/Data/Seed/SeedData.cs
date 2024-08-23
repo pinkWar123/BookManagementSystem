@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookManagementSystem.Application.Dtos.Regulation;
+using BookManagementSystem.Application.Interfaces;
+using BookManagementSystem.Application.Queries;
 using BookManagementSystem.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
@@ -29,6 +32,30 @@ namespace BookManagementSystem.Infrastructure.Data.Seed
                 {
                     await userManager.CreateAsync(defaultUser, DefaultUsers.DefaultPassword);
                     await userManager.AddToRoleAsync(defaultUser, Roles.Manager.ToString());
+                }
+            }
+        }
+
+        public static async Task SeedRegulations(IRegulationService regulationService)
+        {
+            var regulationQuery = new RegulationQuery
+            {
+                PageNumber = 1,
+                PageSize = 5
+            };
+            var regulation = await regulationService.GetAllRegulations(regulationQuery);
+            if(regulation == null || regulation.Count() == 0)
+            {
+                foreach(var newRegulation in DefaultRegulations.DefaultRegulationList)
+                {
+                    var createRegulationDto = new CreateRegulationDto
+                    {
+                        Code = newRegulation.Code,
+                        Value = newRegulation.Value,
+                        Status = newRegulation.Status,
+                        Content = newRegulation.Content
+                    };
+                    await regulationService.CreateRegulation(createRegulationDto);
                 }
             }
         }

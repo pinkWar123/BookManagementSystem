@@ -183,7 +183,9 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<User>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var regulationService = services.GetRequiredService<IRegulationService>();
     SeedData.SeedEssentialsAsync(userManager, roleManager).Wait();
+    SeedData.SeedRegulations(regulationService).Wait();
 }
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
