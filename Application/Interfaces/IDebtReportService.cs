@@ -17,7 +17,7 @@ namespace BookManagementSystem.Application.Interfaces
         Task<bool> DeleteDebtReport(int reportId);
         Task<int> GetReportIdByMonthYear(int month, int year);
         Task<bool> DebtReportExists(int month, int year);
-        Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year);
-
+        // Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year);
+        Task<IEnumerable<GetAllDebtReportDto>> GetAllDebtReportDetails(DebtReportQuery debtReportQuery);
     }
 }

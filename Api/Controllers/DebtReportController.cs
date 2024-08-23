@@ -113,15 +113,28 @@ namespace BookManagementSystem.Api.Controllers
         }
 
 
-        [HttpGet("getAllDebtReportsByMonth")]
+        // [HttpGet("getAllDebtReportsByMonth")]
+        // [Authorize(Roles = "Manager")]
+        // public async Task<IActionResult> GetAllDebtReportDetailsById([FromQuery] int month, [FromQuery] int year)
+        // {
+        //     var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year);
+
+        //     if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
+
+        //     return Ok(new Response<IEnumerable<AllDebtReportDetailDto>>(debtReportDetails));
+        // }
+
+
+        [HttpGet("getAllDebtReportDetails")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllDebtReportDetailsById([FromQuery] int month, [FromQuery] int year)
+        public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] DebtReportQuery debtReportQuery)
         {
-            var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year);
-
-            if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
-
-            return Ok(new Response<IEnumerable<AllDebtReportDetailDto>>(debtReportDetails));
+            var debtReports = await _debtReportService.GetAllDebtReportDetails(debtReportQuery);
+            var totalRecords = debtReports != null ? debtReports.Count() : 0;
+            var validFilter = new PaginationFilter(debtReportQuery.PageNumber, debtReportQuery.PageSize);
+            var pagedDebtReports = debtReports.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReports, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
         }
 
     }

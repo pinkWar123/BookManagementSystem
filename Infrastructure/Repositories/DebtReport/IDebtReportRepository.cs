@@ -12,5 +12,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.DebtReport
         Task<int> GetReportIdByMonthYearAsync(int month, int year);
         Task<bool> DebtReportExists(int month, int year);
         Task<IEnumerable<AllDebtReportDetailDto>> GetDebtReportDetailsByReportIdAsync(int reportId);
+        IQueryable<Domain.Entities.DebtReport>? GetValuesByQuery(QueryObject queryObject);
     }
 }

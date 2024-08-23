@@ -96,19 +96,49 @@ namespace BookManagementSystem.Application.Services
             return await _debtReportRepository.DebtReportExists(month, year);
         }
 
-        public async Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year)
-        {
-            int reportId = await GetReportIdByMonthYear(month, year);
-            var debtReportDetails = await _debtReportRepository.GetDebtReportDetailsByReportIdAsync(reportId);
+        // public async Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year)
+        // {
+        //     int reportId = await GetReportIdByMonthYear(month, year);
+        //     var debtReportDetails = await _debtReportRepository.GetDebtReportDetailsByReportIdAsync(reportId);
 
-            if (debtReportDetails == null || !debtReportDetails.Any())
+        //     if (debtReportDetails == null || !debtReportDetails.Any())
+        //     {
+        //         throw new DebtReportDetailListNotFound(reportId);
+        //     }
+
+        //     return debtReportDetails;
+        // }
+        public async Task<IEnumerable<GetAllDebtReportDto>> GetAllDebtReportDetails(DebtReportQuery debtReportQuery)
+        {
+            var query = _debtReportRepository.GetValuesByQuery(debtReportQuery);
+
+            if (query == null)
             {
-                throw new DebtReportDetailListNotFound(reportId);
+                return Enumerable.Empty<GetAllDebtReportDto>();
             }
 
-            return debtReportDetails;
+            var debtReports = await query
+                .Include(dr => dr.DebtReportDetails)
+                    .ThenInclude(drd => drd.Customer)
+                .ToListAsync();
+
+            var result = debtReports.Select(dr => new GetAllDebtReportDto
+            {
+                Id = dr.Id,
+                ReportMonth = dr.ReportMonth,
+                ReportYear = dr.ReportYear,
+                DebtReportDetails = dr.DebtReportDetails.Select(drd => new AllDebtReportDetailDto
+                {
+                    ReportID = dr.Id,
+                    CustomerID = drd.CustomerID,
+                    customerName = drd.Customer != null ? drd.Customer.CustomerName : "Unknown",
+                    InitialDebt = drd.InitialDebt,
+                    FinalDebt = drd.FinalDebt,
+                    AdditionalDebt = drd.AdditionalDebt
+                }).ToList()
+            });
+
+            return result;
         }
-
-
     }
 }
