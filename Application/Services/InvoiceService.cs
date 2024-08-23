@@ -63,40 +63,29 @@ namespace BookManagementSystem.Application.Services
             var customer = await _customerService.GetCustomerById(invoice.CustomerID);
 
             if (customer == null)
-                throw new CustomerException($"Customer not found with ID {invoice.CustomerID}");
-            // Check if Customer is blocked
+                throw new CustomerNotFound(invoice.CustomerID);
             var regulation = await _regulationService.GetMaximumCustomerDebt();
             if(customer.TotalDebt > regulation?.Value)
             {
                 throw new DebtExceedException();
             }
-            // check book is available
+
             foreach (var detail in invoiceDetails)
             {
                 int bookID = detail.BookID;
                 var book = await _bookService.GetBookById(bookID);
                 if (book == null)
-                    throw new BaseException($"Sách {book.Title} không tồn tại");
+                    throw new BookNotFound(bookID);
                 if(book.StockQuantity < detail.Quantity) 
                     throw new ExceedMinimumInventoryAfterSelling();
-            }
-            // check two books are the same
-            for (int i = 0; i < invoiceDetails.Count; i++)
-            {
-                for (int j = i + 1; j < invoiceDetails.Count; j++)
-                {
-                    if (invoiceDetails[i].BookID == invoiceDetails[j].BookID)
-                        throw new BaseException($"Có 2 cuốn sách {invoiceDetails[i].BookID} trong hóa đơn");
-                }
             }
             
             var invoiceDto = _mapper.Map<InvoiceDto>(invoice);
             int inventoryReportID = await _inventoryReportService.GetReportIdByMonthYear(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
             
-            if (inventoryReportID == null)
-            {
-                throw new BaseException($"Không tìm thấy báo cáo tồn kho tháng {invoiceDto.InvoiceDate.Month} năm {invoiceDto.InvoiceDate.Year}");
-            }
+            if (inventoryReportID == -1)
+                throw new InventoryReportNotFound(invoiceDto.InvoiceDate.Month, invoiceDto.InvoiceDate.Year);
+            
 
 
 
@@ -107,7 +96,6 @@ namespace BookManagementSystem.Application.Services
             {
                 throw new DebtReportDetailNotFound(debtReportId, invoice.CustomerID);
             }
-            // Update TotalDebt of Customer
             var totalDebt = 0;
             var inventoryRegulation = await _regulationService.GetMinimumInventoryAfterSelling();
             foreach (var detail in invoiceDetails)
@@ -156,9 +144,6 @@ namespace BookManagementSystem.Application.Services
 
             await _invoiceRepository.AddAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
-            if (createInvoiceDto.InvoiceDetails == null)
-                throw new InvoiceException("Chi tiết hóa đơn không được để trống");
-            
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
@@ -168,7 +153,7 @@ namespace BookManagementSystem.Application.Services
             var existingEntry = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (existingEntry == null)
             {
-                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
+                throw new InvoiceNotFound(InvoiceID);
             }
 
             _mapper.Map(updateInvoiceDto, existingEntry);
@@ -183,7 +168,7 @@ namespace BookManagementSystem.Application.Services
             var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
-                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
+                throw new InvoiceNotFound(InvoiceID);
             }
             return _mapper.Map<InvoiceDto>(invoice);
         }
@@ -212,10 +197,10 @@ namespace BookManagementSystem.Application.Services
             {
                 var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
                 if (invoice == null)
-                    throw new InvoiceException($"Không tìm thấy hóa đơn với ID {invoiceId}");
+                    throw new InvoiceNotFound(invoiceId);
                 var invoiceDetail = await _invoiceDetailRepository.FindInvoiceDetailsByInvoiceIdAsync(invoiceId);
                 if (invoiceDetail == null)
-                    throw new InvoiceException($"Không tìm thấy chi tiết hóa đơn với ID {invoiceId}");
+                    throw new InvoiceDetailNotFound(invoiceId);
                 foreach (var detail in invoiceDetail)
                 {
                     int bookID = detail.BookID;
@@ -237,7 +222,7 @@ namespace BookManagementSystem.Application.Services
             var invoice = await _invoiceRepository.GetByIdAsync(InvoiceID);
             if (invoice == null)
             {
-                throw new InvoiceException($"Không tìm thấy hóa đơn với ID {InvoiceID}");
+                throw new InvoiceNotFound(InvoiceID);
             }
             _invoiceRepository.Remove(invoice);
             await _invoiceRepository.SaveChangesAsync();

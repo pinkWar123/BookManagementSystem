@@ -14,8 +14,7 @@ namespace BookManagementSystem.Application.Validators
         {
             // write more for InvoiceDetails
             RuleFor(x => x.InvoiceDetails)
-                .NotEmpty().WithMessage("InvoiceDetails không được để trống")
-                .Must(x => x.Count > 0).WithMessage("InvoiceDetails không được để trống")
+                .NotEmpty().WithMessage("Chi tiết hóa đơn không được để trống")
                 .Must(x =>
                 {
                     foreach (var item in x)
@@ -26,12 +25,26 @@ namespace BookManagementSystem.Application.Validators
                         }
                     }
                     return true;
-                }).WithMessage("Quantity không được nhỏ hơn 0");
-            RuleFor(x => x.CustomerID).NotEmpty().WithMessage("CustomerID không được để trống");
+                }).WithMessage("số lượng không được nhỏ hơn 0")
+                .Must(x =>
+                {
+                    for (int i = 0; i < x.Count; i++)
+                    {
+                        for (int j = i + 1; j < x.Count; j++)
+                        {
+                            if (x[i].BookID == x[j].BookID)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                }).WithMessage("Không được nhập 2 sách giống nhau trong hóa đơn");
+            RuleFor(x => x.CustomerID).NotEmpty().WithMessage("ID của khách hàng không được để trống");
             RuleFor(x => x.InvoiceDate)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("Date không được để trống.")
-                .Must(BeAValidDate).WithMessage("InvoiceDate phải là giá trị ngày tháng năm hợp lệ.");
+                .NotEmpty().WithMessage("Ngày nhập hóa đơn không được để trống.")
+                .Must(BeAValidDate).WithMessage("Ngày nhập hóa đơn phải là giá trị ngày tháng năm hợp lệ.");
         }
     }
 }

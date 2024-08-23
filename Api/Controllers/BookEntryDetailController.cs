@@ -32,7 +32,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> CreateNewBookEntryDetailAsync(CreateBookEntryDetailDto createBookEntryDetailDto)
         {
             var validationResult = await _createBookEntryDetailValidator.ValidateAsync(createBookEntryDetailDto);
@@ -46,7 +46,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPut("{entryID}/{bookID}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> UpdateBookEntryDetailAsync([FromRoute] int entryID, [FromRoute] int bookID, UpdateBookEntryDetailDto updateBookEntryDetailDto)
         {
             var validationResult = await _updateBookEntryDetailValidator.ValidateAsync(updateBookEntryDetailDto);
@@ -73,7 +73,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet("{entryID}/{bookID}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> GetBookEntryDetailByIdAsync([FromRoute] int entryID, [FromRoute] int bookID)
         {
             var bookEntryDetail = await _bookEntryDetailService.GetBookEntryDetailById(entryID, bookID);
@@ -86,7 +86,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> GetAllBookEntryDetailsAsync([FromQuery] BookEntryDetailQuery query)
         {
             var bookEntryDetails = await _bookEntryDetailService.GetAllBookEntryDetail(query);
@@ -100,7 +100,7 @@ namespace BookManagementSystem.Api.Controllers
     
 
         [HttpDelete("{entryID}/{bookID}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, StoreKeeper")]
         public async Task<IActionResult> DeleteBookEntryDetailAsync([FromRoute] int entryID, [FromRoute] int bookID)
         {
             var result = await _bookEntryDetailService.DeleteBookEntryDetail(entryID, bookID);

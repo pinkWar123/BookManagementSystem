@@ -32,7 +32,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> CreateNewInvoiceDetailAsync(CreateInvoiceDetailDto createInvoiceDetailDto)
         {
             var validationResult = await _createInvoiceDetailValidator.ValidateAsync(createInvoiceDetailDto);
@@ -46,7 +46,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPut("{entryID}/{bookID}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> UpdateInvoiceDetailAsync([FromRoute] int entryID, [FromRoute] int bookID, UpdateInvoiceDetailDto updateInvoiceDetailDto)
         {
             var validationResult = await _updateInvoiceDetailValidator.ValidateAsync(updateInvoiceDetailDto);
@@ -73,7 +73,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet("{entryID}/{bookID}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetInvoiceDetailByIdAsync([FromRoute] int entryID, [FromRoute] int bookID)
         {
             var invoiceDetail = await _invoiceDetailService.GetInvoiceDetailById(entryID, bookID);
@@ -86,7 +86,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetAllInvoiceDetailsAsync([FromQuery] InvoiceDetailQuery query)
         {
             var invoiceDetails = await _invoiceDetailService.GetAllInvoiceDetail(query);
@@ -100,7 +100,7 @@ namespace BookManagementSystem.Api.Controllers
 
 
         [HttpDelete("{entryID}/{bookID}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> DeleteInvoiceDetailAsync([FromRoute] int entryID, [FromRoute] int bookID)
         {
             var result = await _invoiceDetailService.DeleteInvoiceDetail(entryID, bookID);

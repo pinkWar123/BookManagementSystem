@@ -12,4 +12,10 @@ namespace BookManagementSystem.Application.Exceptions
         {
         }
     }
+    public class BookEntryDetailNotFound : BaseException
+    {
+        public BookEntryDetailNotFound(int EntryID,int BookID) : base($"Không tìm thấy chi tiết phiếu lập sách với ID phiếu là {EntryID} và ID sách là {BookID}.", HttpStatusCode.NotFound)
+        {
+        }
+    } 
 }

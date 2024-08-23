@@ -113,5 +113,17 @@ namespace BookManagementSystem.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("getTop5CustomerPerMonth")]
+        
+        public async Task<IActionResult> GetTopCustomersByMonthYear(int month, int year)
+        {
+            var topCustomers = await _customerService.GetTopCustomersByMonthYear(month, year);
+
+            // if (!topCustomers.Any())
+            //     return NotFound();
+
+            return Ok(topCustomers);
+        }
+
     }
 }

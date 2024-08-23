@@ -32,7 +32,7 @@ namespace BookManagementSystem.Api.Controllers.Invoice
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> CreateNewInvoiceAsync(CreateInvoiceDto createInvoiceDto)
         {
             var validateResult = await _createInvoiceValidator.ValidateAsync(createInvoiceDto);
@@ -48,7 +48,7 @@ namespace BookManagementSystem.Api.Controllers.Invoice
         }
 
         [HttpPut("{invoiceId}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> UpdateInvoiceAsync([FromRoute] int invoiceId, UpdateInvoiceDto updateInvoiceDto)
         {
             var validateResult = await _updateInvoiceValidator.ValidateAsync(updateInvoiceDto);
@@ -76,7 +76,7 @@ namespace BookManagementSystem.Api.Controllers.Invoice
         }
 
         [HttpGet("{invoiceId}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetInvoiceByIdAsync([FromRoute] int invoiceId)
         {
             var invoice = await _invoiceService.GetInvoiceById(invoiceId);
@@ -87,7 +87,7 @@ namespace BookManagementSystem.Api.Controllers.Invoice
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetAllInvoicesAsync([FromQuery] InvoiceQuery query)
         {
             var invoices = await _invoiceService.GetAllInvoice(query);
@@ -100,7 +100,7 @@ namespace BookManagementSystem.Api.Controllers.Invoice
         }
         // write an api to get all invoices in a month
         [HttpGet("get-income-by-month")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetAllInvoicesInMonthAsync([FromQuery] int month, [FromQuery] int year)
         {
             var totalPrices = await _invoiceService.getPriceByMonth(month, year);
@@ -108,7 +108,7 @@ namespace BookManagementSystem.Api.Controllers.Invoice
         }
 
         [HttpDelete("{invoiceId}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> DeleteInvoiceAsync([FromRoute] int invoiceId)
         {
             var result = await _invoiceService.DeleteInvoice(invoiceId);

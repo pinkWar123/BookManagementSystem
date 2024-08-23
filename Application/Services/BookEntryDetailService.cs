@@ -41,9 +41,7 @@ namespace BookManagementSystem.Application.Services
             
             var existingDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             if (existingDetail == null)
-            {
-                throw new BookEntryDetailException($"Không tìm thấy BookEntryDetail với EntryID {EntryID} và BookID {BookID}.");
-            }
+                throw new BookEntryDetailNotFound(EntryID, BookID);
             _mapper.Map(updateBookEntryDetailDto, existingDetail);
 
             var updatedDetail = await _bookEntryDetailRepository.UpdateAsync(EntryID, BookID, existingDetail);
@@ -55,7 +53,7 @@ namespace BookManagementSystem.Application.Services
         {
             var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             if (bookEntryDetail == null)
-                throw new BookEntryDetailException($"Không tìm thấy BookEntryDetail với EntryID {EntryID} và BookID {BookID}.");
+                throw new BookEntryDetailNotFound(EntryID, BookID);
             
             return _mapper.Map<BookEntryDetailDto>(bookEntryDetail);
         }
@@ -77,7 +75,7 @@ namespace BookManagementSystem.Application.Services
         {
             var bookEntryDetail = await _bookEntryDetailRepository.GetByIdAsync(EntryID, BookID);
             if (bookEntryDetail == null)
-                throw new BookEntryDetailException($"Không tìm thấy BookEntryDetail với EntryID {EntryID} và BookID {BookID}");
+                throw new BookEntryDetailNotFound(EntryID, BookID);
         
             _bookEntryDetailRepository.Remove(bookEntryDetail);
             await _bookEntryDetailRepository.SaveChangesAsync();
