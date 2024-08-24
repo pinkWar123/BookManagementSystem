@@ -124,17 +124,17 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<IEnumerable<GetListInventoryReportDetailDto>> GetAllInventoryReportDetailsByMonthYear(InventoryReportQuery inventoryReportQuery)
         {
-            // Kiểm tra xem ReportMonth và ReportYear có được cung cấp không
             if (inventoryReportQuery.ReportMonth != null && inventoryReportQuery.ReportYear != null)
             {
-                // Lấy ReportId dựa trên ReportMonth và ReportYear
                 var reportId = await _inventoryReportRepository.GetReportIdByMonthYearAsync(
                     (int)inventoryReportQuery.ReportMonth,
                     (int)inventoryReportQuery.ReportYear
                 );
                 Console.WriteLine("++++++++++++++++++++++++++++: " + reportId);
 
-                // Tạo đối tượng InventoryReportDetailQuery từ InventoryReportQuery
+                if(reportId == -1)
+                    return Enumerable.Empty<GetListInventoryReportDetailDto>();
+
                 var inventoryReportDetailQuery = new InventoryReportDetailQuery
                 {
                     PageNumber = inventoryReportQuery.PageNumber,
@@ -144,21 +144,17 @@ namespace BookManagementSystem.Application.Services
                     IsDescending = inventoryReportQuery.IsDescending,
                 };
 
-                // Thực hiện truy vấn để lấy InventoryReportDetails theo điều kiện
                 var query = _inventoryReportDeTailRepository.GetValuesByQuery(inventoryReportDetailQuery);
 
-                // Kiểm tra nếu không có kết quả nào
                 if (query == null || !query.Any())
                 {
                     return Enumerable.Empty<GetListInventoryReportDetailDto>();
                 }
 
-                // Chuyển đổi dữ liệu truy vấn thành danh sách chi tiết báo cáo tồn kho
                 var inventoryReportDetails = await query
                     .Include(ird => ird.Book)
                     .ToListAsync();
 
-                // Tạo danh sách các đối tượng GetListInventoryReportDetailDto từ các chi tiết báo cáo tồn kho
                 var result = inventoryReportDetails.Select(ird => new GetListInventoryReportDetailDto
                 {
                     ReportID = ird.ReportID,
@@ -169,10 +165,10 @@ namespace BookManagementSystem.Application.Services
                     AdditionalStock = ird.AdditionalStock
                 }).ToList();
 
-                return result; // Trả về danh sách các chi tiết báo cáo tồn kho
+                return result; 
             }
 
-            return Enumerable.Empty<GetListInventoryReportDetailDto>(); // Trả về danh sách rỗng nếu không có ReportMonth hoặc ReportYear
+            return Enumerable.Empty<GetListInventoryReportDetailDto>(); 
         }
 
 
