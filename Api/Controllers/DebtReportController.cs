@@ -119,9 +119,11 @@ namespace BookManagementSystem.Api.Controllers
         {
             var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year, debtReportQuery);
 
-            // if (debtReportDetails == null || !debtReportDetails.Any()) return NotFound();
-
-            return Ok(new Response<IEnumerable<AllDebtReportDetailDto>>(debtReportDetails));
+            var totalRecords = debtReportDetails != null ? debtReportDetails.Count() : 0;
+            var validFilter = new PaginationFilter(debtReportQuery.PageNumber, debtReportQuery.PageSize);
+            var pagedDebtReports = debtReportDetails.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReports, validFilter, totalRecords, _uriService, Request.Path.Value);
+            return Ok(pagedResponse);
         }
 
 

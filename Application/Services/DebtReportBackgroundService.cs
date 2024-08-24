@@ -49,14 +49,22 @@ namespace BookManagementSystem.Services
                     {
                         try
                         {
-                            // Bước 1: Tạo báo cáo nợ (Debt Report)
-                            var createDebtReportDto = new CreateDebtReportDto
+                            var ReportMonth = DateTime.UtcNow.Month;
+                            var ReportYear = DateTime.UtcNow.Year;
+                            var debtReportId = await debtReportService.GetReportIdByMonthYear(ReportMonth, ReportYear);
+
+                            if(debtReportId == 0)
                             {
-                                ReportMonth = DateTime.Now.Month,
-                                ReportYear = DateTime.Now.Year
-                            };
-                            var debtReport = await debtReportService.CreateNewDebtReport(createDebtReportDto);
-                            await context.SaveChangesAsync();
+                                var createDebtReportDto = new CreateDebtReportDto
+                                {
+                                    ReportMonth = DateTime.UtcNow.Month,
+                                    ReportYear = DateTime.UtcNow.Year
+                                };
+                                var debtReport = await debtReportService.CreateNewDebtReport(createDebtReportDto);
+                                await context.SaveChangesAsync();
+                                debtReportId = debtReport.Id;
+                            }
+                            // Bước 1: Tạo báo cáo nợ (Debt Report)
                             
                             // Bước 2: Lấy danh sách ID các khách hàng
                             var customerIds = await customerService.GetAllCustomerId();
@@ -67,7 +75,7 @@ namespace BookManagementSystem.Services
                                 var customer = await customerService.GetCustomerById(customerId);
                                 var createDebtReportDetailDto = new CreateDebtReportDetailDto
                                 {
-                                    ReportID = debtReport.Id,
+                                    ReportID = debtReportId,
                                     CustomerID = customerId,
                                     InitialDebt = customer.TotalDebt,
                                     FinalDebt = customer.TotalDebt
