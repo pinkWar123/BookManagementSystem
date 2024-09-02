@@ -122,6 +122,7 @@ namespace BookManagementSystem.Application.Services
                 var finalStock = inventoryReportDetail.FinalStock - detail.Quantity;
                 var updateInventoryReportDetailDto = new UpdateInventoryReportDetailDto
                 {
+                    InitialStock = inventoryReportDetail.InitialStock,
                     FinalStock = finalStock,
                     AdditionalStock = finalStock - inventoryReportDetail.InitialStock,
                 };
@@ -139,6 +140,7 @@ namespace BookManagementSystem.Application.Services
             
             var updateDebtReportDetailDto = new UpdateDebtReportDetailDto
             {
+                InitialDebt = debtReportDetail.InitialDebt,
                 FinalDebt = debtReportDetail.FinalDebt + totalDebt
             };
             await _debtReportDetailService.UpdateDebtReportDetail(debtReportId, invoice.CustomerID, updateDebtReportDetailDto);
