@@ -114,14 +114,16 @@ namespace BookManagementSystem.Application.Services
                 var book = await _bookService.GetBookById(bookID);
                 var updateBookDto = new UpdateBookDto
                 {
-                    StockQuantity = book.StockQuantity - detail.Quantity
+                    StockQuantity = book.StockQuantity - detail.Quantity,
+                    Price = book.Price
                 };
                 // update inventory report detail
                 var inventoryReportDetail = await _inventoryReportDetail.GetInventoryReportDetailById(inventoryReportID, bookID);
+                var finalStock = inventoryReportDetail.FinalStock - detail.Quantity;
                 var updateInventoryReportDetailDto = new UpdateInventoryReportDetailDto
                 {
-                    FinalStock = inventoryReportDetail.FinalStock - detail.Quantity,
-                    AdditionalStock = inventoryReportDetail.FinalStock - inventoryReportDetail.InitialStock
+                    FinalStock = finalStock,
+                    AdditionalStock = finalStock - inventoryReportDetail.InitialStock,
                 };
                 await _inventoryReportDetail.UpdateInventoryReportDetail(inventoryReportID, bookID, updateInventoryReportDetailDto);
                 await _bookService.UpdateBook(bookID, updateBookDto);

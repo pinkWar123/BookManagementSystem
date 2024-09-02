@@ -40,10 +40,14 @@ namespace BookManagementSystem.Application.Services
         public async Task<BookEntryDto> CreateNewBookEntry(CreateBookEntryDto createBookEntryDto)
         {
             var bookEntryDetails  = createBookEntryDto.BookEntryDetails;
-            var regulation = await _regulationService.GetMinimumBookEntry();
+            var minimumEntryRegulation = await _regulationService.GetMinimumBookEntry();
+            var inventoryRegulation = await _regulationService.GetMaximumInventory();
+            
             foreach (var bookEntryDetail in bookEntryDetails)
-                if (regulation?.Value > bookEntryDetail.Quantity)
+            {
+                if (minimumEntryRegulation?.Value > bookEntryDetail.Quantity)
                     throw new ExceedMinimumBookEntry();
+            }
             
             // Add stock to book
             var bookEntry = _mapper.Map<BookEntry>(createBookEntryDto);
@@ -55,7 +59,8 @@ namespace BookManagementSystem.Application.Services
                 var inventoryReportDetail = await _inventoryReportDetailService.GetInventoryReportDetailById(inventoryReportID, bookEntryDetail.BookID);
                 if (inventoryReportDetail == null)
                     throw new InventoryReportDetailNotFound(inventoryReportID, bookEntryDetail.BookID);
-                
+                if(inventoryRegulation.Value < book.StockQuantity + bookEntryDetail.Quantity)
+                    throw new ExceedMaximumInventoryAfterAdding();
             }
             // update stock quantity
             foreach (var bookEntryDetail in bookEntryDetails)

@@ -12,7 +12,7 @@ namespace BookManagementSystem.Application.Validators.Users
         public LoginValidator()
         {
             RuleFor(x => x.Username).NotEmpty().WithMessage("{PropertyName} không được để trống");
-            RuleFor(x => x.Password).Password();
+            // RuleFor(x => x.Password).Password();
         }
     }
 }

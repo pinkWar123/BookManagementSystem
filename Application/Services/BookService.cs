@@ -42,6 +42,48 @@ namespace BookManagementSystem.Application.Services
             return book != null;
         }
 
+        // public async Task<BookDto> CreateBook(CreateBookDto createBookDto)
+        // {
+        //     var booktemp = _mapper.Map<Book>(createBookDto);
+
+        //     if (await _bookRepository.BookExistsAsync(createBookDto.Title, createBookDto.Genre, createBookDto.Author))
+        //     {
+        //         throw new BookExisted(createBookDto.Title, createBookDto.Author, createBookDto.Genre);
+        //     }
+
+        //     await _bookRepository.AddAsync(booktemp);
+        //     var Reportid = await _inventoryReportService.GetReportIdByMonthYear(DateTime.Now.Month, DateTime.Now.Year);
+            
+        //     if(Reportid == -1)
+        //     {
+        //         var now = DateTime.Now;
+        //         var createInventoryReportDto = new CreateInventoryReportDto
+        //         {
+        //             ReportMonth = now.Month,
+        //             ReportYear = now.Year
+        //         };
+        //         var report = await _inventoryReportService.CreateInventoryReport(createInventoryReportDto);
+        //         if(report != null)
+        //         {
+        //             Reportid = report.ReportID;
+        //         }
+        //     }
+            
+        //     await _bookRepository.SaveChangesAsync();
+
+        //     var book = _mapper.Map<BookDto>(booktemp);
+            
+        //     // create inventory report detail for this book
+        //     var newInventoryReportDetail = new CreateInventoryReportDetailDto {
+        //         ReportID = Reportid,
+        //         BookID = booktemp.Id,
+        //         InitialStock = 0,
+        //         FinalStock = 0,
+        //         AdditionalStock = 0,
+        //     };
+        //     await _inventoryReportDetailService.CreateInventoryReportDetail(newInventoryReportDetail);
+        //     return book;
+        // }
         public async Task<BookDto> CreateBook(CreateBookDto createBookDto)
         {
             var booktemp = _mapper.Map<Book>(createBookDto);
@@ -53,21 +95,7 @@ namespace BookManagementSystem.Application.Services
 
             await _bookRepository.AddAsync(booktemp);
             var Reportid = await _inventoryReportService.GetReportIdByMonthYear(DateTime.Now.Month, DateTime.Now.Year);
-            
-            if(Reportid == -1)
-            {
-                var now = DateTime.Now;
-                var createInventoryReportDto = new CreateInventoryReportDto
-                {
-                    ReportMonth = now.Month,
-                    ReportYear = now.Year
-                };
-                var report = await _inventoryReportService.CreateInventoryReport(createInventoryReportDto);
-                if(report != null)
-                {
-                    Reportid = report.ReportID;
-                }
-            }
+
             
             await _bookRepository.SaveChangesAsync();
 
@@ -84,7 +112,6 @@ namespace BookManagementSystem.Application.Services
             await _inventoryReportDetailService.CreateInventoryReportDetail(newInventoryReportDetail);
             return book;
         }
-
 
         public async Task<bool> DeleteBook(int BookId)
         {

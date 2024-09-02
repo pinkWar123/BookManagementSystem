@@ -19,6 +19,13 @@ namespace BookManagementSystem.Application.Exceptions
         }
     }
 
+    public class ExceedMaximumInventoryAfterAdding : BaseException
+    {
+        public ExceedMaximumInventoryAfterAdding() : base($"Số lượng tồn kho vượt quy định.", HttpStatusCode.BadRequest)
+        {
+        }
+    }
+
     public class ExceedMinimumBookEntry : BaseException
     {
         public ExceedMinimumBookEntry() : base($"Số lượng sách nhập vào không được nhỏ hơn số lượng quy định.", HttpStatusCode.BadRequest)

@@ -96,7 +96,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet()]
-        [Authorize(Roles = "Manager, Cashier")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllBooks([FromQuery] BookQuery bookQuery)
         {
             var books = await _bookService.GetallBook(bookQuery);

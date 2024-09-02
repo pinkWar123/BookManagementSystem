@@ -38,7 +38,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
             var validateResult = await _createCustomerValidator.ValidateAsync(createCustomerDto);
@@ -79,7 +79,7 @@ namespace BookManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetAllCustomers([FromQuery] CustomerQuery customerQuery)
         {
             var customers = await _customerService.GetAllCustomers(customerQuery);
@@ -92,7 +92,7 @@ namespace BookManagementSystem.Api.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Cashier")]
         public async Task<IActionResult> GetCustomerById([FromRoute] int id)
         {
             var customer = await _customerService.GetCustomerById(id);
