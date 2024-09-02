@@ -44,6 +44,13 @@ namespace BookManagementSystem.Application.Services
 
         public async Task<CustomerDto> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
+            bool customerExists = await _customerRepository.CustomerExistsAsync(createCustomerDto.CustomerName, createCustomerDto.PhoneNumber);
+            
+            if (customerExists)
+            {
+                throw new CustomerAlreadyExists(createCustomerDto.CustomerName, createCustomerDto.PhoneNumber);
+            }
+            
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
@@ -53,7 +60,7 @@ namespace BookManagementSystem.Application.Services
                     await _context.SaveChangesAsync();
                     
                     int reportId = await _debtReportService.GetReportIdByMonthYear(DateTime.Today.Month, DateTime.Today.Year);
-                    Console.WriteLine($"ReportId: {reportId}-----------------------------------------");
+                    // Console.WriteLine($"ReportId: {reportId}-----------------------------------------");
                     if(reportId == 0)
                     {
                         var now = DateTime.Now;
