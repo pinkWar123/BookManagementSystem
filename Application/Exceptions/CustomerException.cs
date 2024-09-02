@@ -18,5 +18,12 @@ namespace BookManagementSystem.Application.Exceptions
         public CustomerNotFound(int id) : base($"Không tìm thấy khách hàng với ID {id}.", HttpStatusCode.NotFound)
         {
         }
-    }    
+    }
+
+    public class CustomerAlreadyExists : BaseException
+    {
+        public CustomerAlreadyExists(string CustomerName, string PhoneNumber) : base($"Khách hàng {CustomerName} với số điện thoại {PhoneNumber} đã tồn tại.", HttpStatusCode.Ambiguous)
+        {
+        }
+    }
 }

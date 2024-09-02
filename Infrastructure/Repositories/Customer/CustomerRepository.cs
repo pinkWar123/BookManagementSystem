@@ -46,6 +46,11 @@ namespace BookManagementSystem.Infrastructure.Repositories.Customer
             return await query.ToListAsync();
         }
 
+        public async Task<bool> CustomerExistsAsync(string customerName, string phoneNumber)
+        {
+            return await _context.Customers
+                .AnyAsync(c => c.CustomerName == customerName && c.PhoneNumber == phoneNumber);
+        }
 
     }
 }

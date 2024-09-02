@@ -13,5 +13,6 @@ namespace BookManagementSystem.Infrastructure.Repositories.Customer
     {
         Task<IEnumerable<int>> GetAllCustomerIdAsync();
         Task<IEnumerable<CustomerDtoWithAmount>> GetTopCustomersByMonthYearAsync(int month, int year);
+        Task<bool> CustomerExistsAsync(string customerName, string phoneNumber);
     }
 }
