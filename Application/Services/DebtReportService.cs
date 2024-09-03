@@ -8,6 +8,7 @@ using BookManagementSystem.Application.Interfaces;
 using BookManagementSystem.Application.Validators;
 using BookManagementSystem.Domain.Entities;
 using BookManagementSystem.Infrastructure.Repositories.DebtReport;
+using BookManagementSystem.Infrastructure.Repositories.DebtReportDetail;
 using FluentValidation;
 using FluentValidation.Results;
 using BookManagementSystem.Application.Exceptions;
@@ -23,12 +24,15 @@ namespace BookManagementSystem.Application.Services
     public class DebtReportService : IDebtReportService
     {
         private readonly IDebtReportRepository _debtReportRepository;
+        private readonly IDebtReportDetailRepository _debtReportDetailRepository;
         private readonly IMapper _mapper;
         public DebtReportService(
             IDebtReportRepository debtReportRepository,
+            IDebtReportDetailRepository debtReportDetailRepository,
             IMapper mapper)
         {
             _debtReportRepository = debtReportRepository ?? throw new ArgumentNullException(nameof(debtReportRepository));
+            _debtReportDetailRepository = debtReportDetailRepository ?? throw new ArgumentNullException(nameof(debtReportDetailRepository));
             _mapper = mapper;
         }
 
@@ -97,51 +101,102 @@ namespace BookManagementSystem.Application.Services
             return await _debtReportRepository.DebtReportExists(month, year);
         }
 
-        public async Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year, DebtReportQuery debtReportQuery)
-        {
-            int reportId = await GetReportIdByMonthYear(month, year);
+        // public async Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(int month, int year, DebtReportQuery debtReportQuery)
+        // {
+        //     int reportId = await GetReportIdByMonthYear(month, year);
             
-            var debtReportDetails = await _debtReportRepository.GetDebtReportDetailsByReportIdAsync(reportId, debtReportQuery);
+        //     var debtReportDetails = await _debtReportRepository.GetDebtReportDetailsByReportIdAsync(reportId, debtReportQuery);
 
-            if (debtReportDetails == null || !debtReportDetails.Any())
-            {
-                // throw new DebtReportDetailListNotFound(reportId);
-                return new List<AllDebtReportDetailDto>();
-            }
+        //     if (debtReportDetails == null || !debtReportDetails.Any())
+        //     {
+        //         // throw new DebtReportDetailListNotFound(reportId);
+        //         return new List<AllDebtReportDetailDto>();
+        //     }
 
-            return debtReportDetails;
-        }
-        public async Task<IEnumerable<GetAllDebtReportDto>> GetAllDebtReportDetails(DebtReportQuery debtReportQuery)
+        //     return debtReportDetails;
+        // }
+
+        public async Task<IEnumerable<AllDebtReportDetailDto>> GetAllDebtReportDetailsByMonth(DebtReportQuery debtReportQuery)
         {
-            var query = _debtReportRepository.GetValuesByQuery(debtReportQuery);
-
-            if (query == null)
+            if (debtReportQuery.ReportMonth != null && debtReportQuery.ReportYear != null)
             {
-                return Enumerable.Empty<GetAllDebtReportDto>();
+                var reportId = await _debtReportRepository.GetReportIdByMonthYearAsync(
+                    (int)debtReportQuery.ReportMonth,
+                    (int)debtReportQuery.ReportYear
+                );
+                Console.WriteLine("++++++++++++++++++++++++++++: " + reportId);
+
+                if(reportId == -1)
+                    return Enumerable.Empty<AllDebtReportDetailDto>();
+
+                var debtReportDetailQuery = new DebtReportDetailQuery
+                {
+                    PageNumber = debtReportQuery.PageNumber,
+                    PageSize = debtReportQuery.PageSize,
+                    ReportId = reportId == -1 ? null : reportId,
+                    SortBy = debtReportQuery.SortBy,
+                    IsDescending = debtReportQuery.IsDescending,
+                };
+
+                var query = _debtReportDetailRepository.GetValuesByQuery(debtReportDetailQuery);
+
+                if (query == null || !query.Any())
+                {
+                    return Enumerable.Empty<AllDebtReportDetailDto>();
+                }
+
+                var debtReportDetails = await query
+                    .Include(ird => ird.Customer)
+                    .ToListAsync();
+
+                var result = debtReportDetails.Select(ird => new AllDebtReportDetailDto
+                {
+                    ReportID = ird.ReportID,
+                    CustomerID = ird.CustomerID,
+                    customerName = ird.Customer.CustomerName,
+                    InitialDebt = ird.InitialDebt,
+                    FinalDebt = ird.FinalDebt,
+                    AdditionalDebt = ird.AdditionalDebt
+                }).ToList();
+
+                return result; 
             }
 
-            var debtReports = await query
-                .Include(dr => dr.DebtReportDetails)
-                    .ThenInclude(drd => drd.Customer)
-                .ToListAsync();
-
-            var result = debtReports.Select(dr => new GetAllDebtReportDto
-            {
-                Id = dr.Id,
-                ReportMonth = dr.ReportMonth,
-                ReportYear = dr.ReportYear,
-                DebtReportDetails = dr.DebtReportDetails.Select(drd => new AllDebtReportDetailDto
-                {
-                    ReportID = dr.Id,
-                    CustomerID = drd.CustomerID,
-                    customerName = drd.Customer != null ? drd.Customer.CustomerName : "Unknown",
-                    InitialDebt = drd.InitialDebt,
-                    FinalDebt = drd.FinalDebt,
-                    AdditionalDebt = drd.AdditionalDebt
-                }).ToList()
-            });
-
-            return result;
+            return Enumerable.Empty<AllDebtReportDetailDto>(); 
         }
+
+
+        // public async Task<IEnumerable<GetAllDebtReportDto>> GetAllDebtReportDetails(DebtReportQuery debtReportQuery)
+        // {
+        //     var query = _debtReportRepository.GetValuesByQuery(debtReportQuery);
+
+        //     if (query == null)
+        //     {
+        //         return Enumerable.Empty<GetAllDebtReportDto>();
+        //     }
+
+        //     var debtReports = await query
+        //         .Include(dr => dr.DebtReportDetails)
+        //             .ThenInclude(drd => drd.Customer)
+        //         .ToListAsync();
+
+        //     var result = debtReports.Select(dr => new GetAllDebtReportDto
+        //     {
+        //         Id = dr.Id,
+        //         ReportMonth = dr.ReportMonth,
+        //         ReportYear = dr.ReportYear,
+        //         DebtReportDetails = dr.DebtReportDetails.Select(drd => new AllDebtReportDetailDto
+        //         {
+        //             ReportID = dr.Id,
+        //             CustomerID = drd.CustomerID,
+        //             customerName = drd.Customer != null ? drd.Customer.CustomerName : "Unknown",
+        //             InitialDebt = drd.InitialDebt,
+        //             FinalDebt = drd.FinalDebt,
+        //             AdditionalDebt = drd.AdditionalDebt
+        //         }).ToList()
+        //     });
+
+        //     return result;
+        // }
     }
 }

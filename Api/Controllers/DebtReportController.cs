@@ -115,9 +115,9 @@ namespace BookManagementSystem.Api.Controllers
 
         [HttpGet("getAllDebtReportsByMonth")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllDebtReportDetailsById([FromQuery] int month, [FromQuery] int year, [FromQuery] DebtReportQuery debtReportQuery)
+        public async Task<IActionResult> GetAllDebtReportDetailsById([FromQuery] DebtReportQuery debtReportQuery)
         {
-            var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(month, year, debtReportQuery);
+            var debtReportDetails = await _debtReportService.GetAllDebtReportDetailsByMonth(debtReportQuery);
 
             var totalRecords = debtReportDetails != null ? debtReportDetails.Count() : 0;
             var validFilter = new PaginationFilter(debtReportQuery.PageNumber, debtReportQuery.PageSize);
@@ -127,17 +127,17 @@ namespace BookManagementSystem.Api.Controllers
         }
 
 
-        [HttpGet("getAllDebtReportDetails")]
-        [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] DebtReportQuery debtReportQuery)
-        {
-            var debtReports = await _debtReportService.GetAllDebtReportDetails(debtReportQuery);
-            var totalRecords = debtReports != null ? debtReports.Count() : 0;
-            var validFilter = new PaginationFilter(debtReportQuery.PageNumber, debtReportQuery.PageSize);
-            var pagedDebtReports = debtReports.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
-            var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReports, validFilter, totalRecords, _uriService, Request.Path.Value);
-            return Ok(pagedResponse);
-        }
+        // [HttpGet("getAllDebtReportDetails")]
+        // [Authorize(Roles = "Manager")]
+        // public async Task<IActionResult> GetAllDebtReportDetails([FromQuery] DebtReportQuery debtReportQuery)
+        // {
+        //     var debtReports = await _debtReportService.GetAllDebtReportDetails(debtReportQuery);
+        //     var totalRecords = debtReports != null ? debtReports.Count() : 0;
+        //     var validFilter = new PaginationFilter(debtReportQuery.PageNumber, debtReportQuery.PageSize);
+        //     var pagedDebtReports = debtReports.Skip((validFilter.PageNumber - 1) * validFilter.PageSize).Take(validFilter.PageSize).ToList();
+        //     var pagedResponse = PaginationHelper.CreatePagedResponse(pagedDebtReports, validFilter, totalRecords, _uriService, Request.Path.Value);
+        //     return Ok(pagedResponse);
+        // }
 
     }
 }
