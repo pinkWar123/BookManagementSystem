@@ -27,21 +27,21 @@ This project follows a **3-layer architecture**:
 
 The **Controllers** are responsible for handling HTTP requests and sending responses. Each controller is associated with a specific domain entity (e.g., BooksController, AuthorsController). Controllers do not contain business logic. Instead, they delegate the work to the service layer.
 
-- Location: `/Controllers`
+- Location: `Api/Controllers`
 
 ### Services
 
 The **Service Layer** contains the business logic of the application. Services fetch, manipulate, and validate data before sending it to the repository or returning it to the controllers.
 
-- Location: `/Services`
+- Location: `Application/Services`
 - Example services: `BookService`, `AuthorService`.
 
 ### Repositories
 
 The **Repository Layer** handles the data persistence. It interacts with the database through Entity Framework and provides CRUD operations to the service layer.
 
-- Location: `/Repositories`
-- Example repositories: `BookRepository`, `AuthorRepository`.
+- Location: `Infrastructure/Repositories`
+- Example repositories: `BookRepository`.
 
 ## Getting Started
 
@@ -59,7 +59,6 @@ Ensure you have the following installed:
 
    ```bash
    git clone https://github.com/yourusername/BookManagementSystemBackend.git
-   cd BookManagementSystemBackend
    ```
 2. Restore dependencies:
     ```bash
