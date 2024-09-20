@@ -58,7 +58,7 @@ Ensure you have the following installed:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/BookManagementSystemBackend.git
+   git clone https://github.com/pinkWar123/BookManagementSystem.git
    ```
 2. Restore dependencies:
     ```bash
